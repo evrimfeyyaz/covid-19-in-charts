@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
+import LocationDataFromOnsetGraph from './components/LocationDataFromOnsetGraph';
+import JHUCSSECovidDataStore, { LocationData } from './store/JHUCSSECovidDataStore';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+  const dataStore = useRef(new JHUCSSECovidDataStore());
+  const [data, setData] = useState<LocationData | undefined>();
+
+  useEffect(() => {
+    dataStore.current.loadData().then(() => {
+      setData(dataStore.current.getCasesDataByLocation('Turkey'));
+    });
+  }, []);
+
+  if (data == null) {
+    return (
+      <div>
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          Loading...
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <LocationDataFromOnsetGraph data={data.values} />
     </div>
   );
 }

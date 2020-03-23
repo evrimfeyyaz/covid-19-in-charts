@@ -12,14 +12,16 @@ interface DateValue {
   value: number
 }
 
-interface ProvinceOrStateData {
-  values: DateValue[],
+export type DateValues = DateValue[];
+
+export interface LocationData {
+  values: DateValues,
   firstNonZeroValueIndex: number | null
 }
 
 interface DataByCountry {
   [countryOrRegion: string]: {
-    [provinceOrState: string]: ProvinceOrStateData
+    [provinceOrState: string]: LocationData
   }
 }
 
@@ -35,25 +37,22 @@ export default class JHUCSSECovidDataStore {
     return index >= JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
   }
 
-  private static isLocationNameCountry(location: string): boolean {
-    return location.indexOf('(') === -1;
-  }
-
   private static isDateColumn(columnName: string): boolean {
     return !!columnName.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/);
   }
 
-  private static parseCountryAndProvinceFromLocation(location: string): { country: string, province: string } {
-    const parsedLocation = location.match(/^([a-zA-Z\s]+)\s\(([a-zA-Z\s]+)\)$/);
+  private static parseCountryAndProvinceFromLocation(location: string): { countryOrRegion: string, provinceOrState: string } {
+    let parsedLocation = location.match(/^([a-zA-Z\s]+)\s?\(?([a-zA-Z\s]*)\)?$/);
 
-    if (typeof parsedLocation?.[1] !== 'string' || typeof parsedLocation?.[2] !== 'string') {
-      throw new Error(`Invalid country and province string: ${location}.`);
+    if (typeof parsedLocation?.[1] !== 'string') {
+      JHUCSSECovidDataStore.throwInvalidLocationError(location);
     }
 
-    return {
-      country: parsedLocation[1],
-      province: parsedLocation[2],
-    };
+    const countryOrRegion = parsedLocation?.[1] as string;
+    let provinceOrState = parsedLocation?.[2] as string;
+    provinceOrState = provinceOrState.trim().length === 0 ? JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY : provinceOrState;
+
+    return { countryOrRegion, provinceOrState };
   }
 
   private static throwInvalidLocationError(location: string) {
@@ -64,6 +63,7 @@ export default class JHUCSSECovidDataStore {
   private deathsByCountry: DataByCountry | undefined;
   private recoveredByCountry: DataByCountry | undefined;
   private locations: string[] | undefined;
+  private dataSetLength: number = 0;
 
   async loadData(): Promise<void> {
     const rawConfirmedDataResponse = await fetch(JHUCSSECovidDataStore.CONFIRMED_URL);
@@ -80,9 +80,11 @@ export default class JHUCSSECovidDataStore {
     const rawRecoveredData = await rawRecoveredDataResponse.text();
     const parsedRecoveredData = await this.parseCsv(rawRecoveredData);
     this.recoveredByCountry = await this.formatParsedData(parsedRecoveredData);
+
+    this.dataSetLength = parsedConfirmedData.length - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
   }
 
-  getListOfLocations() {
+  getListOfLocations(): string[] {
     this.throwErrorIfNotLoaded();
 
     if (this.locations != null) {
@@ -96,7 +98,7 @@ export default class JHUCSSECovidDataStore {
       if (Object.keys(countryData).length === 1) { // No provincial data.
         locations.push(countryName);
       } else {
-        Object.entries(countryData).forEach(([provinceName, provinceData]) => {
+        Object.entries(countryData).forEach(([provinceName]) => {
           if (provinceName === JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY) {
             locations.push(countryName);
           } else {
@@ -112,30 +114,22 @@ export default class JHUCSSECovidDataStore {
     return this.locations;
   }
 
-  getCasesDataByLocation(location: string) {
+  getCasesDataByLocation(location: string): LocationData {
     this.throwErrorIfNotLoaded();
 
     const casesByCountry = this.casesByCountry as DataByCountry;
 
-    if (JHUCSSECovidDataStore.isLocationNameCountry(location)) {
-      if (!casesByCountry.hasOwnProperty(location)) {
-        JHUCSSECovidDataStore.throwInvalidLocationError(location);
-      }
+    const { countryOrRegion, provinceOrState } = JHUCSSECovidDataStore.parseCountryAndProvinceFromLocation(location);
 
-      return casesByCountry[location];
-    } else {
-      const { country, province } = JHUCSSECovidDataStore.parseCountryAndProvinceFromLocation(location);
-
-      if (!casesByCountry.hasOwnProperty(country)) {
-        JHUCSSECovidDataStore.throwInvalidLocationError(location);
-      }
-
-      if (!casesByCountry[country].hasOwnProperty(province)) {
-        JHUCSSECovidDataStore.throwInvalidLocationError(location);
-      }
-
-      return casesByCountry[country][province];
+    if (!casesByCountry.hasOwnProperty(countryOrRegion)) {
+      JHUCSSECovidDataStore.throwInvalidLocationError(location);
     }
+
+    if (!casesByCountry[countryOrRegion].hasOwnProperty(provinceOrState)) {
+      JHUCSSECovidDataStore.throwInvalidLocationError(location);
+    }
+
+    return casesByCountry[countryOrRegion][provinceOrState];
   }
 
   private throwErrorIfNotLoaded() {
@@ -238,15 +232,14 @@ export default class JHUCSSECovidDataStore {
         return;
       }
 
-      const dataSetLength = countryData[JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY].values.length;
-      let countryTotal: ProvinceOrStateData = {
+      let countryTotal: LocationData = {
         values: [],
-        firstNonZeroValueIndex: dataSetLength,
+        firstNonZeroValueIndex: this.dataSetLength,
       };
 
       Object.values(countryData).forEach(provinceData => {
-        const countryFirstNonZeroTime = countryTotal.firstNonZeroValueIndex ?? dataSetLength;
-        const provinceFirstNonZeroTime = provinceData.firstNonZeroValueIndex ?? dataSetLength;
+        const countryFirstNonZeroTime = countryTotal.firstNonZeroValueIndex ?? this.dataSetLength;
+        const provinceFirstNonZeroTime = provinceData.firstNonZeroValueIndex ?? this.dataSetLength;
 
         if (countryTotal.firstNonZeroValueIndex == null || countryFirstNonZeroTime > provinceFirstNonZeroTime) {
           countryTotal.firstNonZeroValueIndex = provinceData.firstNonZeroValueIndex;
