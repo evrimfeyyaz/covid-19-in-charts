@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-import LocationDataFromOnsetGraph from './components/LocationDataFromOnsetGraph';
 import JHUCSSECovidDataStore, { LocationData } from './store/JHUCSSECovidDataStore';
+import SingleLocationGraph from './components/SingleLocationGraph';
 
 function App() {
   const dataStore = useRef(new JHUCSSECovidDataStore());
@@ -9,7 +9,7 @@ function App() {
 
   useEffect(() => {
     dataStore.current.loadData().then(() => {
-      setData(dataStore.current.getCasesDataByLocation('Turkey'));
+      setData(dataStore.current.getDataByLocation('Turkey', { stripDataBeforeOnset: true }));
     });
   }, []);
 
@@ -25,7 +25,7 @@ function App() {
 
   return (
     <div>
-      <LocationDataFromOnsetGraph data={data.values} />
+      <SingleLocationGraph data={data.values} />
     </div>
   );
 }

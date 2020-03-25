@@ -9,27 +9,28 @@ type ParsedCsv = readonly ParsedCsvRow[];
 
 interface DateValue {
   date: string,
-  value: number
+  confirmed: number,
+  deaths: number,
 }
 
 export type DateValues = DateValue[];
 
 export interface LocationData {
+  latitude: string,
+  longitude: string,
   values: DateValues,
-  firstNonZeroValueIndex: number | null
+  firstConfirmedIndex: number | null,
+  firstDeathIndex: number | null
 }
 
-interface DataByCountry {
-  [countryOrRegion: string]: {
-    [provinceOrState: string]: LocationData
-  }
+interface DataByLocation {
+  [location: string]: LocationData
 }
 
 export default class JHUCSSECovidDataStore {
   private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
-  private static CONFIRMED_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_19-covid-Confirmed.csv`;
-  private static DEATHS_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_19-covid-Deaths.csv`;
-  private static RECOVERED_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_19-covid-Recovered.csv`;
+  private static CONFIRMED_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
+  private static DEATHS_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
   private static COUNTRY_TOTAL_KEY = 'Total';
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
 
@@ -41,101 +42,66 @@ export default class JHUCSSECovidDataStore {
     return !!columnName.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/);
   }
 
-  private static parseCountryAndProvinceFromLocation(location: string): { countryOrRegion: string, provinceOrState: string } {
-    let parsedLocation = location.match(/^([a-zA-Z\s]+)\s?\(?([a-zA-Z\s]*)\)?$/);
-
-    if (typeof parsedLocation?.[1] !== 'string') {
-      JHUCSSECovidDataStore.throwInvalidLocationError(location);
-    }
-
-    const countryOrRegion = parsedLocation?.[1] as string;
-    let provinceOrState = parsedLocation?.[2] as string;
-    provinceOrState = provinceOrState.trim().length === 0 ? JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY : provinceOrState;
-
-    return { countryOrRegion, provinceOrState };
+  private static invalidLocationError(location: string) {
+    return new Error(`Invalid location: "${location}".`);
   }
 
-  private static throwInvalidLocationError(location: string) {
-    throw new Error(`Invalid location: "${location}".`);
+  private static notLoadedError() {
+    return new Error('Store is not populated. Make sure to first call the `loadData` method.');
   }
 
-  private casesByCountry: DataByCountry | undefined;
-  private deathsByCountry: DataByCountry | undefined;
-  private recoveredByCountry: DataByCountry | undefined;
-  private locations: string[] | undefined;
+  private dataByLocation: DataByLocation | undefined;
   private dataSetLength: number = 0;
+  private _locations: string[] | undefined;
 
   async loadData(): Promise<void> {
-    const rawConfirmedDataResponse = await fetch(JHUCSSECovidDataStore.CONFIRMED_URL);
-    const rawConfirmedData = await rawConfirmedDataResponse.text();
-    const parsedConfirmedData = await this.parseCsv(rawConfirmedData);
-    this.casesByCountry = await this.formatParsedData(parsedConfirmedData);
-
-    const rawDeathsDataResponse = await fetch(JHUCSSECovidDataStore.DEATHS_URL);
-    const rawDeathsData = await rawDeathsDataResponse.text();
-    const parsedDeathsData = await this.parseCsv(rawDeathsData);
-    this.deathsByCountry = await this.formatParsedData(parsedDeathsData);
-
-    const rawRecoveredDataResponse = await fetch(JHUCSSECovidDataStore.RECOVERED_URL);
-    const rawRecoveredData = await rawRecoveredDataResponse.text();
-    const parsedRecoveredData = await this.parseCsv(rawRecoveredData);
-    this.recoveredByCountry = await this.formatParsedData(parsedRecoveredData);
-
-    this.dataSetLength = parsedConfirmedData.length - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
+    const parsedConfirmedData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.CONFIRMED_URL);
+    const parsedDeathsData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.DEATHS_URL);
+    this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData);
+    this._locations = Object.keys(this.dataByLocation);
+    this.dataSetLength = this.dataByLocation[this._locations[0]].values.length;
   }
 
-  getListOfLocations(): string[] {
-    this.throwErrorIfNotLoaded();
-
-    if (this.locations != null) {
-      return this.locations;
+  get locations(): string[] {
+    if (this._locations == null) {
+      throw JHUCSSECovidDataStore.notLoadedError();
     }
 
-    const locations: string[] = [];
-    const casesByCountry = this.casesByCountry as DataByCountry;
-
-    Object.entries(casesByCountry).forEach(([countryName, countryData]) => {
-      if (Object.keys(countryData).length === 1) { // No provincial data.
-        locations.push(countryName);
-      } else {
-        Object.entries(countryData).forEach(([provinceName]) => {
-          if (provinceName === JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY) {
-            locations.push(countryName);
-          } else {
-            locations.push(`${countryName} (${provinceName})`);
-          }
-        });
-      }
-    });
-
-    locations.sort((a, b) => a.localeCompare(b));
-    this.locations = locations;
-
-    return this.locations;
+    return _.cloneDeep(this._locations);
   }
 
-  getCasesDataByLocation(location: string): LocationData {
-    this.throwErrorIfNotLoaded();
-
-    const casesByCountry = this.casesByCountry as DataByCountry;
-
-    const { countryOrRegion, provinceOrState } = JHUCSSECovidDataStore.parseCountryAndProvinceFromLocation(location);
-
-    if (!casesByCountry.hasOwnProperty(countryOrRegion)) {
-      JHUCSSECovidDataStore.throwInvalidLocationError(location);
+  getDataByLocation(
+    location: string,
+    options: { stripDataBeforeOnset: boolean } = { stripDataBeforeOnset: false },
+  ): LocationData {
+    if (this.dataByLocation == null) {
+      throw JHUCSSECovidDataStore.notLoadedError();
     }
 
-    if (!casesByCountry[countryOrRegion].hasOwnProperty(provinceOrState)) {
-      JHUCSSECovidDataStore.throwInvalidLocationError(location);
+    if (this.locations.indexOf(location) === -1) {
+      throw JHUCSSECovidDataStore.invalidLocationError(location);
     }
 
-    return casesByCountry[countryOrRegion][provinceOrState];
+    const locationData = _.cloneDeep(this.dataByLocation[location]);
+
+    if (options.stripDataBeforeOnset) {
+      let { firstConfirmedIndex } = locationData;
+      firstConfirmedIndex = firstConfirmedIndex ?? this.dataSetLength - 1;
+
+      return {
+        ...locationData,
+        values: locationData.values.slice(firstConfirmedIndex, this.dataSetLength),
+      };
+    }
+
+    return locationData;
   }
 
-  private throwErrorIfNotLoaded() {
-    if (this.casesByCountry == null || this.deathsByCountry == null || this.recoveredByCountry == null) {
-      throw new Error('You need to first call the `loadData` method to populate the store.');
-    }
+  private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
+    const rawResponse = await fetch(url);
+    const rawData = await rawResponse.text();
+
+    return await this.parseCsv(rawData);
   }
 
   private parseCsv(text: string): Promise<ParsedCsv> {
@@ -171,12 +137,12 @@ export default class JHUCSSECovidDataStore {
     });
   }
 
-  private formatParsedData(parsedData: ParsedCsv): Promise<DataByCountry> {
+  private formatParsedData(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv): Promise<DataByLocation> {
     return new Promise((resolve, reject) => {
       let formattedData;
 
       try {
-        formattedData = this.formatDataByCountry(parsedData);
+        formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData);
         this.mutatingAddCountryTotalsToFormattedData(formattedData);
       } catch (err) {
         reject(err);
@@ -186,24 +152,38 @@ export default class JHUCSSECovidDataStore {
     });
   }
 
-  private formatDataByCountry(parsedData: ParsedCsv): DataByCountry {
-    let formattedData: DataByCountry = {};
+  private formatDataByLocation(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv): DataByLocation {
+    let formattedData: DataByLocation = {};
 
-    for (let i = 0; i < parsedData.length; i++) {
-      const locationData = parsedData[i];
-      const countryOrRegion = locationData['Country/Region'];
-      const provinceOrState = locationData['Province/State'] || JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY;
+    for (let i = 0; i < parsedConfirmedData.length; i++) {
+      const confirmedData = parsedConfirmedData[i];
+      const deathsData = parsedDeathsData[i];
+      const countryOrRegion = confirmedData['Country/Region'];
+      const provinceOrState = confirmedData['Province/State'];
+      const latitude = confirmedData['Lat'] as string;
+      const longitude = confirmedData['Long'] as string;
 
-      let firstNonZeroValueIndex: number | null = null;
-      const values = Object.keys(locationData).reduce<DateValue[]>((result, dateStr, index) => {
+      let location = countryOrRegion;
+      if (provinceOrState != null && typeof provinceOrState === 'string' && provinceOrState.trim().length > 0) {
+        location = `${location} (${provinceOrState})`;
+      }
+
+      let firstConfirmedIndex: number | null = null;
+      let firstDeathIndex: number | null = null;
+      const values = Object.keys(confirmedData).reduce<DateValue[]>((result, dateStr, index) => {
         if (JHUCSSECovidDataStore.isIndexOfDateColumn(index)) {
-          const value = locationData[dateStr] as number;
+          const confirmed = confirmedData[dateStr] as number;
+          const deaths = deathsData[dateStr] as number;
 
-          if (value > 0 && firstNonZeroValueIndex == null) {
-            firstNonZeroValueIndex = index - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
+          if (confirmed > 0 && firstConfirmedIndex == null) {
+            firstConfirmedIndex = index - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
           }
 
-          result = [...result, { date: dateStr, value }];
+          if (deaths > 0 && firstDeathIndex == null) {
+            firstDeathIndex = index - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
+          }
+
+          result = [...result, { date: dateStr, confirmed, deaths }];
         }
 
         return result;
@@ -211,12 +191,12 @@ export default class JHUCSSECovidDataStore {
 
       formattedData = {
         ...formattedData,
-        [countryOrRegion]: {
-          ...formattedData[countryOrRegion],
-          [provinceOrState]: {
-            values,
-            firstNonZeroValueIndex,
-          },
+        [location]: {
+          latitude,
+          longitude,
+          values,
+          firstConfirmedIndex,
+          firstDeathIndex,
         },
       };
     }
@@ -224,37 +204,73 @@ export default class JHUCSSECovidDataStore {
     return formattedData;
   }
 
-  private mutatingAddCountryTotalsToFormattedData(formattedData: DataByCountry): void {
-    Object.keys(formattedData).forEach((country) => {
-      const countryData = formattedData[country];
+  private mutatingAddCountryTotalsToFormattedData(formattedData: DataByLocation): void {
+    // All latitudes and longitudes below are taken from Google.
+    const australiaTotalData: LocationData = {
+      values: [],
+      latitude: '-25.2744',
+      longitude: '133.7751',
+      firstConfirmedIndex: this.dataSetLength,
+      firstDeathIndex: this.dataSetLength,
+    };
+    const canadaTotalData: LocationData = {
+      values: [],
+      latitude: '56.1304',
+      longitude: '-106.3468',
+      firstConfirmedIndex: this.dataSetLength,
+      firstDeathIndex: this.dataSetLength,
+    };
+    const chinaTotalData: LocationData = {
+      values: [],
+      latitude: '35.8617',
+      longitude: '104.1954',
+      firstConfirmedIndex: this.dataSetLength,
+      firstDeathIndex: this.dataSetLength,
+    };
 
-      if (countryData.hasOwnProperty(JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY)) {
+    Object.keys(formattedData).forEach((location) => {
+      const locationData = formattedData[location];
+
+      let countryTotalData: LocationData;
+      if (location.includes('China')) {
+        countryTotalData = chinaTotalData;
+      } else if (location.includes('Australia')) {
+        countryTotalData = australiaTotalData;
+      } else if (location.includes('Canada')) {
+        countryTotalData = canadaTotalData;
+      } else {
         return;
       }
 
-      let countryTotal: LocationData = {
-        values: [],
-        firstNonZeroValueIndex: this.dataSetLength,
+      if (
+        locationData.firstConfirmedIndex != null &&
+        countryTotalData.firstConfirmedIndex as number > locationData.firstConfirmedIndex
+      ) {
+        countryTotalData.firstConfirmedIndex = locationData.firstConfirmedIndex;
+      }
+
+      if (
+        locationData.firstDeathIndex != null &&
+        countryTotalData.firstDeathIndex as number > locationData.firstDeathIndex
+      ) {
+        countryTotalData.firstDeathIndex = locationData.firstDeathIndex;
+      }
+
+      if (countryTotalData.values.length === 0) {
+        countryTotalData.values = _.cloneDeep(locationData.values);
+      } else {
+        countryTotalData.values.forEach((value, index) => {
+          countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
+          countryTotalData.values[index].deaths += locationData.values[index].deaths;
+        });
+      }
+
+      formattedData = {
+        ...formattedData,
+        [`Australia (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: australiaTotalData,
+        [`Canada (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: canadaTotalData,
+        [`China (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: chinaTotalData,
       };
-
-      Object.values(countryData).forEach(provinceData => {
-        const countryFirstNonZeroTime = countryTotal.firstNonZeroValueIndex ?? this.dataSetLength;
-        const provinceFirstNonZeroTime = provinceData.firstNonZeroValueIndex ?? this.dataSetLength;
-
-        if (countryTotal.firstNonZeroValueIndex == null || countryFirstNonZeroTime > provinceFirstNonZeroTime) {
-          countryTotal.firstNonZeroValueIndex = provinceData.firstNonZeroValueIndex;
-        }
-
-        if (countryTotal.values.length === 0) {
-          countryTotal.values = _.cloneDeep(provinceData.values);
-        } else {
-          for (let j = 0; j < countryTotal.values.length; j++) {
-            countryTotal.values[j].value = countryTotal.values[j].value + provinceData.values[j].value;
-          }
-        }
-      });
-
-      countryData[JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY] = countryTotal;
     });
   }
 }
