@@ -16,6 +16,7 @@ interface DateValue {
 export type DateValues = DateValue[];
 
 export interface LocationData {
+  location: string,
   latitude: string,
   longitude: string,
   values: DateValues,
@@ -58,7 +59,7 @@ export default class JHUCSSECovidDataStore {
     const parsedConfirmedData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.CONFIRMED_URL);
     const parsedDeathsData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.DEATHS_URL);
     this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData);
-    this._locations = Object.keys(this.dataByLocation);
+    this._locations = Object.keys(this.dataByLocation).sort((location1, location2) => location1.localeCompare(location2));
     this.dataSetLength = this.dataByLocation[this._locations[0]].values.length;
   }
 
@@ -143,7 +144,7 @@ export default class JHUCSSECovidDataStore {
 
       try {
         formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData);
-        this.mutatingAddCountryTotalsToFormattedData(formattedData);
+        formattedData = this.addCountryTotalsToFormattedData(formattedData);
       } catch (err) {
         reject(err);
       }
@@ -158,7 +159,7 @@ export default class JHUCSSECovidDataStore {
     for (let i = 0; i < parsedConfirmedData.length; i++) {
       const confirmedData = parsedConfirmedData[i];
       const deathsData = parsedDeathsData[i];
-      const countryOrRegion = confirmedData['Country/Region'];
+      const countryOrRegion = confirmedData['Country/Region'] as string;
       const provinceOrState = confirmedData['Province/State'];
       const latitude = confirmedData['Lat'] as string;
       const longitude = confirmedData['Long'] as string;
@@ -192,6 +193,7 @@ export default class JHUCSSECovidDataStore {
       formattedData = {
         ...formattedData,
         [location]: {
+          location,
           latitude,
           longitude,
           values,
@@ -204,9 +206,10 @@ export default class JHUCSSECovidDataStore {
     return formattedData;
   }
 
-  private mutatingAddCountryTotalsToFormattedData(formattedData: DataByLocation): void {
+  private addCountryTotalsToFormattedData(formattedData: DataByLocation): DataByLocation {
     // All latitudes and longitudes below are taken from Google.
     const australiaTotalData: LocationData = {
+      location: `Australia (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '-25.2744',
       longitude: '133.7751',
@@ -214,6 +217,7 @@ export default class JHUCSSECovidDataStore {
       firstDeathIndex: this.dataSetLength,
     };
     const canadaTotalData: LocationData = {
+      location: `Canada (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '56.1304',
       longitude: '-106.3468',
@@ -221,6 +225,7 @@ export default class JHUCSSECovidDataStore {
       firstDeathIndex: this.dataSetLength,
     };
     const chinaTotalData: LocationData = {
+      location: `China (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '35.8617',
       longitude: '104.1954',
@@ -264,13 +269,13 @@ export default class JHUCSSECovidDataStore {
           countryTotalData.values[index].deaths += locationData.values[index].deaths;
         });
       }
-
-      formattedData = {
-        ...formattedData,
-        [`Australia (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: australiaTotalData,
-        [`Canada (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: canadaTotalData,
-        [`China (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`]: chinaTotalData,
-      };
     });
+
+    return {
+      ...formattedData,
+      [australiaTotalData.location]: australiaTotalData,
+      [canadaTotalData.location]: canadaTotalData,
+      [chinaTotalData.location]: chinaTotalData,
+    };
   }
 }
