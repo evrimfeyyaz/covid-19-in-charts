@@ -1,39 +1,53 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-import JHUCSSECovidDataStore, { LocationData } from './store/JHUCSSECovidDataStore';
-import SingleLocationGraph from './components/SingleLocationGraph';
-import MultiLocationGraph from './components/MultiLocationGraph';
+import CovidDataStore, { LocationData } from './store/CovidDataStore';
+import SingleLocationChart from './components/SingleLocationChart';
+import Spinner from 'react-bootstrap/Spinner';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
+import NavDropdown from 'react-bootstrap/NavDropdown';
+import Container from 'react-bootstrap/Container';
 
 function App() {
-  const dataStore = useRef(new JHUCSSECovidDataStore());
+  const dataStore = useRef(new CovidDataStore());
   const [data, setData] = useState<LocationData | undefined>();
-  const [data2, setData2] = useState<LocationData | undefined>();
-  const [data3, setData3] = useState<LocationData | undefined>();
 
   useEffect(() => {
     dataStore.current.loadData().then(() => {
-      console.log(dataStore.current.locations);
-      setData(dataStore.current.getDataByLocation('Turkey', { stripDataBeforeOnset: true }));
-      setData2(dataStore.current.getDataByLocation('US', { stripDataBeforeOnset: true }));
-      setData3(dataStore.current.getDataByLocation('China (Total)', { stripDataBeforeOnset: true }));
+      let turkey = dataStore.current.getDataByLocation('Turkey');
+      turkey = CovidDataStore.stripDataBeforeCasesExceedsN(turkey, 10);
+      setData(turkey);
     });
   }, []);
 
-  if (data == null || data2 == null || data3 == null) {
+  if (data == null) {
     return (
-      <div>
-        <p>
-          Loading...
-        </p>
+      <div className='h-100 d-flex justify-content-center align-items-center'>
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
       </div>
     );
   }
 
   return (
-    <div>
-      <SingleLocationGraph data={data.values} />
-      <MultiLocationGraph data={[data, data2, data3]} />
-    </div>
+    <Navbar bg="light" expand="lg">
+      <Container>
+        <Navbar.Brand>COVID-19 in Charts</Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse>
+          <Nav className="mr-auto">
+            <NavDropdown title="Dropdown" id="nav-dropdown">
+              <NavDropdown.Item>Progression in Single Location</NavDropdown.Item>
+              <NavDropdown.Item>Progression Comparison in Multiple Locations</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+          <Nav className='ml-auto'>
+            <Nav.Link>About</Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
 

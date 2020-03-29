@@ -10,6 +10,7 @@ type ParsedCsv = readonly ParsedCsvRow[];
 interface DateValue {
   date: string,
   confirmed: number,
+  newConfirmed: number,
   deaths: number,
 }
 
@@ -20,23 +21,30 @@ export interface LocationData {
   latitude: string,
   longitude: string,
   values: DateValues,
-  firstConfirmedIndex: number | null,
-  firstDeathIndex: number | null
 }
 
 interface DataByLocation {
   [location: string]: LocationData
 }
 
-export default class JHUCSSECovidDataStore {
+export default class CovidDataStore {
   private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
-  private static CONFIRMED_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
-  private static DEATHS_URL = `${JHUCSSECovidDataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
+  private static CONFIRMED_URL = `${CovidDataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
+  private static DEATHS_URL = `${CovidDataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
   private static COUNTRY_TOTAL_KEY = 'Total';
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
 
+  static stripDataBeforeCasesExceedsN(locationData: Readonly<LocationData>, n: number): LocationData {
+    const dataClone = _.cloneDeep(locationData);
+
+    return {
+      ...dataClone,
+      values: dataClone.values.filter(value => value.confirmed > n),
+    };
+  }
+
   private static isIndexOfDateColumn(index: number): boolean {
-    return index >= JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
+    return index >= CovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
   }
 
   private static isDateColumn(columnName: string): boolean {
@@ -56,8 +64,8 @@ export default class JHUCSSECovidDataStore {
   private _locations: string[] | undefined;
 
   async loadData(): Promise<void> {
-    const parsedConfirmedData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.CONFIRMED_URL);
-    const parsedDeathsData = await this.getParsedDataFromURL(JHUCSSECovidDataStore.DEATHS_URL);
+    const parsedConfirmedData = await this.getParsedDataFromURL(CovidDataStore.CONFIRMED_URL);
+    const parsedDeathsData = await this.getParsedDataFromURL(CovidDataStore.DEATHS_URL);
     this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData);
     this._locations = Object.keys(this.dataByLocation).sort((location1, location2) => location1.localeCompare(location2));
     this.dataSetLength = this.dataByLocation[this._locations[0]].values.length;
@@ -65,37 +73,22 @@ export default class JHUCSSECovidDataStore {
 
   get locations(): string[] {
     if (this._locations == null) {
-      throw JHUCSSECovidDataStore.notLoadedError();
+      throw CovidDataStore.notLoadedError();
     }
 
     return _.cloneDeep(this._locations);
   }
 
-  getDataByLocation(
-    location: string,
-    options: { stripDataBeforeOnset: boolean } = { stripDataBeforeOnset: false },
-  ): LocationData {
+  getDataByLocation(location: string): LocationData {
     if (this.dataByLocation == null) {
-      throw JHUCSSECovidDataStore.notLoadedError();
+      throw CovidDataStore.notLoadedError();
     }
 
     if (this.locations.indexOf(location) === -1) {
-      throw JHUCSSECovidDataStore.invalidLocationError(location);
+      throw CovidDataStore.invalidLocationError(location);
     }
 
-    const locationData = _.cloneDeep(this.dataByLocation[location]);
-
-    if (options.stripDataBeforeOnset) {
-      let { firstConfirmedIndex } = locationData;
-      firstConfirmedIndex = firstConfirmedIndex ?? this.dataSetLength - 1;
-
-      return {
-        ...locationData,
-        values: locationData.values.slice(firstConfirmedIndex, this.dataSetLength),
-      };
-    }
-
-    return locationData;
+    return _.cloneDeep(this.dataByLocation[location]);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
@@ -120,7 +113,7 @@ export default class JHUCSSECovidDataStore {
               throw new Error('Context column name should be `string`.');
             }
 
-            if (JHUCSSECovidDataStore.isDateColumn(context.column)) {
+            if (CovidDataStore.isDateColumn(context.column)) {
               return parseInt(value);
             }
 
@@ -169,23 +162,23 @@ export default class JHUCSSECovidDataStore {
         location = `${location} (${provinceOrState})`;
       }
 
-      let firstConfirmedIndex: number | null = null;
-      let firstDeathIndex: number | null = null;
+      let prevDateStr: string | null = null;
       const values = Object.keys(confirmedData).reduce<DateValue[]>((result, dateStr, index) => {
-        if (JHUCSSECovidDataStore.isIndexOfDateColumn(index)) {
+        if (CovidDataStore.isIndexOfDateColumn(index)) {
           const confirmed = confirmedData[dateStr] as number;
           const deaths = deathsData[dateStr] as number;
 
-          if (confirmed > 0 && firstConfirmedIndex == null) {
-            firstConfirmedIndex = index - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
+          let newConfirmed = 0;
+          if (prevDateStr != null) {
+            const yesterdaysConfirmed = confirmedData[prevDateStr] as number;
+            newConfirmed = confirmed - yesterdaysConfirmed;
           }
 
-          if (deaths > 0 && firstDeathIndex == null) {
-            firstDeathIndex = index - JHUCSSECovidDataStore.INDEX_OF_FIRST_DATE_COLUMN;
-          }
+          result = [...result, { date: dateStr, confirmed, newConfirmed, deaths }];
 
-          result = [...result, { date: dateStr, confirmed, deaths }];
         }
+
+        prevDateStr = dateStr;
 
         return result;
       }, []);
@@ -197,8 +190,6 @@ export default class JHUCSSECovidDataStore {
           latitude,
           longitude,
           values,
-          firstConfirmedIndex,
-          firstDeathIndex,
         },
       };
     }
@@ -209,28 +200,22 @@ export default class JHUCSSECovidDataStore {
   private addCountryTotalsToFormattedData(formattedData: DataByLocation): DataByLocation {
     // All latitudes and longitudes below are taken from Google.
     const australiaTotalData: LocationData = {
-      location: `Australia (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `Australia (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '-25.2744',
       longitude: '133.7751',
-      firstConfirmedIndex: this.dataSetLength,
-      firstDeathIndex: this.dataSetLength,
     };
     const canadaTotalData: LocationData = {
-      location: `Canada (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `Canada (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '56.1304',
       longitude: '-106.3468',
-      firstConfirmedIndex: this.dataSetLength,
-      firstDeathIndex: this.dataSetLength,
     };
     const chinaTotalData: LocationData = {
-      location: `China (${JHUCSSECovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `China (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '35.8617',
       longitude: '104.1954',
-      firstConfirmedIndex: this.dataSetLength,
-      firstDeathIndex: this.dataSetLength,
     };
 
     Object.keys(formattedData).forEach((location) => {
@@ -245,20 +230,6 @@ export default class JHUCSSECovidDataStore {
         countryTotalData = canadaTotalData;
       } else {
         return;
-      }
-
-      if (
-        locationData.firstConfirmedIndex != null &&
-        countryTotalData.firstConfirmedIndex as number > locationData.firstConfirmedIndex
-      ) {
-        countryTotalData.firstConfirmedIndex = locationData.firstConfirmedIndex;
-      }
-
-      if (
-        locationData.firstDeathIndex != null &&
-        countryTotalData.firstDeathIndex as number > locationData.firstDeathIndex
-      ) {
-        countryTotalData.firstDeathIndex = locationData.firstDeathIndex;
       }
 
       if (countryTotalData.values.length === 0) {
