@@ -171,7 +171,7 @@ export default class CovidDataStore {
           let newConfirmed = 0;
           if (prevDateStr != null) {
             const yesterdaysConfirmed = confirmedData[prevDateStr] as number;
-            newConfirmed = confirmed - yesterdaysConfirmed;
+            newConfirmed = Math.max(0, confirmed - yesterdaysConfirmed);
           }
 
           result = [...result, { date: dateStr, confirmed, newConfirmed, deaths }];
