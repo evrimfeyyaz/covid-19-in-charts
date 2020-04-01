@@ -9,7 +9,9 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+import Button from 'react-bootstrap/Button';
+import domtoimage from 'dom-to-image';
+import FileSaver from 'file-saver';
 
 interface SingleLocationProgressionProps extends RouteComponentProps {
   store: CovidDataStore,
@@ -67,6 +69,14 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     setCasesExceedInputValue(event.currentTarget.value);
   }
 
+  function handleDownloadClick() {
+    const node = document.getElementById('single-location-progression-chart') as Node;
+
+    domtoimage
+      .toBlob(node)
+      .then(blob => FileSaver.saveAs(blob, 'my-node.png'));
+  }
+
   if (data == null) {
     return (
       <div className='h-100 d-flex justify-content-center align-items-center'>
@@ -117,7 +127,20 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       </Row>
       <Row>
         <Col>
-          <SingleLocationProgressionChart data={data.values} location={selectedLocation} casesExceed={casesExceed} />
+          <div id='single-location-progression-chart'>
+            <SingleLocationProgressionChart
+              data={data.values}
+              location={selectedLocation}
+              casesExceed={casesExceed}
+            />
+          </div>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Button onClick={handleDownloadClick}>
+            Download
+          </Button>
         </Col>
       </Row>
     </Container>

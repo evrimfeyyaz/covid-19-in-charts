@@ -5,7 +5,7 @@ import {
   CartesianGrid,
   ComposedChart, Label,
   Legend,
-  Line, ResponsiveContainer, Text,
+  Line, ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
