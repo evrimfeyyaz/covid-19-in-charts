@@ -1,7 +1,6 @@
 import React, { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { LocationData } from '../store/CovidDataStore';
 import SingleLocationProgressionChart from './SingleLocationProgressionChart';
-import { RouteComponentProps } from '@reach/router';
 import Spinner from 'react-bootstrap/Spinner';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -13,7 +12,7 @@ import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
 import FileSaver from 'file-saver';
 
-interface SingleLocationProgressionProps extends RouteComponentProps {
+interface SingleLocationProgressionProps {
   store: CovidDataStore,
 }
 

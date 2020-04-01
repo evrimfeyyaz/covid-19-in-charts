@@ -6,8 +6,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
-import { Router } from '@reach/router';
 import SingleLocationProgression from './components/SingleLocationProgression';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
 
 function App() {
   const dataStore = useRef<CovidDataStore>(new CovidDataStore());
@@ -32,7 +32,7 @@ function App() {
   }
 
   return (
-    <>
+    <BrowserRouter>
       <Navbar bg="light" expand="lg">
         <Container>
           <Navbar.Brand>COVID-19 in Charts</Navbar.Brand>
@@ -55,10 +55,12 @@ function App() {
         </Container>
       </Navbar>
 
-      <Router>
-        <SingleLocationProgression store={dataStore.current} path='/single-location-progression' />
-      </Router>
-    </>
+      <Switch>
+        <Route path='/single-location-progression'>
+          <SingleLocationProgression store={dataStore.current} />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
