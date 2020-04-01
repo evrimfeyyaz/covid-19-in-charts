@@ -34,7 +34,7 @@ export default class CovidDataStore {
   private static COUNTRY_TOTAL_KEY = 'Total';
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
 
-  static stripDataBeforeCasesExceedsN(locationData: Readonly<LocationData>, n: number): LocationData {
+  static stripDataBeforeCasesExceedN(locationData: Readonly<LocationData>, n: number): LocationData {
     const dataClone = _.cloneDeep(locationData);
 
     return {

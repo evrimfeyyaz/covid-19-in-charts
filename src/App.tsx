@@ -16,7 +16,7 @@ function App() {
   useEffect(() => {
     dataStore.current.loadData().then(() => {
       let turkey = dataStore.current.getDataByLocation('Turkey');
-      turkey = CovidDataStore.stripDataBeforeCasesExceedsN(turkey, 10);
+      turkey = CovidDataStore.stripDataBeforeCasesExceedN(turkey, 10);
       setData(turkey);
     });
   }, []);

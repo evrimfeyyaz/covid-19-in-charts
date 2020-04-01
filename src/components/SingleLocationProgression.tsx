@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { LocationData } from '../store/CovidDataStore';
 import SingleLocationProgressionChart from './SingleLocationProgressionChart';
 import { RouteComponentProps } from '@reach/router';
@@ -8,6 +8,8 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 interface SingleLocationProgressionProps extends RouteComponentProps {
   store: CovidDataStore,
@@ -15,21 +17,34 @@ interface SingleLocationProgressionProps extends RouteComponentProps {
 
 const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
   const [locations] = useState(store.locations);
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedLocation, setSelectedLocation] = useState();
+  const [casesExceed, setCasesExceed] = useState(10);
   const [data, setData] = useState<LocationData>();
 
+  const [selectedLocationInputValue, setSelectedLocationInputValue] = useState<string[]>([]);
+  const [casesExceedInputValue, setCasesExceedInputValue] = useState(casesExceed.toString());
+  const [casesExceedError, setCasesExceedError] = useState();
+
   useEffect(() => {
-    setSelectedLocations([locations[0]]);
+    setSelectedLocationInputValue([locations[0]]);
   }, [locations]);
 
   useEffect(() => {
-    if (selectedLocations.length === 0) {
+    if (selectedLocationInputValue.length === 0) {
       return;
     }
 
-    setSelectedLocation(selectedLocations[0]);
-  }, [selectedLocations]);
+    setSelectedLocation(selectedLocationInputValue[0]);
+  }, [selectedLocationInputValue]);
+
+  useEffect(() => {
+    if (casesExceedInputValue.match(/^\d+$/)) {
+      setCasesExceed(parseInt(casesExceedInputValue));
+      setCasesExceedError(undefined);
+    } else {
+      setCasesExceedError('Please enter a number.');
+    }
+  }, [casesExceedInputValue]);
 
   useEffect(() => {
     if (selectedLocation == null) {
@@ -37,15 +52,19 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     }
 
     const fullData = store.getDataByLocation(selectedLocation);
-    const strippedData = CovidDataStore.stripDataBeforeCasesExceedsN(fullData, 10);
+    const strippedData = CovidDataStore.stripDataBeforeCasesExceedN(fullData, casesExceed);
 
     setData(strippedData);
-  }, [store, selectedLocation]);
+  }, [store, selectedLocation, casesExceed]);
 
   function handleLocationMenuBlur() {
-    if (selectedLocations.length === 0) {
-      setSelectedLocations([selectedLocation]);
+    if (selectedLocationInputValue.length === 0) {
+      setSelectedLocationInputValue([selectedLocation]);
     }
+  }
+
+  function handleCasesExceedChange(event: FormEvent<HTMLInputElement>) {
+    setCasesExceedInputValue(event.currentTarget.value);
   }
 
   if (data == null) {
@@ -62,18 +81,38 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     <Container>
       <Row>
         <Col>
-          <Typeahead
-            id='location-selection'
-            options={locations}
-            placeholder="Select location..."
-            highlightOnlyResult
-            selectHintOnEnter
-            clearButton
-            onChange={setSelectedLocations}
-            onBlur={handleLocationMenuBlur}
-            selected={selectedLocations}
-            paginationText='Show more countries'
-          />
+          <Form>
+            <Form.Group>
+              <Row>
+                <Col>
+                  <Form.Label>Country</Form.Label>
+                  <Typeahead
+                    id='location-selection'
+                    options={locations}
+                    placeholder="Select location..."
+                    highlightOnlyResult
+                    selectHintOnEnter
+                    clearButton
+                    onChange={setSelectedLocationInputValue}
+                    onBlur={handleLocationMenuBlur}
+                    selected={selectedLocationInputValue}
+                    paginationText='Show more countries'
+                  />
+                </Col>
+                <Col>
+                  <Form.Label>Start When Cases Exceed</Form.Label>
+                  <Form.Control
+                    value={casesExceedInputValue}
+                    onChange={handleCasesExceedChange}
+                    isInvalid={!!casesExceedError}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {casesExceedError}
+                  </Form.Control.Feedback>
+                </Col>
+              </Row>
+            </Form.Group>
+          </Form>
         </Col>
       </Row>
       <Row>
