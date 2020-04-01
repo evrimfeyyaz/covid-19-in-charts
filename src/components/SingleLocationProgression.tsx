@@ -117,7 +117,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       </Row>
       <Row>
         <Col>
-          <SingleLocationProgressionChart data={data.values} />
+          <SingleLocationProgressionChart data={data.values} location={selectedLocation} casesExceed={casesExceed} />
         </Col>
       </Row>
     </Container>
