@@ -34,12 +34,16 @@ export default class CovidDataStore {
   private static COUNTRY_TOTAL_KEY = 'Total';
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
 
-  static stripDataBeforeCasesExceedN(locationData: Readonly<LocationData>, n: number): LocationData {
+  static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: string, n: number): LocationData {
     const dataClone = _.cloneDeep(locationData);
+
+    if (property !== 'confirmed' && property !== 'deaths') {
+      throw new Error('Property should either be "confirmed" or "deaths"');
+    }
 
     return {
       ...dataClone,
-      values: dataClone.values.filter(value => value.confirmed > n),
+      values: dataClone.values.filter(value => value[property] > n),
     };
   }
 

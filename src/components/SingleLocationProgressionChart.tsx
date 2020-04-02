@@ -15,10 +15,20 @@ import Card from 'react-bootstrap/Card';
 interface SingleLocationProgressionChartProps {
   data: DateValues,
   location: string,
-  casesExceed: number,
+  exceedingProperty: string,
+  exceedingValue: number,
 }
 
-const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({ data, location, casesExceed }) => {
+const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
+                                                                                                  data, location,
+                                                                                                  exceedingProperty,
+                                                                                                  exceedingValue,
+                                                                                                }) => {
+  let exceedingPropertyText = 'confirmed cases';
+  if (exceedingProperty === 'deaths') {
+    exceedingPropertyText = 'deaths';
+  }
+
   return (
     <>
       <h1 className='h3 mb-3'>COVID-19 Progression: {location}</h1>
@@ -29,7 +39,8 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
                            margin={{ top: 20, right: 20, bottom: 40, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis>
-                <Label value={`Number of days since cases exceeded ${casesExceed}`} position='bottom' offset={20} />
+                <Label value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`} position='bottom'
+                       offset={20} />
               </XAxis>
               <YAxis yAxisId="left" label={{ value: 'Cases', angle: -90, position: 'left' }} />
               <YAxis yAxisId="right" orientation="right" domain={[0, dataMax => dataMax * 5]}

@@ -21,24 +21,25 @@ interface SingleLocationProgressionProps {
 
 interface InputValues {
   selectedLocations: string[],
-  casesExceed: string
+  exceedingProperty: string,
+  exceedingValue: string
 }
 
 interface InputErrors {
   selectedLocations: string[],
-  casesExceed: string[]
+  exceedingValue: string[]
 }
 
-function validateInputs(selectedLocations: string[], casesExceed: string): InputErrors {
+function validateInputs(selectedLocations: string[], exceedingValue: string): InputErrors {
   let errors: InputErrors = {
-    casesExceed: [],
+    exceedingValue: [],
     selectedLocations: [],
   };
 
-  if (casesExceed.match(/^\d+$/)) {
-    errors.casesExceed = [];
+  if (exceedingValue.match(/^\d+$/)) {
+    errors.exceedingValue = [];
   } else {
-    errors.casesExceed = ['Please enter a number.'];
+    errors.exceedingValue = ['Please enter a number.'];
   }
 
   console.log(`selected locations length in validation: ${selectedLocations.length}`);
@@ -56,34 +57,37 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   const [data, setData] = useState<LocationData>();
 
   const [location = 'Turkey', setLocation] = useQueryParam('location', StringParam);
-  const [casesExceed = 10, setCasesExceed] = useQueryParam('casesExceed', NumberParam);
+  const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
+  const [exceedingValue = 10, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
   const [inputValues, setInputValues] = useState<InputValues>({
-    selectedLocations: [location.toString()],
-    casesExceed: casesExceed.toString(),
+    selectedLocations: [location],
+    exceedingProperty: exceedingProperty,
+    exceedingValue: exceedingValue.toString(),
   });
   const [inputErrors, setInputErrors] = useState<InputErrors>({
     selectedLocations: [],
-    casesExceed: [],
+    exceedingValue: [],
   });
 
   useEffect(() => {
-    const { selectedLocations, casesExceed } = inputValues;
-    const errors = validateInputs(selectedLocations, casesExceed);
+    const { selectedLocations, exceedingValue, exceedingProperty } = inputValues;
+    const errors = validateInputs(selectedLocations, exceedingValue);
     setInputErrors(errors);
 
-    if (errors.casesExceed.length === 0 && errors.selectedLocations.length === 0) {
-      const casesExceedNum = parseInt(casesExceed);
+    if (errors.exceedingValue.length === 0 && errors.selectedLocations.length === 0) {
+      const exceedingNum = parseInt(exceedingValue);
       const selectedLocation = inputValues.selectedLocations[0];
 
       const data = store.getDataByLocation(selectedLocation);
-      const strippedData = CovidDataStore.stripDataBeforeCasesExceedN(data, casesExceedNum);
+      const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingNum);
 
       setData(strippedData);
       setLocation(selectedLocation);
-      setCasesExceed(casesExceedNum);
+      setExceedingValue(exceedingNum);
+      setExceedingProperty(exceedingProperty);
     }
-  }, [store, inputValues, setLocation, setCasesExceed]);
+  }, [store, inputValues, setLocation, setExceedingValue, setExceedingProperty]);
 
   function handleLocationMenuBlur() {
     if (inputValues.selectedLocations.length === 0) {
@@ -91,8 +95,12 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     }
   }
 
-  function handleCasesExceedChange(event: FormEvent<HTMLInputElement>) {
-    setInputValues({ ...inputValues, casesExceed: event.currentTarget.value });
+  function handleExceedingPropertyChange(event: FormEvent<HTMLInputElement>) {
+    setInputValues({ ...inputValues, exceedingProperty: event.currentTarget.value });
+  }
+
+  function handleExceedingValueChange(event: FormEvent<HTMLInputElement>) {
+    setInputValues({ ...inputValues, exceedingValue: event.currentTarget.value });
   }
 
   function handleSelectedLocationChange(locations: string[]) {
@@ -147,9 +155,13 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
                     <Col xs={12} sm={6} lg={12}>
                       <Form.Group>
                         <Form.Label>Start from the day</Form.Label>
-                        <Form.Control as="select">
-                          <option>confirmed cases</option>
-                          <option>deaths</option>
+                        <Form.Control
+                          as="select"
+                          onChange={handleExceedingPropertyChange}
+                          value={exceedingProperty}
+                        >
+                          <option value='confirmed'>confirmed cases</option>
+                          <option value='deaths'>deaths</option>
                         </Form.Control>
                       </Form.Group>
                     </Col>
@@ -157,12 +169,12 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
                       <Form.Group>
                         <Form.Label>exceeded</Form.Label>
                         <Form.Control
-                          value={inputValues.casesExceed}
-                          onChange={handleCasesExceedChange}
-                          isInvalid={inputErrors.casesExceed.length > 0}
+                          value={inputValues.exceedingValue}
+                          onChange={handleExceedingValueChange}
+                          isInvalid={inputErrors.exceedingValue.length > 0}
                         />
                         <Form.Control.Feedback type="invalid">
-                          {inputErrors.casesExceed?.[0]}
+                          {inputErrors.exceedingValue?.[0]}
                         </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
@@ -182,7 +194,8 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
             <SingleLocationProgressionChart
               data={data.values}
               location={location}
-              casesExceed={parseInt(inputValues.casesExceed)}
+              exceedingProperty={exceedingProperty}
+              exceedingValue={exceedingValue}
             />
           </div>
         </Col>
