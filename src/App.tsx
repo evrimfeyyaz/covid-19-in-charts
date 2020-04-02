@@ -7,21 +7,20 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Container from 'react-bootstrap/Container';
 import SingleLocationProgression from './components/SingleLocationProgression';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import { ROUTE_PATHS } from './constants';
 
 function App() {
   const dataStore = useRef<CovidDataStore>(new CovidDataStore());
-  const [data, setData] = useState<LocationData | undefined>();
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     dataStore.current.loadData().then(() => {
-      let turkey = dataStore.current.getDataByLocation('Turkey');
-      turkey = CovidDataStore.stripDataBeforeCasesExceedN(turkey, 10);
-      setData(turkey);
+      setLoaded(true);
     });
   }, []);
 
-  if (data == null) {
+  if (!loaded) {
     return (
       <div className='h-100 d-flex justify-content-center align-items-center'>
         <Spinner animation="border" role="status">
@@ -32,7 +31,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <>
       <Navbar bg="light" expand="lg">
         <Container>
           <Navbar.Brand>COVID-19 in Charts</Navbar.Brand>
@@ -40,8 +39,8 @@ function App() {
           <Navbar.Collapse>
             <Nav className="mr-auto">
               <NavDropdown title="Dropdown" id="nav-dropdown">
-                <NavDropdown.Item href='/single-location-progression'>
-                  Progression in Single Location
+                <NavDropdown.Item href={ROUTE_PATHS.diseaseProgression}>
+                  Progression of Cases
                 </NavDropdown.Item>
                 <NavDropdown.Item>
                   Progression Comparison in Multiple Locations
@@ -56,11 +55,11 @@ function App() {
       </Navbar>
 
       <Switch>
-        <Route path='/single-location-progression'>
+        <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
           <SingleLocationProgression store={dataStore.current} />
         </Route>
       </Switch>
-    </BrowserRouter>
+    </>
   );
 }
 

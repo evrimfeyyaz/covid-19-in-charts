@@ -3,9 +3,15 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { QueryParamProvider } from 'use-query-params';
 
 ReactDOM.render(
-  <App />,
+  <BrowserRouter>
+    <QueryParamProvider ReactRouterRoute={Route}>
+      <App />
+    </QueryParamProvider>
+  </BrowserRouter>,
   document.getElementById('root'),
 );
 

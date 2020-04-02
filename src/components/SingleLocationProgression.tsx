@@ -11,61 +11,90 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
 import FileSaver from 'file-saver';
+import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
 }
 
+interface InputValues {
+  selectedLocations: string[],
+  casesExceed: string
+}
+
+interface InputErrors {
+  selectedLocations: string[],
+  casesExceed: string[]
+}
+
+function validateInputs(selectedLocations: string[], casesExceed: string): InputErrors {
+  let errors: InputErrors = {
+    casesExceed: [],
+    selectedLocations: [],
+  };
+
+  if (casesExceed.match(/^\d+$/)) {
+    errors.casesExceed = [];
+  } else {
+    errors.casesExceed = ['Please enter a number.'];
+  }
+
+  console.log(`selected locations length in validation: ${selectedLocations.length}`);
+  if (selectedLocations.length === 0) {
+    errors.selectedLocations = ['No location selected.'];
+  } else {
+    errors.selectedLocations = [];
+  }
+
+  return errors;
+}
+
 const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
   const [locations] = useState(store.locations);
-  const [selectedLocation, setSelectedLocation] = useState();
-  const [casesExceed, setCasesExceed] = useState(10);
   const [data, setData] = useState<LocationData>();
 
-  const [selectedLocationInputValue, setSelectedLocationInputValue] = useState<string[]>([]);
-  const [casesExceedInputValue, setCasesExceedInputValue] = useState(casesExceed.toString());
-  const [casesExceedError, setCasesExceedError] = useState();
+  const [location = 'Turkey', setLocation] = useQueryParam('location', StringParam);
+  const [casesExceed = 10, setCasesExceed] = useQueryParam('casesExceed', NumberParam);
+
+  const [inputValues, setInputValues] = useState<InputValues>({
+    selectedLocations: [location.toString()],
+    casesExceed: casesExceed.toString(),
+  });
+  const [inputErrors, setInputErrors] = useState<InputErrors>({
+    selectedLocations: [],
+    casesExceed: [],
+  });
 
   useEffect(() => {
-    setSelectedLocationInputValue([locations[0]]);
-  }, [locations]);
+    const { selectedLocations, casesExceed } = inputValues;
+    const errors = validateInputs(selectedLocations, casesExceed);
+    setInputErrors(errors);
 
-  useEffect(() => {
-    if (selectedLocationInputValue.length === 0) {
-      return;
+    if (errors.casesExceed.length === 0 && errors.selectedLocations.length === 0) {
+      const casesExceedNum = parseInt(casesExceed);
+      const selectedLocation = inputValues.selectedLocations[0];
+
+      const data = store.getDataByLocation(selectedLocation);
+      const strippedData = CovidDataStore.stripDataBeforeCasesExceedN(data, casesExceedNum);
+
+      setData(strippedData);
+      setLocation(selectedLocation);
+      setCasesExceed(casesExceedNum);
     }
-
-    setSelectedLocation(selectedLocationInputValue[0]);
-  }, [selectedLocationInputValue]);
-
-  useEffect(() => {
-    if (casesExceedInputValue.match(/^\d+$/)) {
-      setCasesExceed(parseInt(casesExceedInputValue));
-      setCasesExceedError(undefined);
-    } else {
-      setCasesExceedError('Please enter a number.');
-    }
-  }, [casesExceedInputValue]);
-
-  useEffect(() => {
-    if (selectedLocation == null) {
-      return;
-    }
-
-    const fullData = store.getDataByLocation(selectedLocation);
-    const strippedData = CovidDataStore.stripDataBeforeCasesExceedN(fullData, casesExceed);
-
-    setData(strippedData);
-  }, [store, selectedLocation, casesExceed]);
+  }, [store, inputValues, setLocation, setCasesExceed]);
 
   function handleLocationMenuBlur() {
-    if (selectedLocationInputValue.length === 0) {
-      setSelectedLocationInputValue([selectedLocation]);
+    if (inputValues.selectedLocations.length === 0) {
+      setInputValues({ ...inputValues, selectedLocations: [location] });
     }
   }
 
   function handleCasesExceedChange(event: FormEvent<HTMLInputElement>) {
-    setCasesExceedInputValue(event.currentTarget.value);
+    setInputValues({ ...inputValues, casesExceed: event.currentTarget.value });
+  }
+
+  function handleSelectedLocationChange(locations: string[]) {
+    setInputValues({ ...inputValues, selectedLocations: locations });
   }
 
   function handleDownloadClick() {
@@ -102,21 +131,21 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
                     highlightOnlyResult
                     selectHintOnEnter
                     clearButton
-                    onChange={setSelectedLocationInputValue}
+                    onChange={handleSelectedLocationChange}
                     onBlur={handleLocationMenuBlur}
-                    selected={selectedLocationInputValue}
+                    selected={inputValues.selectedLocations}
                     paginationText='Show more countries'
                   />
                 </Col>
                 <Col>
                   <Form.Label>Start When Cases Exceed</Form.Label>
                   <Form.Control
-                    value={casesExceedInputValue}
+                    value={inputValues.casesExceed}
                     onChange={handleCasesExceedChange}
-                    isInvalid={!!casesExceedError}
+                    isInvalid={inputErrors.casesExceed.length > 0}
                   />
                   <Form.Control.Feedback type="invalid">
-                    {casesExceedError}
+                    {inputErrors.casesExceed?.[0]}
                   </Form.Control.Feedback>
                 </Col>
               </Row>
@@ -129,8 +158,8 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
           <div id='single-location-progression-chart'>
             <SingleLocationProgressionChart
               data={data.values}
-              location={selectedLocation}
-              casesExceed={casesExceed}
+              location={location}
+              casesExceed={parseInt(inputValues.casesExceed)}
             />
           </div>
         </Col>
