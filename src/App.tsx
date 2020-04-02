@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
-import CovidDataStore, { LocationData } from './store/CovidDataStore';
+import CovidDataStore from './store/CovidDataStore';
 import Spinner from 'react-bootstrap/Spinner';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
@@ -31,7 +31,7 @@ function App() {
   }
 
   return (
-    <>
+    <div style={{ backgroundColor: '#e1e6ed' }} className='h-100'>
       <Navbar bg="light" expand="lg">
         <Container>
           <Navbar.Brand>COVID-19 in Charts</Navbar.Brand>
@@ -40,7 +40,7 @@ function App() {
             <Nav className="mr-auto">
               <NavDropdown title="Dropdown" id="nav-dropdown">
                 <NavDropdown.Item href={ROUTE_PATHS.diseaseProgression}>
-                  Progression of Cases
+                  Disease Progression
                 </NavDropdown.Item>
                 <NavDropdown.Item>
                   Progression Comparison in Multiple Locations
@@ -54,12 +54,14 @@ function App() {
         </Container>
       </Navbar>
 
-      <Switch>
-        <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
-          <SingleLocationProgression store={dataStore.current} />
-        </Route>
-      </Switch>
-    </>
+      <div className='py-4'>
+        <Switch>
+          <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
+            <SingleLocationProgression store={dataStore.current} />
+          </Route>
+        </Switch>
+      </div>
+    </div>
   );
 }
 

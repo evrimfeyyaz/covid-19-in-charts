@@ -12,6 +12,8 @@ import Button from 'react-bootstrap/Button';
 import domtoimage from 'dom-to-image';
 import FileSaver from 'file-saver';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
@@ -118,42 +120,63 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   return (
     <Container>
       <Row>
-        <Col>
-          <Form>
-            <Form.Group>
-              <Row>
-                <Col>
-                  <Form.Label>Country</Form.Label>
-                  <Typeahead
-                    id='location-selection'
-                    options={locations}
-                    placeholder="Select location..."
-                    highlightOnlyResult
-                    selectHintOnEnter
-                    clearButton
-                    onChange={handleSelectedLocationChange}
-                    onBlur={handleLocationMenuBlur}
-                    selected={inputValues.selectedLocations}
-                    paginationText='Show more countries'
-                  />
-                </Col>
-                <Col>
-                  <Form.Label>Start When Cases Exceed</Form.Label>
-                  <Form.Control
-                    value={inputValues.casesExceed}
-                    onChange={handleCasesExceedChange}
-                    isInvalid={inputErrors.casesExceed.length > 0}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {inputErrors.casesExceed?.[0]}
-                  </Form.Control.Feedback>
-                </Col>
-              </Row>
-            </Form.Group>
-          </Form>
+        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
+          <Form.Group>
+            <Form.Label>Location</Form.Label>
+            <Typeahead
+              id='location-selection'
+              options={locations}
+              placeholder="Select location..."
+              highlightOnlyResult
+              selectHintOnEnter
+              clearButton
+              onChange={handleSelectedLocationChange}
+              onBlur={handleLocationMenuBlur}
+              selected={inputValues.selectedLocations}
+              paginationText='Show more countries'
+            />
+          </Form.Group>
+          <Accordion>
+            <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
+              More Options
+            </Accordion.Toggle>
+            <Accordion.Collapse eventKey="0" className='py-2'>
+              <Card className='bg-transparent border-white'>
+                <Card.Body>
+                  <Row>
+                    <Col xs={12} sm={6} lg={12}>
+                      <Form.Group>
+                        <Form.Label>Start from the day</Form.Label>
+                        <Form.Control as="select">
+                          <option>confirmed cases</option>
+                          <option>deaths</option>
+                        </Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col xs={12} sm={6} lg={12}>
+                      <Form.Group>
+                        <Form.Label>exceeded</Form.Label>
+                        <Form.Control
+                          value={inputValues.casesExceed}
+                          onChange={handleCasesExceedChange}
+                          isInvalid={inputErrors.casesExceed.length > 0}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {inputErrors.casesExceed?.[0]}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Accordion.Collapse>
+          </Accordion>
+          <div className='mt-auto'>
+            <Button onClick={handleDownloadClick}>
+              Download as PNG
+            </Button>
+          </div>
         </Col>
-      </Row>
-      <Row>
         <Col>
           <div id='single-location-progression-chart'>
             <SingleLocationProgressionChart
@@ -162,13 +185,6 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
               casesExceed={parseInt(inputValues.casesExceed)}
             />
           </div>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Button onClick={handleDownloadClick}>
-            Download
-          </Button>
         </Col>
       </Row>
     </Container>
