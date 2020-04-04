@@ -7,7 +7,7 @@ interface ParsedCsvRow {
 
 type ParsedCsv = readonly ParsedCsvRow[];
 
-interface DateValue {
+export interface DateValue {
   date: string,
   confirmed: number,
   newConfirmed: number,
@@ -241,6 +241,7 @@ export default class CovidDataStore {
       } else {
         countryTotalData.values.forEach((value, index) => {
           countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
+          countryTotalData.values[index].newConfirmed += locationData.values[index].newConfirmed;
           countryTotalData.values[index].deaths += locationData.values[index].deaths;
         });
       }

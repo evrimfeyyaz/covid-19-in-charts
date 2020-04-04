@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
+import SingleLocationProgressionTooltip from './SingleLocationProgressionTooltip';
 
 interface SingleLocationProgressionChartProps {
   data: DateValues,
@@ -39,23 +40,24 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
                            margin={{ top: 20, right: 20, bottom: 40, left: 20 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis>
-                <Label value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`} position='bottom'
+                <Label value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`}
+                       position='bottom'
                        offset={20} />
               </XAxis>
               <YAxis yAxisId="left" label={{ value: 'Cases', angle: -90, position: 'left' }} />
               <YAxis yAxisId="right" orientation="right" domain={[0, dataMax => dataMax * 5]}
                      label={{ value: 'Deaths', angle: 90, position: 'right' }} />
-              <Tooltip />
-              <Legend align='center' verticalAlign='top' />
+              <Tooltip content={SingleLocationProgressionTooltip} />
+              <Legend align='center' verticalAlign='top' height={40} />
               <Bar dataKey='newConfirmed' yAxisId='left' fill='#eb8242' name='New Cases' />
               <Line
                 type='monotone' dataKey='deaths' yAxisId='right'
-                stroke='#da2d2d' strokeWidth={4} name='Deaths'
+                stroke='#da2d2d' strokeWidth={3} name='Deaths'
                 dot={false} activeDot={false}
               />
               <Line
                 type='monotone' yAxisId='left' dataKey="confirmed"
-                stroke="#f6da63" strokeWidth={4} name='Confirmed Cases'
+                stroke="#f6da63" strokeWidth={3} name='Confirmed Cases'
                 dot={false} activeDot={false}
               />
             </ComposedChart>
