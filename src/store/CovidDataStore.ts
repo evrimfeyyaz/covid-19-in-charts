@@ -179,10 +179,8 @@ export default class CovidDataStore {
           }
 
           result = [...result, { date: dateStr, confirmed, newConfirmed, deaths }];
-
+          prevDateStr = dateStr;
         }
-
-        prevDateStr = dateStr;
 
         return result;
       }, []);
@@ -204,19 +202,22 @@ export default class CovidDataStore {
   private addCountryTotalsToFormattedData(formattedData: DataByLocation): DataByLocation {
     // All latitudes and longitudes below are taken from Google.
     const australiaTotalData: LocationData = {
-      location: `Australia (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `
+            Australia(${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '-25.2744',
       longitude: '133.7751',
     };
     const canadaTotalData: LocationData = {
-      location: `Canada (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `;
+            Canada(${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '56.1304',
       longitude: '-106.3468',
     };
     const chinaTotalData: LocationData = {
-      location: `China (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `;
+            China(${CovidDataStore.COUNTRY_TOTAL_KEY})`,
       values: [],
       latitude: '35.8617',
       longitude: '104.1954',

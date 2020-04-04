@@ -42,7 +42,6 @@ function validateInputs(selectedLocations: string[], exceedingValue: string): In
     errors.exceedingValue = ['Please enter a number.'];
   }
 
-  console.log(`selected locations length in validation: ${selectedLocations.length}`);
   if (selectedLocations.length === 0) {
     errors.selectedLocations = ['No location selected.'];
   } else {
