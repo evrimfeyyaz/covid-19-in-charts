@@ -16,6 +16,7 @@ import { COLORS } from '../constants';
 
 interface SingleLocationProgressionChartProps {
   data: DateValues,
+  lastUpdated: Date,
   location: string,
   exceedingProperty: string,
   exceedingValue: number,
@@ -23,6 +24,7 @@ interface SingleLocationProgressionChartProps {
 
 const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
                                                                                                   data, location,
+                                                                                                  lastUpdated,
                                                                                                   exceedingProperty,
                                                                                                   exceedingValue,
                                                                                                 }) => {
@@ -71,7 +73,8 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
       <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
         <small>
           covid19incharts.com | source:&nbsp;
-          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a>
+          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last updated:&nbsp;
+          {lastUpdated.toUTCString()}
         </small>
       </p>
     </div>

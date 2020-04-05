@@ -54,6 +54,7 @@ function validateInputs(selectedLocations: string[], exceedingValue: string): In
 const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
+  const [lastUpdated, setLastUpdated] = useState<Date>();
 
   const [location = 'Turkey', setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
@@ -79,9 +80,11 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       const selectedLocation = inputValues.selectedLocations[0];
 
       const data = store.getDataByLocation(selectedLocation);
+      const lastUpdated = store.lastUpdated;
       const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingNum);
 
       setData(strippedData);
+      setLastUpdated(lastUpdated);
       setLocation(selectedLocation);
       setExceedingValue(exceedingNum);
       setExceedingProperty(exceedingProperty);
@@ -114,7 +117,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       .then(blob => FileSaver.saveAs(blob, 'my-node.png'));
   }
 
-  if (data == null) {
+  if (data == null || lastUpdated == null) {
     return (
       <div className='h-100 d-flex justify-content-center align-items-center'>
         <Spinner animation="border" role="status">
@@ -192,6 +195,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
           <div id='single-location-progression-chart'>
             <SingleLocationProgressionChart
               data={data.values}
+              lastUpdated={lastUpdated}
               location={location}
               exceedingProperty={exceedingProperty}
               exceedingValue={exceedingValue}

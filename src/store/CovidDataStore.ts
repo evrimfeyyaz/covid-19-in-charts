@@ -66,8 +66,10 @@ export default class CovidDataStore {
   private dataByLocation: DataByLocation | undefined;
   private dataSetLength: number = 0;
   private _locations: string[] | undefined;
+  private _lastUpdated: Date | undefined;
 
   async loadData(): Promise<void> {
+    this._lastUpdated = await this.getDateOfLastCommitIncludingRepoDirectory();
     const parsedConfirmedData = await this.getParsedDataFromURL(CovidDataStore.CONFIRMED_URL);
     const parsedDeathsData = await this.getParsedDataFromURL(CovidDataStore.DEATHS_URL);
     this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData);
@@ -83,6 +85,14 @@ export default class CovidDataStore {
     return _.cloneDeep(this._locations);
   }
 
+  get lastUpdated(): Date {
+    if (this._lastUpdated == null) {
+      throw CovidDataStore.notLoadedError();
+    }
+
+    return new Date(this._lastUpdated.getTime());
+  }
+
   getDataByLocation(location: string): LocationData {
     if (this.dataByLocation == null) {
       throw CovidDataStore.notLoadedError();
@@ -93,6 +103,15 @@ export default class CovidDataStore {
     }
 
     return _.cloneDeep(this.dataByLocation[location]);
+  }
+
+  private async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
+    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
+
+    const response = await fetch(commitDataUrl);
+    const json = await response.json();
+
+    return new Date(json[0]['commit']['author']['date']);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
