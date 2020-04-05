@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
 import SingleLocationProgressionTooltip from './SingleLocationProgressionTooltip';
+import { COLORS } from '../constants';
 
 interface SingleLocationProgressionChartProps {
   data: DateValues,
@@ -49,15 +50,15 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
                      label={{ value: 'Deaths', angle: 90, position: 'right' }} />
               <Tooltip content={SingleLocationProgressionTooltip} />
               <Legend align='center' verticalAlign='top' height={40} />
-              <Bar dataKey='newConfirmed' yAxisId='left' fill='#eb8242' name='New Cases' />
+              <Bar dataKey='newConfirmed' yAxisId='left' fill={COLORS.newConfirmed} name='New Cases' />
               <Line
                 type='monotone' dataKey='deaths' yAxisId='right'
-                stroke='#da2d2d' strokeWidth={3} name='Deaths'
+                stroke={COLORS.deaths} strokeWidth={3} name='Deaths'
                 dot={false} activeDot={false}
               />
               <Line
                 type='monotone' yAxisId='left' dataKey="confirmed"
-                stroke="#f6da63" strokeWidth={3} name='Confirmed Cases'
+                stroke={COLORS.confirmed} strokeWidth={3} name='Confirmed Cases'
                 dot={false} activeDot={false}
               />
             </ComposedChart>

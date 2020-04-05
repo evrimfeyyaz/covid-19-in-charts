@@ -2,8 +2,8 @@ import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
 import { DateValue } from '../store/CovidDataStore';
 import { prettifyMDYDate } from '../utilities/dateUtilities';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import Table from 'react-bootstrap/Table';
+import { COLORS } from '../constants';
 
 interface SingleLocationProgressionTooltipProps {
   payload: { payload: DateValue }[],
@@ -19,34 +19,33 @@ const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgress
   const { confirmed, newConfirmed, deaths, date } = payload[0].payload;
 
   return (
-    <Card className='shadow-sm'>
-      <Card.Body>
-        <Card.Title>
+    <Card className='shadow-sm rounded-lg'>
+      <Card.Body className='rounded-lg'>
+        <Card.Title className='text-center'>
           {prettifyMDYDate(date)}
         </Card.Title>
         <Card.Text>
-          <Row as='dl' className='w-50'>
-            <Col as='dt' xs={9}>
-              Confirmed cases
-            </Col>
-            <Col as='dd' xs={3}>
-              {confirmed}
-            </Col>
-
-            <Col as='dt' xs={9}>
-              New cases
-            </Col>
-            <Col as='dd' xs={3}>
-              {newConfirmed}
-            </Col>
-
-            <Col as='dt' xs={9}>
-              Deaths
-            </Col>
-            <Col as='dd' xs={3}>
-              {deaths}
-            </Col>
-          </Row>
+          <Table borderless size='sm'>
+            <tbody>
+            <tr>
+              <td style={{ backgroundColor: COLORS.confirmed, width: 5, borderRadius: 5 }} />
+              <th>Confirmed Cases</th>
+              <td className='text-right'>{confirmed}</td>
+            </tr>
+            <tr style={{ height: 5 }} />
+            <tr>
+              <td style={{ backgroundColor: COLORS.newConfirmed, width: 5, borderRadius: 5 }} />
+              <th>New Cases</th>
+              <td className='text-right'>{newConfirmed}</td>
+            </tr>
+            <tr style={{ height: 5 }} />
+            <tr>
+              <td style={{ backgroundColor: COLORS.deaths, width: 5, borderRadius: 5 }} />
+              <th>Deaths</th>
+              <td className='text-right'>{deaths}</td>
+            </tr>
+            </tbody>
+          </Table>
         </Card.Text>
       </Card.Body>
     </Card>
