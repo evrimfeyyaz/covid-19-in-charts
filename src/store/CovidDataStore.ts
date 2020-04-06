@@ -55,7 +55,7 @@ export default class CovidDataStore {
 
     return {
       ...dataClone,
-      values: dataClone.values.filter(value => value[property] ?? 0 > n),
+      values: dataClone.values.filter(value => (value[property] ?? 0) > n),
     };
   }
 
