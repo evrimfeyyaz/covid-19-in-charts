@@ -34,6 +34,8 @@ export default class CovidDataStore {
   private static DEATHS_URL = `${CovidDataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
   private static RECOVERED_URL = `${CovidDataStore.BASE_URL}time_series_covid19_recovered_global.csv`;
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
+  private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
+  private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
 
   private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
@@ -163,6 +165,7 @@ export default class CovidDataStore {
       try {
         formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
         formattedData = this.addCountryTotalsToFormattedData(formattedData);
+        formattedData = this.addCanadaRecoveredDataToFormattedData(formattedData, parsedRecoveredData);
       } catch (err) {
         reject(err);
       }
@@ -173,21 +176,27 @@ export default class CovidDataStore {
 
   private formatDataByLocation(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv, parsedRecoveredData: ParsedCsv): DataByLocation {
     let formattedData: DataByLocation = {};
-    const countryRegionColumnTitle = 'Country/Region';
-    const provinceStateColumnTitle = 'Province/State';
 
     for (let i = 0; i < parsedConfirmedData.length; i++) {
       const confirmedData = parsedConfirmedData[i];
-      const countryOrRegion = confirmedData[countryRegionColumnTitle] as string;
-      const provinceOrState = confirmedData[provinceStateColumnTitle];
+      const countryOrRegion = confirmedData[CovidDataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
+      const provinceOrState = confirmedData[CovidDataStore.PROVINCE_OR_STATE_COLUMN_TITLE];
 
-      // Remove Canada (Recovered) from the data, it seems like a mistakenly included value.
+      // Remove Canada (Recovered) from the parsed data, it seems like a mistakenly included value.
       if (countryOrRegion === 'Canada' && provinceOrState === 'Recovered') {
         continue;
       }
 
-      const deathsData = parsedDeathsData.find(deaths => deaths[countryRegionColumnTitle] === countryOrRegion && deaths[provinceStateColumnTitle] === provinceOrState);
-      const recoveredData = parsedRecoveredData.find(recovered => recovered[countryRegionColumnTitle] === countryOrRegion && recovered[provinceStateColumnTitle] === provinceOrState);
+      const deathsData = parsedDeathsData
+        .find(deaths =>
+          deaths[CovidDataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion &&
+          deaths[CovidDataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
+        );
+      const recoveredData = parsedRecoveredData
+        .find(recovered =>
+          recovered[CovidDataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion
+          && recovered[CovidDataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
+        );
 
       const latitude = confirmedData['Lat'] as string;
       const longitude = confirmedData['Long'] as string;
@@ -301,6 +310,25 @@ export default class CovidDataStore {
       [australiaTotalData.location]: australiaTotalData,
       [canadaTotalData.location]: canadaTotalData,
       [chinaTotalData.location]: chinaTotalData,
+    };
+  }
+
+  private addCanadaRecoveredDataToFormattedData(formattedData: DataByLocation, parsedRecoveredData: ParsedCsv) {
+    const formattedCanadaValues = _.cloneDeep(formattedData['Canada'].values);
+    const parsedCanadaRecoveredValues = parsedRecoveredData
+      .find(data => data[CovidDataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === 'Canada');
+
+    for (let i = 0; i < formattedCanadaValues.length; i++) {
+      const date = formattedCanadaValues[i].date;
+      formattedCanadaValues[i].recovered = parseInt(parsedCanadaRecoveredValues?.[date] as string);
+    }
+
+    return {
+      ...formattedData,
+      'Canada': {
+        ...formattedData['Canada'],
+        values: formattedCanadaValues,
+      },
     };
   }
 }
