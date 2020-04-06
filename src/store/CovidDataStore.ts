@@ -11,7 +11,8 @@ export interface DateValue {
   date: string,
   confirmed: number,
   newConfirmed: number,
-  deaths: number,
+  deaths: number | null,
+  recovered: number | null
 }
 
 export type DateValues = DateValue[];
@@ -31,8 +32,17 @@ export default class CovidDataStore {
   private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
   private static CONFIRMED_URL = `${CovidDataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
   private static DEATHS_URL = `${CovidDataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
-  private static COUNTRY_TOTAL_KEY = 'Total';
+  private static RECOVERED_URL = `${CovidDataStore.BASE_URL}time_series_covid19_recovered_global.csv`;
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
+
+  private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
+    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
+
+    const response = await fetch(commitDataUrl);
+    const json = await response.json();
+
+    return new Date(json[0]['commit']['author']['date']);
+  }
 
   static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: string, n: number): LocationData {
     const dataClone = _.cloneDeep(locationData);
@@ -43,7 +53,7 @@ export default class CovidDataStore {
 
     return {
       ...dataClone,
-      values: dataClone.values.filter(value => value[property] > n),
+      values: dataClone.values.filter(value => value[property] ?? 0 > n),
     };
   }
 
@@ -69,10 +79,11 @@ export default class CovidDataStore {
   private _lastUpdated: Date | undefined;
 
   async loadData(): Promise<void> {
-    this._lastUpdated = await this.getDateOfLastCommitIncludingRepoDirectory();
+    this._lastUpdated = await CovidDataStore.getDateOfLastCommitIncludingRepoDirectory();
     const parsedConfirmedData = await this.getParsedDataFromURL(CovidDataStore.CONFIRMED_URL);
     const parsedDeathsData = await this.getParsedDataFromURL(CovidDataStore.DEATHS_URL);
-    this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData);
+    const parsedRecoveredData = await this.getParsedDataFromURL(CovidDataStore.RECOVERED_URL);
+    this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
     this._locations = Object.keys(this.dataByLocation).sort((location1, location2) => location1.localeCompare(location2));
     this.dataSetLength = this.dataByLocation[this._locations[0]].values.length;
   }
@@ -103,15 +114,6 @@ export default class CovidDataStore {
     }
 
     return _.cloneDeep(this.dataByLocation[location]);
-  }
-
-  private async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
-    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
-
-    const response = await fetch(commitDataUrl);
-    const json = await response.json();
-
-    return new Date(json[0]['commit']['author']['date']);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
@@ -154,12 +156,12 @@ export default class CovidDataStore {
     });
   }
 
-  private formatParsedData(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv): Promise<DataByLocation> {
+  private formatParsedData(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv, parsedRecoveredData: ParsedCsv): Promise<DataByLocation> {
     return new Promise((resolve, reject) => {
       let formattedData;
 
       try {
-        formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData);
+        formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
         formattedData = this.addCountryTotalsToFormattedData(formattedData);
       } catch (err) {
         reject(err);
@@ -169,14 +171,24 @@ export default class CovidDataStore {
     });
   }
 
-  private formatDataByLocation(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv): DataByLocation {
+  private formatDataByLocation(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv, parsedRecoveredData: ParsedCsv): DataByLocation {
     let formattedData: DataByLocation = {};
+    const countryRegionColumnTitle = 'Country/Region';
+    const provinceStateColumnTitle = 'Province/State';
 
     for (let i = 0; i < parsedConfirmedData.length; i++) {
       const confirmedData = parsedConfirmedData[i];
-      const deathsData = parsedDeathsData[i];
-      const countryOrRegion = confirmedData['Country/Region'] as string;
-      const provinceOrState = confirmedData['Province/State'];
+      const countryOrRegion = confirmedData[countryRegionColumnTitle] as string;
+      const provinceOrState = confirmedData[provinceStateColumnTitle];
+
+      // Remove Canada (Recovered) from the data, it seems like a mistakenly included value.
+      if (countryOrRegion === 'Canada' && provinceOrState === 'Recovered') {
+        continue;
+      }
+
+      const deathsData = parsedDeathsData.find(deaths => deaths[countryRegionColumnTitle] === countryOrRegion && deaths[provinceStateColumnTitle] === provinceOrState);
+      const recoveredData = parsedRecoveredData.find(recovered => recovered[countryRegionColumnTitle] === countryOrRegion && recovered[provinceStateColumnTitle] === provinceOrState);
+
       const latitude = confirmedData['Lat'] as string;
       const longitude = confirmedData['Long'] as string;
 
@@ -189,7 +201,16 @@ export default class CovidDataStore {
       const values = Object.keys(confirmedData).reduce<DateValue[]>((result, dateStr, index) => {
         if (CovidDataStore.isIndexOfDateColumn(index)) {
           const confirmed = confirmedData[dateStr] as number;
-          const deaths = deathsData[dateStr] as number;
+
+          let deaths = null;
+          if (deathsData != null) {
+            deaths = deathsData[dateStr] as number;
+          }
+
+          let recovered = null;
+          if (recoveredData != null) {
+            recovered = recoveredData[dateStr] as number;
+          }
 
           let newConfirmed = 0;
           if (prevDateStr != null) {
@@ -197,7 +218,7 @@ export default class CovidDataStore {
             newConfirmed = Math.max(0, confirmed - yesterdaysConfirmed);
           }
 
-          result = [...result, { date: dateStr, confirmed, newConfirmed, deaths }];
+          result = [...result, { date: dateStr, confirmed, newConfirmed, deaths, recovered }];
           prevDateStr = dateStr;
         }
 
@@ -221,19 +242,19 @@ export default class CovidDataStore {
   private addCountryTotalsToFormattedData(formattedData: DataByLocation): DataByLocation {
     // All latitudes and longitudes below are taken from Google.
     const australiaTotalData: LocationData = {
-      location: `Australia (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `Australia`,
       values: [],
       latitude: '-25.2744',
       longitude: '133.7751',
     };
     const canadaTotalData: LocationData = {
-      location: `Canada (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `Canada`,
       values: [],
       latitude: '56.1304',
       longitude: '-106.3468',
     };
     const chinaTotalData: LocationData = {
-      location: `China (${CovidDataStore.COUNTRY_TOTAL_KEY})`,
+      location: `China`,
       values: [],
       latitude: '35.8617',
       longitude: '104.1954',
@@ -259,7 +280,18 @@ export default class CovidDataStore {
         countryTotalData.values.forEach((value, index) => {
           countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
           countryTotalData.values[index].newConfirmed += locationData.values[index].newConfirmed;
-          countryTotalData.values[index].deaths += locationData.values[index].deaths;
+
+          const totalDeaths = countryTotalData.values[index].deaths;
+          const locationDeaths = locationData.values[index].deaths;
+          if (locationDeaths != null) {
+            countryTotalData.values[index].deaths = (totalDeaths ?? 0) + locationDeaths;
+          }
+
+          const totalRecovered = countryTotalData.values[index].recovered;
+          const locationRecovered = locationData.values[index].recovered;
+          if (locationRecovered != null) {
+            countryTotalData.values[index].recovered = (totalRecovered ?? 0) + locationRecovered;
+          }
         });
       }
     });

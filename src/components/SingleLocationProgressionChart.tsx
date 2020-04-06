@@ -67,6 +67,11 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
             stroke={COLORS.confirmed} strokeWidth={3} name='Confirmed Cases'
             dot={false}
           />
+          <Line
+            type='monotone' yAxisId='left' dataKey="recovered"
+            stroke={COLORS.recovered} strokeWidth={3} name='Recovered'
+            dot={false}
+          />
         </ComposedChart>
       </ResponsiveContainer>
 

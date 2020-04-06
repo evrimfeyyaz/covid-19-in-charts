@@ -16,7 +16,7 @@ const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgress
     return null;
   }
 
-  const { confirmed, newConfirmed, deaths, date } = payload[0].payload;
+  const { confirmed, newConfirmed, deaths, recovered, date } = payload[0].payload;
 
   return (
     <Card className='shadow-sm rounded-lg'>
@@ -42,7 +42,13 @@ const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgress
             <tr>
               <td style={{ backgroundColor: COLORS.deaths, width: 5, borderRadius: 5 }} />
               <th>Deaths</th>
-              <td className='text-right'>{deaths}</td>
+              <td className='text-right'>{deaths ?? 'n/a'}</td>
+            </tr>
+            <tr style={{ height: 5 }} />
+            <tr>
+              <td style={{ backgroundColor: COLORS.recovered, width: 5, borderRadius: 5 }} />
+              <th>Recovered</th>
+              <td className='text-right'>{recovered ?? 'n/a'}</td>
             </tr>
             </tbody>
           </Table>
