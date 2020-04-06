@@ -40,15 +40,15 @@ const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgress
             </tr>
             <tr style={{ height: 5 }} />
             <tr>
-              <td style={{ backgroundColor: COLORS.deaths, width: 5, borderRadius: 5 }} />
-              <th>Deaths</th>
-              <td className='text-right'>{deaths ?? 'n/a'}</td>
+              <td style={{ backgroundColor: COLORS.recovered, width: 5, borderRadius: 5 }} />
+              <th>Recovered Cases</th>
+              <td className='text-right'>{recovered ?? 'n/a'}</td>
             </tr>
             <tr style={{ height: 5 }} />
             <tr>
-              <td style={{ backgroundColor: COLORS.recovered, width: 5, borderRadius: 5 }} />
-              <th>Recovered</th>
-              <td className='text-right'>{recovered ?? 'n/a'}</td>
+              <td style={{ backgroundColor: COLORS.deaths, width: 5, borderRadius: 5 }} />
+              <th>Deaths</th>
+              <td className='text-right'>{deaths ?? 'n/a'}</td>
             </tr>
             </tbody>
           </Table>

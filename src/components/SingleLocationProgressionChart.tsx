@@ -13,9 +13,12 @@ import {
 import Card from 'react-bootstrap/Card';
 import SingleLocationProgressionTooltip from './SingleLocationProgressionTooltip';
 import { COLORS } from '../constants';
+import { prettifyMDYDate } from '../utilities/dateUtilities';
 
 interface SingleLocationProgressionChartProps {
   data: DateValues,
+  firstDate: string | undefined,
+  lastDate: string | undefined,
   lastUpdated: Date,
   location: string,
   exceedingProperty: string,
@@ -23,8 +26,8 @@ interface SingleLocationProgressionChartProps {
 }
 
 const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
-                                                                                                  data, location,
-                                                                                                  lastUpdated,
+                                                                                                  data, firstDate, lastDate,
+                                                                                                  location, lastUpdated,
                                                                                                   exceedingProperty,
                                                                                                   exceedingValue,
                                                                                                 }) => {
@@ -69,7 +72,7 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
           />
           <Line
             type='monotone' yAxisId='left' dataKey="recovered"
-            stroke={COLORS.recovered} strokeWidth={3} name='Recovered'
+            stroke={COLORS.recovered} strokeWidth={3} name='Recovered Cases'
             dot={false}
           />
         </ComposedChart>
@@ -78,7 +81,8 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
       <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
         <small>
           covid19incharts.com | source:&nbsp;
-          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last updated:&nbsp;
+          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last
+          updated:&nbsp;
           {lastUpdated.toUTCString()}
         </small>
       </p>
@@ -87,8 +91,11 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
 
   return (
     <>
-      <h1 className='h3 mb-3'>COVID-19 Progression: {location}</h1>
-      <Card className='shadow-lg border-0' style={{ borderRadius: 15 }}>
+      <h1 className='h3 mb-1'>COVID-19 Progression: {location}</h1>
+      {firstDate && lastDate && (
+        <p className='h6 text-muted'>{prettifyMDYDate(firstDate)} - {prettifyMDYDate(lastDate)}</p>
+      )}
+      <Card className='shadow-lg border-0 mt-3' style={{ borderRadius: 15 }}>
         <Card.Body>
           {data.length === 0 && (
             <h2 className='h6 text-center my-auto'>

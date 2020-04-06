@@ -60,6 +60,9 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 10, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
+  const firstDate = data?.values?.[0]?.date;
+  const lastDate = data?.values?.[data?.values?.length - 1]?.date;
+
   const [inputValues, setInputValues] = useState<InputValues>({
     selectedLocations: [location],
     exceedingProperty: exceedingProperty,
@@ -196,6 +199,8 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
             <SingleLocationProgressionChart
               data={data.values}
               lastUpdated={lastUpdated}
+              firstDate={firstDate}
+              lastDate={lastDate}
               location={location}
               exceedingProperty={exceedingProperty}
               exceedingValue={exceedingValue}
