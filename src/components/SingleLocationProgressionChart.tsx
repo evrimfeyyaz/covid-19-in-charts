@@ -23,6 +23,7 @@ interface SingleLocationProgressionChartProps {
   location: string,
   exceedingProperty: string,
   exceedingValue: number,
+  isAnimationActive: boolean,
 }
 
 const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
@@ -30,6 +31,7 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
                                                                                                   location, lastUpdated,
                                                                                                   exceedingProperty,
                                                                                                   exceedingValue,
+                                                                                                  isAnimationActive,
                                                                                                 }) => {
   let exceedingPropertyText = 'confirmed cases';
   if (exceedingProperty === 'deaths') {
@@ -57,23 +59,27 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
             domain={[0, dataMax => dataMax * 5]}
             label={{ value: 'Deaths', angle: 90, position: 'right', dy: -25, dx: 5 }}
           />
-          <Tooltip content={SingleLocationProgressionTooltip} />
+          <Tooltip content={SingleLocationProgressionTooltip} offset={30} />
           <Legend align='center' verticalAlign='top' height={45} />
-          <Bar dataKey='newConfirmed' yAxisId='left' fill={COLORS.newConfirmed} name='New Cases' />
+          <Bar
+            dataKey='newConfirmed' yAxisId='left'
+            fill={COLORS.newConfirmed} name='New Cases'
+            isAnimationActive={isAnimationActive}
+          />
           <Line
             type='monotone' dataKey='deaths' yAxisId='right'
             stroke={COLORS.deaths} strokeWidth={3} name='Deaths'
-            dot={false}
+            dot={false} isAnimationActive={isAnimationActive}
           />
           <Line
             type='monotone' yAxisId='left' dataKey="confirmed"
             stroke={COLORS.confirmed} strokeWidth={3} name='Confirmed Cases'
-            dot={false}
+            dot={false} isAnimationActive={isAnimationActive}
           />
           <Line
             type='monotone' yAxisId='left' dataKey="recovered"
             stroke={COLORS.recovered} strokeWidth={3} name='Recovered Cases'
-            dot={false}
+            dot={false} isAnimationActive={isAnimationActive}
           />
         </ComposedChart>
       </ResponsiveContainer>
@@ -91,9 +97,9 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
 
   return (
     <>
-      <h1 className='h3 mb-1'>COVID-19 Progression: {location}</h1>
+      <h1 className='h4 mb-1'>COVID-19 Progression: {location}</h1>
       {firstDate && lastDate && (
-        <p className='h6 text-muted'>{prettifyMDYDate(firstDate)} - {prettifyMDYDate(lastDate)}</p>
+        <p className='small text-muted ml-1'>{prettifyMDYDate(firstDate)} - {prettifyMDYDate(lastDate)}</p>
       )}
       <Card className='shadow-lg border-0 mt-3' style={{ borderRadius: 15 }}>
         <Card.Body>

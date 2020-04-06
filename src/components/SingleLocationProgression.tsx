@@ -15,6 +15,8 @@ import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
 import ShareButtons from './ShareButtons';
+import { COLORS } from '../constants';
+import { uuidv4 } from '../utilities/uuidv4';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
@@ -56,6 +58,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
+  const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
   const [location = 'Turkey', setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
@@ -63,6 +66,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
 
   const firstDate = data?.values?.[0]?.date;
   const lastDate = data?.values?.[data?.values?.length - 1]?.date;
+  const chartId = 'single-location-progression-chart';
 
   const [inputValues, setInputValues] = useState<InputValues>({
     selectedLocations: [location],
@@ -114,11 +118,28 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   }
 
   function handleDownloadClick() {
-    const node = document.getElementById('single-location-progression-chart') as Node;
+    setAreChartAnimationsActive(false);
+    const node = document.getElementById(chartId) as HTMLElement;
+    const horizontalPadding = 20;
+    const verticalPadding = 20;
 
+    // Some of the code below is from
+    // https://github.com/tsayen/dom-to-image/issues/69#issuecomment-486146688
     domtoimage
-      .toBlob(node)
-      .then(blob => FileSaver.saveAs(blob, 'my-node.png'));
+      .toBlob(node, {
+        width: node.offsetWidth * 2 + horizontalPadding * 2 * 2,
+        height: node.offsetHeight * 2 + verticalPadding * 2 * 2,
+        bgcolor: COLORS.bgColor,
+        style: {
+          padding: `${verticalPadding}px ${horizontalPadding}px`,
+          transform: 'scale(2)',
+          transformOrigin: 'top left',
+          width: node.offsetWidth + horizontalPadding * 2 + 'px',
+          height: node.offsetHeight + verticalPadding * 2 + 'px',
+        },
+      })
+      .then(blob => FileSaver.saveAs(blob, `${uuidv4()}.png`))
+      .finally(() => setAreChartAnimationsActive(true));
   }
 
   if (data == null || lastUpdated == null) {
@@ -193,13 +214,13 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
             <h2 className='h5 mt-3'>Share</h2>
             <ShareButtons title={`COVID-19 Progression: ${location}`} url={window.location.href} />
             <h2 className='h5 mt-3'>Download</h2>
-            <Button onClick={handleDownloadClick}>
+            <Button onClick={handleDownloadClick} className='ml-2'>
               Download as PNG
             </Button>
           </div>
         </Col>
         <Col>
-          <div id='single-location-progression-chart'>
+          <div id={chartId}>
             <SingleLocationProgressionChart
               data={data.values}
               lastUpdated={lastUpdated}
@@ -208,6 +229,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
               location={location}
               exceedingProperty={exceedingProperty}
               exceedingValue={exceedingValue}
+              isAnimationActive={areChartAnimationsActive}
             />
           </div>
         </Col>
