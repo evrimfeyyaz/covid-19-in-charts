@@ -182,7 +182,7 @@ export default class CovidDataStore {
       const countryOrRegion = confirmedData[CovidDataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
       const provinceOrState = confirmedData[CovidDataStore.PROVINCE_OR_STATE_COLUMN_TITLE];
 
-      // Remove Canada (Recovered) and Canada (Dimaond Princess)
+      // Remove Canada (Recovered) and Canada (Diamond Princess)
       // from the parsed data, they seem like mistakenly included values.
       if (
         countryOrRegion === 'Canada' &&

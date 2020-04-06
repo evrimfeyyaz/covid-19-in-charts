@@ -14,6 +14,7 @@ import FileSaver from 'file-saver';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 import Accordion from 'react-bootstrap/Accordion';
 import Card from 'react-bootstrap/Card';
+import ShareButtons from './ShareButtons';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
@@ -189,6 +190,9 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
             </Accordion.Collapse>
           </Accordion>
           <div className='mt-auto'>
+            <h2 className='h5 mt-3'>Share</h2>
+            <ShareButtons title={`COVID-19 Progression: ${location}`} url={window.location.href} />
+            <h2 className='h5 mt-3'>Download</h2>
             <Button onClick={handleDownloadClick}>
               Download as PNG
             </Button>
