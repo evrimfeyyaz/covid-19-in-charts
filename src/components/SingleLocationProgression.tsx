@@ -62,7 +62,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
-  const [location = 'Turkey', setLocation] = useQueryParam('location', StringParam);
+  const [location = 'US', setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 10, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
