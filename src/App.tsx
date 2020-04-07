@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import CovidDataStore from './store/CovidDataStore';
-import Spinner from 'react-bootstrap/Spinner';
 import SingleLocationProgression from './components/SingleLocationProgression';
 import { Switch, Route } from 'react-router-dom';
-import { ROUTE_PATHS } from './constants';
+import { COLORS, ROUTE_PATHS } from './constants';
 import NavBar from './components/NavBar';
+import Loading from './components/Loading';
+import { Helmet } from 'react-helmet';
+import { createPageTitle } from './utilities/metaUtilities';
 
 function App() {
   const dataStore = useRef<CovidDataStore>(new CovidDataStore());
@@ -17,28 +19,26 @@ function App() {
     });
   }, []);
 
-  if (!loaded) {
-    return (
-      <div className='h-100 d-flex justify-content-center align-items-center'>
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ backgroundColor: '#e1e6ed' }} className='h-100'>
-      <NavBar />
+    <>
+      <Helmet>
+        <title>{createPageTitle()}</title>
+      </Helmet>
+      {!loaded && <Loading />}
+      {loaded && (
+        <div style={{ backgroundColor: COLORS.bgColor }} className='h-100'>
+          <NavBar />
 
-      <div className='py-4'>
-        <Switch>
-          <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
-            <SingleLocationProgression store={dataStore.current} />
-          </Route>
-        </Switch>
-      </div>
-    </div>
+          <div className='py-4'>
+            <Switch>
+              <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
+                <SingleLocationProgression store={dataStore.current} />
+              </Route>
+            </Switch>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

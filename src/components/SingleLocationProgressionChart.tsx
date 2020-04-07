@@ -17,10 +17,10 @@ import { prettifyMDYDate } from '../utilities/dateUtilities';
 
 interface SingleLocationProgressionChartProps {
   data: DateValues,
+  title: string,
   firstDate: string | undefined,
   lastDate: string | undefined,
   lastUpdated: Date,
-  location: string,
   exceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
@@ -28,7 +28,7 @@ interface SingleLocationProgressionChartProps {
 
 const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
                                                                                                   data, firstDate, lastDate,
-                                                                                                  location, lastUpdated,
+                                                                                                  title, lastUpdated,
                                                                                                   exceedingProperty,
                                                                                                   exceedingValue,
                                                                                                   isAnimationActive,
@@ -97,7 +97,7 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
 
   return (
     <>
-      <h1 className='h4 mb-1'>COVID-19 Progression: {location}</h1>
+      <h1 className='h4 mb-1'>{title}</h1>
       {firstDate && lastDate && (
         <p className='small text-muted ml-1'>{prettifyMDYDate(firstDate)} - {prettifyMDYDate(lastDate)}</p>
       )}

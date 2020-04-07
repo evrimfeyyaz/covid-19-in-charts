@@ -1,7 +1,6 @@
 import React, { FormEvent, FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { LocationData } from '../store/CovidDataStore';
+import CovidDataStore, { DateValues, LocationData } from '../store/CovidDataStore';
 import SingleLocationProgressionChart from './SingleLocationProgressionChart';
-import Spinner from 'react-bootstrap/Spinner';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Container from 'react-bootstrap/Container';
@@ -17,6 +16,9 @@ import Card from 'react-bootstrap/Card';
 import ShareButtons from './ShareButtons';
 import { COLORS } from '../constants';
 import { uuidv4 } from '../utilities/uuidv4';
+import Loading from './Loading';
+import Helmet from 'react-helmet';
+import { createPageTitle } from '../utilities/metaUtilities';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
@@ -67,6 +69,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   const firstDate = data?.values?.[0]?.date;
   const lastDate = data?.values?.[data?.values?.length - 1]?.date;
   const chartId = 'single-location-progression-chart';
+  const title = `COVID-19 Progression: ${location}`;
 
   const [inputValues, setInputValues] = useState<InputValues>({
     selectedLocations: [location],
@@ -122,6 +125,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     const node = document.getElementById(chartId) as HTMLElement;
     const horizontalPadding = 20;
     const verticalPadding = 20;
+    const fileName = `${uuidv4()}.png`;
 
     // Some of the code below is from
     // https://github.com/tsayen/dom-to-image/issues/69#issuecomment-486146688
@@ -138,102 +142,102 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
           height: node.offsetHeight + verticalPadding * 2 + 'px',
         },
       })
-      .then(blob => FileSaver.saveAs(blob, `${uuidv4()}.png`))
+      .then(blob => FileSaver.saveAs(blob, fileName))
       .finally(() => setAreChartAnimationsActive(true));
   }
 
-  if (data == null || lastUpdated == null) {
-    return (
-      <div className='h-100 d-flex justify-content-center align-items-center'>
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>
-    );
+  function isLoaded() {
+    return (data != null && lastUpdated != null);
   }
 
   return (
     <Container>
-      <Row>
-        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          <Form.Group>
-            <Form.Label>Location</Form.Label>
-            <Typeahead
-              id='location-selection'
-              options={locations}
-              placeholder="Select location..."
-              highlightOnlyResult
-              selectHintOnEnter
-              clearButton
-              onChange={handleSelectedLocationChange}
-              onBlur={handleLocationMenuBlur}
-              selected={inputValues.selectedLocations}
-              paginationText='Show more countries'
-            />
-          </Form.Group>
-          <Accordion>
-            <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
-              More Options
-            </Accordion.Toggle>
-            <Accordion.Collapse eventKey="0" className='py-2'>
-              <Card className='bg-transparent border-white'>
-                <Card.Body>
-                  <Row>
-                    <Col xs={12} sm={6} lg={12}>
-                      <Form.Group>
-                        <Form.Label>Start from the day</Form.Label>
-                        <Form.Control
-                          as="select"
-                          onChange={handleExceedingPropertyChange}
-                          value={exceedingProperty}
-                        >
-                          <option value='confirmed'>confirmed cases</option>
-                          <option value='deaths'>deaths</option>
-                        </Form.Control>
-                      </Form.Group>
-                    </Col>
-                    <Col xs={12} sm={6} lg={12}>
-                      <Form.Group>
-                        <Form.Label>exceeded</Form.Label>
-                        <Form.Control
-                          value={inputValues.exceedingValue}
-                          onChange={handleExceedingValueChange}
-                          isInvalid={inputErrors.exceedingValue.length > 0}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                          {inputErrors.exceedingValue?.[0]}
-                        </Form.Control.Feedback>
-                      </Form.Group>
-                    </Col>
-                  </Row>
-                </Card.Body>
-              </Card>
-            </Accordion.Collapse>
-          </Accordion>
-          <div className='mt-auto'>
-            <h2 className='h5 mt-3'>Share</h2>
-            <ShareButtons title={`COVID-19 Progression: ${location}`} url={window.location.href} />
-            <h2 className='h5 mt-3'>Download</h2>
-            <Button onClick={handleDownloadClick} className='ml-2'>
-              Download as PNG
-            </Button>
-          </div>
-        </Col>
-        <Col>
-          <div id={chartId}>
-            <SingleLocationProgressionChart
-              data={data.values}
-              lastUpdated={lastUpdated}
-              firstDate={firstDate}
-              lastDate={lastDate}
-              location={location}
-              exceedingProperty={exceedingProperty}
-              exceedingValue={exceedingValue}
-              isAnimationActive={areChartAnimationsActive}
-            />
-          </div>
-        </Col>
-      </Row>
+      <Helmet>
+        <title>{createPageTitle(title)}</title>
+      </Helmet>
+      {!isLoaded() && <Loading />}
+      {isLoaded() && (
+        <Row>
+          <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
+            <Form.Group>
+              <Form.Label>Location</Form.Label>
+              <Typeahead
+                id='location-selection'
+                options={locations}
+                placeholder="Select location..."
+                highlightOnlyResult
+                selectHintOnEnter
+                clearButton
+                onChange={handleSelectedLocationChange}
+                onBlur={handleLocationMenuBlur}
+                selected={inputValues.selectedLocations}
+                paginationText='Show more locations'
+              />
+            </Form.Group>
+            <Accordion>
+              <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
+                More Options
+              </Accordion.Toggle>
+              <Accordion.Collapse eventKey="0" className='py-2'>
+                <Card className='bg-transparent border-white'>
+                  <Card.Body>
+                    <Row>
+                      <Col xs={12} sm={6} lg={12}>
+                        <Form.Group>
+                          <Form.Label>Start from the day</Form.Label>
+                          <Form.Control
+                            as="select"
+                            onChange={handleExceedingPropertyChange}
+                            value={exceedingProperty}
+                          >
+                            <option value='confirmed'>confirmed cases</option>
+                            <option value='deaths'>deaths</option>
+                          </Form.Control>
+                        </Form.Group>
+                      </Col>
+                      <Col xs={12} sm={6} lg={12}>
+                        <Form.Group>
+                          <Form.Label>exceeded</Form.Label>
+                          <Form.Control
+                            value={inputValues.exceedingValue}
+                            onChange={handleExceedingValueChange}
+                            isInvalid={inputErrors.exceedingValue.length > 0}
+                          />
+                          <Form.Control.Feedback type="invalid">
+                            {inputErrors.exceedingValue?.[0]}
+                          </Form.Control.Feedback>
+                        </Form.Group>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Accordion.Collapse>
+            </Accordion>
+            <div className='mt-auto'>
+              <h2 className='h5 mt-3'>Share</h2>
+              <ShareButtons title={`COVID-19 Progression: ${location}`} url={window.location.href} />
+              <h2 className='h5 mt-3'>Download</h2>
+              <Button onClick={handleDownloadClick} className='ml-2'>
+                Download as PNG
+              </Button>
+            </div>
+          </Col>
+          <Col>
+            <div id={chartId}>
+              <SingleLocationProgressionChart
+                title={title}
+                data={data?.values as DateValues}
+                lastUpdated={lastUpdated as Date}
+                firstDate={firstDate}
+                lastDate={lastDate}
+                exceedingProperty={exceedingProperty}
+                exceedingValue={exceedingValue}
+                isAnimationActive={areChartAnimationsActive}
+              />
+            </div>
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 };
