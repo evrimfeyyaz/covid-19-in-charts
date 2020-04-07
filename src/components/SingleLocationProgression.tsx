@@ -57,12 +57,14 @@ function validateInputs(selectedLocations: string[], exceedingValue: string): In
 }
 
 const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
+  const defaultLocation = 'US';
+
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
-  const [location = 'US', setLocation] = useQueryParam('location', StringParam);
+  const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 10, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
@@ -88,19 +90,39 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
 
     if (errors.exceedingValue.length === 0 && errors.selectedLocations.length === 0) {
       const exceedingNum = parseInt(exceedingValue);
-      const selectedLocation = inputValues.selectedLocations[0];
+      let selectedLocation = inputValues.selectedLocations[0];
+      let selectedExceedingProperty = inputValues.exceedingProperty;
+
+      if (store.locations.indexOf(selectedLocation) === -1) {
+        selectedLocation = defaultLocation;
+
+        setInputValues({
+          ...inputValues,
+          selectedLocations: [selectedLocation],
+        });
+      }
+
+      const exceedingPropertyValues = ['confirmed', 'deaths'];
+      if (exceedingPropertyValues.indexOf(exceedingProperty) === -1) {
+        selectedExceedingProperty = exceedingPropertyValues[0];
+
+        setInputValues({
+          ...inputValues,
+          exceedingProperty: selectedExceedingProperty,
+        });
+      }
 
       const data = store.getDataByLocation(selectedLocation);
       const lastUpdated = store.lastUpdated;
-      const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingNum);
+      const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, selectedExceedingProperty, exceedingNum);
 
       setData(strippedData);
       setLastUpdated(lastUpdated);
       setLocation(selectedLocation);
       setExceedingValue(exceedingNum);
-      setExceedingProperty(exceedingProperty);
+      setExceedingProperty(selectedExceedingProperty);
     }
-  }, [store, inputValues, setLocation, setExceedingValue, setExceedingProperty]);
+  }, [store, inputValues, setLocation, setExceedingValue, setExceedingProperty, location]);
 
   function handleLocationMenuBlur() {
     if (inputValues.selectedLocations.length === 0) {
@@ -146,8 +168,92 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       .finally(() => setAreChartAnimationsActive(true));
   }
 
-  function isLoaded() {
-    return (data != null && lastUpdated != null);
+  let body = <Loading />;
+
+  if (data != null && lastUpdated != null) {
+    body = (
+      <Row>
+        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
+          <Form.Group>
+            <Form.Label>Location</Form.Label>
+            <Typeahead
+              id='location-selection'
+              options={locations}
+              placeholder="Select location..."
+              highlightOnlyResult
+              selectHintOnEnter
+              clearButton
+              onChange={handleSelectedLocationChange}
+              onBlur={handleLocationMenuBlur}
+              selected={inputValues.selectedLocations}
+              paginationText='Show more locations'
+            />
+          </Form.Group>
+          <Accordion>
+            <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
+              More Options
+            </Accordion.Toggle>
+            <Accordion.Collapse eventKey="0" className='py-2'>
+              <Card className='bg-transparent border-white'>
+                <Card.Body>
+                  <Row>
+                    <Col xs={12} sm={6} lg={12}>
+                      <Form.Group>
+                        <Form.Label>Start from the day</Form.Label>
+                        <Form.Control
+                          as="select"
+                          onChange={handleExceedingPropertyChange}
+                          value={exceedingProperty}
+                        >
+                          <option value='confirmed'>confirmed cases</option>
+                          <option value='deaths'>deaths</option>
+                        </Form.Control>
+                      </Form.Group>
+                    </Col>
+                    <Col xs={12} sm={6} lg={12}>
+                      <Form.Group>
+                        <Form.Label>exceeded</Form.Label>
+                        <Form.Control
+                          value={inputValues.exceedingValue}
+                          onChange={handleExceedingValueChange}
+                          isInvalid={inputErrors.exceedingValue.length > 0}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {inputErrors.exceedingValue?.[0]}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Accordion.Collapse>
+          </Accordion>
+          <div className='mt-auto'>
+            <h2 className='h5 mt-3'>Share</h2>
+            <ShareButtons title={title} url={window.location.href} />
+
+            <h2 className='h5 mt-3'>Download</h2>
+            <Button onClick={handleDownloadClick} className='ml-2'>
+              Download as PNG
+            </Button>
+          </div>
+        </Col>
+        <Col>
+          <div id={chartId}>
+            <SingleLocationProgressionChart
+              title={title}
+              data={data?.values as DateValues}
+              lastUpdated={lastUpdated as Date}
+              firstDate={firstDate}
+              lastDate={lastDate}
+              exceedingProperty={exceedingProperty}
+              exceedingValue={exceedingValue}
+              isAnimationActive={areChartAnimationsActive}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
   }
 
   return (
@@ -155,89 +261,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
       <Helmet>
         <title>{createPageTitle(title)}</title>
       </Helmet>
-      {!isLoaded() && <Loading />}
-      {isLoaded() && (
-        <Row>
-          <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-            <Form.Group>
-              <Form.Label>Location</Form.Label>
-              <Typeahead
-                id='location-selection'
-                options={locations}
-                placeholder="Select location..."
-                highlightOnlyResult
-                selectHintOnEnter
-                clearButton
-                onChange={handleSelectedLocationChange}
-                onBlur={handleLocationMenuBlur}
-                selected={inputValues.selectedLocations}
-                paginationText='Show more locations'
-              />
-            </Form.Group>
-            <Accordion>
-              <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
-                More Options
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="0" className='py-2'>
-                <Card className='bg-transparent border-white'>
-                  <Card.Body>
-                    <Row>
-                      <Col xs={12} sm={6} lg={12}>
-                        <Form.Group>
-                          <Form.Label>Start from the day</Form.Label>
-                          <Form.Control
-                            as="select"
-                            onChange={handleExceedingPropertyChange}
-                            value={exceedingProperty}
-                          >
-                            <option value='confirmed'>confirmed cases</option>
-                            <option value='deaths'>deaths</option>
-                          </Form.Control>
-                        </Form.Group>
-                      </Col>
-                      <Col xs={12} sm={6} lg={12}>
-                        <Form.Group>
-                          <Form.Label>exceeded</Form.Label>
-                          <Form.Control
-                            value={inputValues.exceedingValue}
-                            onChange={handleExceedingValueChange}
-                            isInvalid={inputErrors.exceedingValue.length > 0}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {inputErrors.exceedingValue?.[0]}
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-              </Accordion.Collapse>
-            </Accordion>
-            <div className='mt-auto'>
-              <h2 className='h5 mt-3'>Share</h2>
-              <ShareButtons title={`COVID-19 Progression: ${location}`} url={window.location.href} />
-              <h2 className='h5 mt-3'>Download</h2>
-              <Button onClick={handleDownloadClick} className='ml-2'>
-                Download as PNG
-              </Button>
-            </div>
-          </Col>
-          <Col>
-            <div id={chartId}>
-              <SingleLocationProgressionChart
-                title={title}
-                data={data?.values as DateValues}
-                lastUpdated={lastUpdated as Date}
-                firstDate={firstDate}
-                lastDate={lastDate}
-                exceedingProperty={exceedingProperty}
-                exceedingValue={exceedingValue}
-                isAnimationActive={areChartAnimationsActive}
-              />
-            </div>
-          </Col>
-        </Row>
-      )}
+      {body}
     </Container>
   );
 };
