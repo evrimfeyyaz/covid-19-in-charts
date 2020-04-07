@@ -5,9 +5,22 @@ import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { ROUTE_PATHS } from '../constants';
 import { ReactComponent as GitHubMark } from '../images/github-mark.svg';
+import { useLocation } from 'react-router-dom';
 
 const NavBar: FunctionComponent = () => {
+  const { pathname } = useLocation();
+
   const gitHubRepoLink = 'https://github.com/evrimfeyyaz/covid-19-in-charts';
+
+  function createNavLinkProps(href: string) {
+    let className = '';
+
+    if (href === pathname) {
+      className = 'active';
+    }
+
+    return { href, className };
+  }
 
   return (
     <Navbar bg="light" expand="lg">
@@ -17,7 +30,7 @@ const NavBar: FunctionComponent = () => {
         <Navbar.Collapse>
           <Nav className="mr-auto">
             <NavDropdown title="Charts" id="nav-dropdown">
-              <NavDropdown.Item href={ROUTE_PATHS.diseaseProgression}>
+              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.diseaseProgression)}>
                 Disease Progression
               </NavDropdown.Item>
             </NavDropdown>

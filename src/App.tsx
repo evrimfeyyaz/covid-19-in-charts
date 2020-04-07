@@ -24,6 +24,7 @@ function App() {
       <Helmet>
         <title>{createPageTitle()}</title>
       </Helmet>
+
       {!loaded && <Loading />}
       {loaded && (
         <div style={{ backgroundColor: COLORS.bgColor }} className='h-100'>
