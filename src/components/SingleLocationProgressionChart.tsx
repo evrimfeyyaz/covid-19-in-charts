@@ -51,34 +51,34 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
 
           <YAxis
             yAxisId="left"
-            label={{ value: 'Cases', angle: -90, position: 'left', dy: -20, dx: -15 }}
+            label={{ value: 'Confirmed Cases', angle: -90, position: 'left', dy: -60, dx: -15 }}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
-            domain={[0, dataMax => dataMax * 5]}
-            label={{ value: 'Deaths', angle: 90, position: 'right', dy: -25, dx: 5 }}
+            domain={[0, dataMax => dataMax * 2]}
+            label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
           />
           <Tooltip content={SingleLocationProgressionTooltip} offset={30} />
           <Legend align='center' verticalAlign='top' height={45} />
           <Bar
-            dataKey='newConfirmed' yAxisId='left'
+            dataKey='newConfirmed' yAxisId='right'
             fill={COLORS.newConfirmed} name='New Cases'
             isAnimationActive={isAnimationActive}
           />
           <Line
-            type='monotone' dataKey='deaths' yAxisId='right'
+            type='monotone' dataKey='deaths' yAxisId='right' opacity={.8}
             stroke={COLORS.deaths} strokeWidth={3} name='Deaths'
             dot={false} isAnimationActive={isAnimationActive}
           />
           <Line
-            type='monotone' yAxisId='left' dataKey="confirmed"
-            stroke={COLORS.confirmed} strokeWidth={3} name='Confirmed Cases'
+            type='monotone' yAxisId='right' dataKey="recovered" opacity={.8}
+            stroke={COLORS.recovered} strokeWidth={3} name='Recovered Cases'
             dot={false} isAnimationActive={isAnimationActive}
           />
           <Line
-            type='monotone' yAxisId='left' dataKey="recovered"
-            stroke={COLORS.recovered} strokeWidth={3} name='Recovered Cases'
+            type='monotone' yAxisId='left' dataKey="confirmed" opacity={.8}
+            stroke={COLORS.confirmed} strokeWidth={3} name='Confirmed Cases'
             dot={false} isAnimationActive={isAnimationActive}
           />
         </ComposedChart>
