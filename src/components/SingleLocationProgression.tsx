@@ -66,7 +66,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
 
   const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
-  const [exceedingValue = 10, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
+  const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
   const firstDate = data?.values?.[0]?.date;
   const lastDate = data?.values?.[data?.values?.length - 1]?.date;
