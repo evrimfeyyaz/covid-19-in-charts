@@ -27,7 +27,7 @@ function App() {
 
       {!loaded && <Loading />}
       {loaded && (
-        <div style={{ backgroundColor: COLORS.bgColor }} className='h-100'>
+        <>
           <NavBar />
 
           <div className='py-4'>
@@ -37,7 +37,7 @@ function App() {
               </Route>
             </Switch>
           </div>
-        </div>
+        </>
       )}
     </>
   );
