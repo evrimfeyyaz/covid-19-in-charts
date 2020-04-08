@@ -3,11 +3,12 @@ import './App.css';
 import CovidDataStore from './store/CovidDataStore';
 import SingleLocationProgression from './components/SingleLocationProgression';
 import { Switch, Route } from 'react-router-dom';
-import { COLORS, ROUTE_PATHS } from './constants';
+import { ROUTE_PATHS } from './constants';
 import NavBar from './components/NavBar';
 import Loading from './components/Loading';
 import { Helmet } from 'react-helmet';
 import { createPageTitle } from './utilities/metaUtilities';
+import Footer from './components/Footer';
 
 function App() {
   const dataStore = useRef<CovidDataStore>(new CovidDataStore());
@@ -37,6 +38,8 @@ function App() {
               </Route>
             </Switch>
           </div>
+
+          <Footer />
         </>
       )}
     </>

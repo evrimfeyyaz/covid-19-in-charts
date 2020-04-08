@@ -3,14 +3,13 @@ import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-import { ROUTE_PATHS } from '../constants';
+import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
 import { ReactComponent as GitHubMark } from '../images/github-mark.svg';
 import { useLocation } from 'react-router-dom';
 
 const NavBar: FunctionComponent = () => {
   const { pathname } = useLocation();
 
-  const gitHubRepoLink = 'https://github.com/evrimfeyyaz/covid-19-in-charts';
 
   function createNavLinkProps(href: string) {
     let className = '';
@@ -36,7 +35,7 @@ const NavBar: FunctionComponent = () => {
             </NavDropdown>
           </Nav>
           <Nav className='ml-auto'>
-            <Nav.Link className='p-2' href={gitHubRepoLink} target='_blank' rel='noopener noreferrer'>
+            <Nav.Link className='p-2' href={EXTERNAL_LINKS.gitHubRepo} target='_blank' rel='noopener noreferrer'>
               <GitHubMark height='1rem' width='1rem' className='align-top mt-1' />
             </Nav.Link>
             <Nav.Link>About</Nav.Link>
