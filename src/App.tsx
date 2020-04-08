@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import CovidDataStore from './store/CovidDataStore';
 import SingleLocationProgression from './components/SingleLocationProgression';
 import { Switch, Route } from 'react-router-dom';
-import { ROUTE_PATHS } from './constants';
+import { ROUTE_PATHS, SITE_INFO } from './constants';
 import NavBar from './components/NavBar';
 import Loading from './components/Loading';
 import { Helmet } from 'react-helmet';
@@ -23,6 +23,13 @@ function App() {
     <>
       <Helmet>
         <title>{createPageTitle()}</title>
+        <meta property="og:title" content={createPageTitle()} />
+        <meta property="og:description" content={SITE_INFO.description} />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:url" content={SITE_INFO.baseUrl} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta property="og:site_name" content="COVID-19 in Charts" />
+        <meta name="twitter:image:alt" content="COVID-19 in Charts" />
       </Helmet>
 
       {!loaded && <Loading />}

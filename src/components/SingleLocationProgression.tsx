@@ -19,6 +19,8 @@ import { uuidv4 } from '../utilities/uuidv4';
 import Loading from './Loading';
 import Helmet from 'react-helmet';
 import { createPageTitle } from '../utilities/metaUtilities';
+import { prettifyMDYDate } from '../utilities/dateUtilities';
+import { useCanonicalURL } from '../utilities/useCanonicalURL';
 
 interface SingleLocationProgressionProps {
   store: CovidDataStore,
@@ -57,6 +59,7 @@ function validateInputs(selectedLocations: string[], exceedingValue: string): In
 }
 
 const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
+  const canonicalUrl = useCanonicalURL();
   const defaultLocation = 'US';
 
   const [locations] = useState(store.locations);
@@ -256,10 +259,19 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
     );
   }
 
+  const pageTitle = createPageTitle(title);
+  let pageDescription = title;
+  if (firstDate != null && lastDate != null) {
+    pageDescription += ` ${prettifyMDYDate(firstDate as string)} - ${prettifyMDYDate(lastDate as string)}`;
+  }
+
   return (
     <Container>
       <Helmet>
-        <title>{createPageTitle(title)}</title>
+        <title>{pageTitle}</title>
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={canonicalUrl} />
       </Helmet>
       {body}
     </Container>

@@ -16,3 +16,9 @@ export const EXTERNAL_LINKS = {
   gitHubRepo: 'https://github.com/evrimfeyyaz/covid-19-in-charts',
   authorTwitter: 'https://twitter.com/evrimfeyyaz',
 };
+
+export const SITE_INFO = {
+  baseUrl: 'https://covid19incharts.com',
+  baseTitle: 'COVID-19 in Charts',
+  description: 'Various data related to COVID-10 visualized.',
+};

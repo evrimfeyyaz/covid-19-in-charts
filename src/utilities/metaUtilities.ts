@@ -1,5 +1,7 @@
+import { SITE_INFO } from '../constants';
+
 export function createPageTitle(title?: string) {
-  const baseTitle = 'COVID-19 in Charts';
+  const { baseTitle } = SITE_INFO;
 
   if (title == null) {
     return baseTitle;
