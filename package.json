@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "bootstrap": "^4.4.1",
     "csv-parse": "^4.8.8",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.2",
     "lodash": "^4.17.15",
+    "node-sass": "^4.13.1",
     "react": "^16.13.1",
     "react-bootstrap": "^1.0.0",
     "react-bootstrap-typeahead": "^5.0.0-alpha.1",

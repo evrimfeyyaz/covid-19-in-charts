@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './App.css';
 import CovidDataStore from './store/CovidDataStore';
 import SingleLocationProgression from './components/SingleLocationProgression';
 import { Switch, Route } from 'react-router-dom';
