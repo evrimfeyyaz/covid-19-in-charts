@@ -34,11 +34,14 @@ const Footer: FunctionComponent = () => {
         <Row>
           <Col className='pt-2'>
             <h1 className='h6'>Charts</h1>
-            <ul className='list-inline'>
-              <li className='list-inline-item'>
+            <ul className='list-unstyled'>
+              <li className='list-item'>
                 <Link to={ROUTE_PATHS.casesInLocation} className='link footer-link'>
                   Cases, Recoveries & Deaths
                 </Link>
+              </li>
+              <li className='list-item'>
+                More Charts to Come
               </li>
             </ul>
           </Col>
