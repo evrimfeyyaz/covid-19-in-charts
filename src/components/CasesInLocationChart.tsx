@@ -11,11 +11,11 @@ import {
   YAxis,
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
-import SingleLocationProgressionTooltip from './SingleLocationProgressionTooltip';
+import CasesInLocationTooltip from './CasesInLocationTooltip';
 import { COLORS } from '../constants';
 import { prettifyMDYDate } from '../utilities/dateUtilities';
 
-interface SingleLocationProgressionChartProps {
+interface CasesInLocationChartProps {
   data: DateValues,
   title: string,
   firstDate: string | undefined,
@@ -26,7 +26,7 @@ interface SingleLocationProgressionChartProps {
   isAnimationActive: boolean,
 }
 
-const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
+const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
                                                                                                   data, firstDate, lastDate,
                                                                                                   title, lastUpdated,
                                                                                                   exceedingProperty,
@@ -59,7 +59,7 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
             domain={[0, dataMax => dataMax * 2]}
             label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
           />
-          <Tooltip content={SingleLocationProgressionTooltip} offset={30} />
+          <Tooltip content={CasesInLocationTooltip} offset={30} />
           <Legend align='center' verticalAlign='top' height={45} />
           <Bar
             dataKey='newConfirmed' yAxisId='right'
@@ -115,4 +115,4 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
   );
 };
 
-export default SingleLocationProgressionChart;
+export default CasesInLocationChart;

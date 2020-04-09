@@ -1,6 +1,6 @@
 import React, { FormEvent, FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { DateValues, LocationData } from '../store/CovidDataStore';
-import SingleLocationProgressionChart from './SingleLocationProgressionChart';
+import CasesInLocationChart from './CasesInLocationChart';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Container from 'react-bootstrap/Container';
@@ -19,10 +19,9 @@ import { uuidv4 } from '../utilities/uuidv4';
 import Loading from './Loading';
 import Helmet from 'react-helmet';
 import { createPageTitle } from '../utilities/metaUtilities';
-import { prettifyMDYDate } from '../utilities/dateUtilities';
 import { useCanonicalURL } from '../utilities/useCanonicalURL';
 
-interface SingleLocationProgressionProps {
+interface CasesInLocationProps {
   store: CovidDataStore,
 }
 
@@ -58,7 +57,7 @@ function validateInputs(selectedLocations: string[], exceedingValue: string): In
   return errors;
 }
 
-const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProps> = ({ store }) => {
+const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => {
   const canonicalUrl = useCanonicalURL();
   const defaultLocation = 'US';
 
@@ -73,8 +72,8 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
 
   const firstDate = data?.values?.[0]?.date;
   const lastDate = data?.values?.[data?.values?.length - 1]?.date;
-  const chartId = 'single-location-progression-chart';
-  const title = `COVID-19 Progression: ${location}`;
+  const chartId = 'cases-in-location';
+  const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
 
   const [inputValues, setInputValues] = useState<InputValues>({
     selectedLocations: [location],
@@ -243,7 +242,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
         </Col>
         <Col>
           <div id={chartId}>
-            <SingleLocationProgressionChart
+            <CasesInLocationChart
               title={title}
               data={data?.values as DateValues}
               lastUpdated={lastUpdated as Date}
@@ -260,7 +259,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   }
 
   const pageTitle = createPageTitle(title);
-  let pageDescription = `The latest data on the progression of COVID-19 in ${location} visualized.`;
+  let pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
 
   return (
     <Container>
@@ -275,4 +274,4 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   );
 };
 
-export default SingleLocationProgression;
+export default CasesInLocation;

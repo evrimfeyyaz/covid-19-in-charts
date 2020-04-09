@@ -2,7 +2,6 @@ import React, { FunctionComponent } from 'react';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import NavDropdown from 'react-bootstrap/NavDropdown';
 import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
 import { useLocation } from 'react-router-dom';
 
@@ -27,8 +26,8 @@ const NavBar: FunctionComponent = () => {
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="mr-auto">
-            <Nav.Link {...createNavLinkProps(ROUTE_PATHS.diseaseProgression)}>
-              Disease Progression
+            <Nav.Link {...createNavLinkProps(ROUTE_PATHS.casesInLocation)}>
+              Cases, Recoveries & Deaths
             </Nav.Link>
           </Nav>
           <Nav className='ml-auto'>

@@ -4,6 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
 import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
+import Nav from 'react-bootstrap/Nav';
 
 const Footer: FunctionComponent = () => {
   return (
@@ -35,8 +36,8 @@ const Footer: FunctionComponent = () => {
             <h1 className='h6'>Charts</h1>
             <ul className='list-inline'>
               <li className='list-inline-item'>
-                <Link to={ROUTE_PATHS.diseaseProgression} className='link footer-link'>
-                  Disease Progression
+                <Link to={ROUTE_PATHS.casesInLocation} className='link footer-link'>
+                  Cases, Recoveries & Deaths
                 </Link>
               </li>
             </ul>

@@ -5,13 +5,13 @@ import { prettifyMDYDate } from '../utilities/dateUtilities';
 import Table from 'react-bootstrap/Table';
 import { COLORS } from '../constants';
 
-interface SingleLocationProgressionTooltipProps {
+interface CasesInLocationTooltip {
   payload: { payload: DateValue }[],
   label: string,
   active: boolean
 }
 
-const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgressionTooltipProps> = ({ payload, label, active }) => {
+const CasesInLocationTooltip: FunctionComponent<CasesInLocationTooltip> = ({ payload, label, active }) => {
   if (!active) {
     return null;
   }
@@ -60,4 +60,4 @@ const SingleLocationProgressionTooltip: FunctionComponent<SingleLocationProgress
   );
 };
 
-export default SingleLocationProgressionTooltip;
+export default CasesInLocationTooltip;

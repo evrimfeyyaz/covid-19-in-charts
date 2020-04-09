@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import CovidDataStore from './store/CovidDataStore';
-import SingleLocationProgression from './components/SingleLocationProgression';
+import CasesInLocation from './components/CasesInLocation';
 import { Switch, Route } from 'react-router-dom';
 import { ROUTE_PATHS, SITE_INFO } from './constants';
 import NavBar from './components/NavBar';
@@ -40,8 +40,8 @@ function App() {
 
           <div className='py-4'>
             <Switch>
-              <Route path={ROUTE_PATHS.diseaseProgression}>
-                <SingleLocationProgression store={dataStore.current} />
+              <Route path={ROUTE_PATHS.casesInLocation}>
+                <CasesInLocation store={dataStore.current} />
               </Route>
               <Route path={ROUTE_PATHS.about}>
                 <About />

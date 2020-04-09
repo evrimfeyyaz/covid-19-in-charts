@@ -12,11 +12,22 @@ const ChartsIndex: FunctionComponent = () => {
           <Card>
             <Card.Body>
               <Card.Title>
-                Test
+                Cases, Recoveries and Deaths
               </Card.Title>
               <Card.Text>
-                Hello
+                See the number of confirmed cases, new cases, recoveries and deaths.
               </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col lg={4}>
+          <Card>
+            <Card.Img variant="top" src={require('../images/more-charts-to-come.png')} />
+            <Card.Body>
+              <Card.Title>
+                More Visualizations to Come
+              </Card.Title>
             </Card.Body>
           </Card>
         </Col>

@@ -1,6 +1,6 @@
 export const ROUTE_PATHS = {
   home: '/',
-  diseaseProgression: '/disease-progression',
+  casesInLocation: '/cases-recoveries-deaths',
   about: '/about',
 };
 
