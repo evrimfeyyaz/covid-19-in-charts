@@ -15,6 +15,8 @@ export const COLORS = {
 export const EXTERNAL_LINKS = {
   gitHubRepo: 'https://github.com/evrimfeyyaz/covid-19-in-charts',
   authorTwitter: 'https://twitter.com/evrimfeyyaz',
+  authorWebsite: 'https://evrim.io',
+  feedbackEmail: 'feedback@covid19incharts.com',
 };
 
 export const SITE_INFO = {

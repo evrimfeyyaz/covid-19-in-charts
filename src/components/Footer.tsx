@@ -7,7 +7,7 @@ import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
 
 const Footer: FunctionComponent = () => {
   return (
-    <footer className='bg-dark text-light pt-4 pb-3 mt-5 small text-center'>
+    <footer className='bg-dark text-light pt-4 pb-3 mt-3 small text-center'>
       <Container>
         <Row>
           <Col>

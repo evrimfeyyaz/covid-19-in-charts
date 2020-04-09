@@ -8,6 +8,8 @@ import Loading from './components/Loading';
 import { Helmet } from 'react-helmet';
 import { createPageTitle } from './utilities/metaUtilities';
 import Footer from './components/Footer';
+import ChartsIndex from './components/ChartsIndex';
+import About from './components/About';
 
 function App() {
   const dataStore = useRef<CovidDataStore>(new CovidDataStore());
@@ -38,8 +40,14 @@ function App() {
 
           <div className='py-4'>
             <Switch>
-              <Route path={`${ROUTE_PATHS.diseaseProgression}`}>
+              <Route path={ROUTE_PATHS.diseaseProgression}>
                 <SingleLocationProgression store={dataStore.current} />
+              </Route>
+              <Route path={ROUTE_PATHS.about}>
+                <About />
+              </Route>
+              <Route path={ROUTE_PATHS.home}>
+                <ChartsIndex />
               </Route>
             </Switch>
           </div>
