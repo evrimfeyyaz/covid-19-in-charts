@@ -38,19 +38,6 @@ const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url }) => {
       </a>
 
       <a className="resp-sharing-button__link"
-         href={`https://www.tumblr.com/widgets/share/tool?posttype=link&title=${encodedTitle}&caption=${encodedTitle}&content=${encodedURL}&amp;canonicalUrl=${encodedURL}&amp;shareSource=tumblr_share_button`}
-         target="_blank" rel="noopener noreferrer" aria-label="">
-        <div className="resp-sharing-button resp-sharing-button--tumblr resp-sharing-button--small">
-          <div aria-hidden="true" className="resp-sharing-button__icon resp-sharing-button__icon--solid">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M13.5.5v5h5v4h-5V15c0 5 3.5 4.4 6 2.8v4.4c-6.7 3.2-12 0-12-4.2V9.5h-3V6.7c1-.3 2.2-.7 3-1.3.5-.5 1-1.2 1.4-2 .3-.7.6-1.7.7-3h3.8z" />
-            </svg>
-          </div>
-        </div>
-      </a>
-
-      <a className="resp-sharing-button__link"
          href={`mailto:?subject=${encodedTitle}&body=${encodedURL}`}
          target="_self" rel="noopener noreferrer" aria-label="">
         <div className="resp-sharing-button resp-sharing-button--email resp-sharing-button--small">
@@ -58,19 +45,6 @@ const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url }) => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path
                 d="M22 4H2C.9 4 0 4.9 0 6v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM7.25 14.43l-3.5 2c-.08.05-.17.07-.25.07-.17 0-.34-.1-.43-.25-.14-.24-.06-.55.18-.68l3.5-2c.24-.14.55-.06.68.18.14.24.06.55-.18.68zm4.75.07c-.1 0-.2-.03-.27-.08l-8.5-5.5c-.23-.15-.3-.46-.15-.7.15-.22.46-.3.7-.14L12 13.4l8.23-5.32c.23-.15.54-.08.7.15.14.23.07.54-.16.7l-8.5 5.5c-.08.04-.17.07-.27.07zm8.93 1.75c-.1.16-.26.25-.43.25-.08 0-.17-.02-.25-.07l-3.5-2c-.24-.13-.32-.44-.18-.68s.44-.32.68-.18l3.5 2c.24.13.32.44.18.68z" />
-            </svg>
-          </div>
-        </div>
-      </a>
-
-      <a className="resp-sharing-button__link"
-         href={`https://pinterest.com/pin/create/button/?url=${encodedURL}&media=${encodedURL}&description=${encodedTitle}`}
-         target="_blank" rel="noopener noreferrer" aria-label="">
-        <div className="resp-sharing-button resp-sharing-button--pinterest resp-sharing-button--small">
-          <div aria-hidden="true" className="resp-sharing-button__icon resp-sharing-button__icon--solid">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-              <path
-                d="M12.14.5C5.86.5 2.7 5 2.7 8.75c0 2.27.86 4.3 2.7 5.05.3.12.57 0 .66-.33l.27-1.06c.1-.32.06-.44-.2-.73-.52-.62-.86-1.44-.86-2.6 0-3.33 2.5-6.32 6.5-6.32 3.55 0 5.5 2.17 5.5 5.07 0 3.8-1.7 7.02-4.2 7.02-1.37 0-2.4-1.14-2.07-2.54.4-1.68 1.16-3.48 1.16-4.7 0-1.07-.58-1.98-1.78-1.98-1.4 0-2.55 1.47-2.55 3.42 0 1.25.43 2.1.43 2.1l-1.7 7.2c-.5 2.13-.08 4.75-.04 5 .02.17.22.2.3.1.14-.18 1.82-2.26 2.4-4.33.16-.58.93-3.63.93-3.63.45.88 1.8 1.65 3.22 1.65 4.25 0 7.13-3.87 7.13-9.05C20.5 4.15 17.18.5 12.14.5z" />
             </svg>
           </div>
         </div>
