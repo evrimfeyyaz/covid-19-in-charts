@@ -260,7 +260,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   }
 
   const pageTitle = createPageTitle(title);
-  let pageDescription = 'The latest data on the progression of COVID-19 visualized.';
+  let pageDescription = `The latest data on the progression of COVID-19 in ${location} visualized.`;
 
   return (
     <Container>

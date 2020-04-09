@@ -25,7 +25,6 @@ function App() {
         <title>{createPageTitle()}</title>
         <meta property="og:title" content={createPageTitle()} />
         <meta property="og:description" content={SITE_INFO.description} />
-        <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content={SITE_INFO.baseUrl} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:site_name" content="COVID-19 in Charts" />
