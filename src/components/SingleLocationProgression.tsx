@@ -260,10 +260,7 @@ const SingleLocationProgression: FunctionComponent<SingleLocationProgressionProp
   }
 
   const pageTitle = createPageTitle(title);
-  let pageDescription = title;
-  if (firstDate != null && lastDate != null) {
-    pageDescription += ` ${prettifyMDYDate(firstDate as string)} - ${prettifyMDYDate(lastDate as string)}`;
-  }
+  let pageDescription = 'The latest data on the progression of COVID-19 visualized.';
 
   return (
     <Container>
