@@ -15,6 +15,7 @@ import CasesInLocationTooltip from './CasesInLocationTooltip';
 import { COLORS } from '../constants';
 import { prettifyMDYDate } from '../utilities/dateUtilities';
 import CaseInLocationLegend from './CaseInLocationLegend';
+import { numToGroupedString } from '../utilities/numUtilities';
 
 interface CasesInLocationChartProps {
   data: DateValues,
@@ -53,12 +54,14 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
           <YAxis
             yAxisId="left"
             label={{ value: 'Confirmed Cases', angle: -90, position: 'left', dy: -60, dx: -15 }}
+            tickFormatter={numToGroupedString}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
             domain={[0, dataMax => dataMax * 2]}
             label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
+            tickFormatter={numToGroupedString}
           />
           <Tooltip content={CasesInLocationTooltip} offset={30} />
           <Legend align='center' verticalAlign='top' content={<CaseInLocationLegend data={data} />} />
