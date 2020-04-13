@@ -3,6 +3,8 @@
 $font-family-sans-serif: "Roboto Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 $headings-font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif !default;
 
+$body-bg: #e1e6ed;
+
 html {
   height: 100%;
 }
@@ -12,7 +14,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  background-color: #e1e6ed;
 }
 
 #root {
