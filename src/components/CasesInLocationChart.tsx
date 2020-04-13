@@ -14,6 +14,7 @@ import Card from 'react-bootstrap/Card';
 import CasesInLocationTooltip from './CasesInLocationTooltip';
 import { COLORS } from '../constants';
 import { prettifyMDYDate } from '../utilities/dateUtilities';
+import CaseInLocationLegend from './CaseInLocationLegend';
 
 interface CasesInLocationChartProps {
   data: DateValues,
@@ -27,12 +28,12 @@ interface CasesInLocationChartProps {
 }
 
 const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
-                                                                                                  data, firstDate, lastDate,
-                                                                                                  title, lastUpdated,
-                                                                                                  exceedingProperty,
-                                                                                                  exceedingValue,
-                                                                                                  isAnimationActive,
-                                                                                                }) => {
+                                                                              data, firstDate, lastDate,
+                                                                              title, lastUpdated,
+                                                                              exceedingProperty,
+                                                                              exceedingValue,
+                                                                              isAnimationActive,
+                                                                            }) => {
   let exceedingPropertyText = 'confirmed cases';
   if (exceedingProperty === 'deaths') {
     exceedingPropertyText = 'deaths';
@@ -60,7 +61,7 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
             label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
           />
           <Tooltip content={CasesInLocationTooltip} offset={30} />
-          <Legend align='center' verticalAlign='top' height={45} />
+          <Legend align='center' verticalAlign='top' content={<CaseInLocationLegend data={data} />} />
           <Bar
             dataKey='newConfirmed' yAxisId='right'
             fill={COLORS.newConfirmed} name='New Cases'
