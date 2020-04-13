@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from 'react';
 import { DateValues } from '../store/CovidDataStore';
-import './CaseInLocationLegend.scss';
 import { numToGroupedString } from '../utilities/numUtilities';
 
 interface CaseInLocationLegendProps {
@@ -27,37 +26,38 @@ const CaseInLocationLegend: FunctionComponent<CaseInLocationLegendProps> = ({ pa
 
   return (
     <div
-      className='d-flex flex-column align-items-center small border rounded-lg mx-auto cill-container overflow-hidden mb-4'>
+      className='d-flex flex-column align-items-center small border
+       rounded-lg mx-auto cases-in-location-legend-container overflow-hidden mb-4'>
       <div className='d-flex w-100'>
         {latestConfirmed != null && (
-          <div className='py-1 media-body text-center'
+          <div className='py-1 flex-1 text-center'
                style={{ backgroundColor: payloadConfirmed?.color }}>Confirmed</div>
         )}
         {latestNewConfirmed != null && (
-          <div className='py-1 media-body text-center'
+          <div className='py-1 flex-1 text-center'
                style={{ backgroundColor: payloadNewConfirmed?.color }}>New</div>
         )}
         {latestRecovered != null && (
-          <div className='py-1 media-body text-center text-light'
+          <div className='py-1 flex-1 text-center text-light'
                style={{ backgroundColor: payloadRecovered?.color }}>Recovered</div>
         )}
         {latestDeaths != null && (
-          <div className='py-1 media-body text-center text-light'
+          <div className='py-1 flex-1 text-center text-light'
                style={{ backgroundColor: payloadDeaths?.color }}>Deaths</div>
         )}
       </div>
       <div className='d-flex w-100'>
         {latestConfirmed != null && (
-          <div className='py-1 media-body text-center'>{numToGroupedString(latestConfirmed)}</div>
+          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestConfirmed)}</div>
         )}
         {latestNewConfirmed != null && (
-          <div className='py-1 media-body text-center'>{numToGroupedString(latestNewConfirmed)}</div>
+          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestNewConfirmed)}</div>
         )}
         {latestRecovered != null && (
-          <div className='py-1 media-body text-center'>{numToGroupedString(latestRecovered)}</div>
+          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestRecovered)}</div>
         )}
         {latestDeaths != null && (
-          <div className='py-1 media-body text-center'>{numToGroupedString(latestDeaths)}</div>
+          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestDeaths)}</div>
         )}
       </div>
     </div>

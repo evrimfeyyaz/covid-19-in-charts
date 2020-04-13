@@ -20,6 +20,11 @@ body {
   height: 100%;
 }
 
+.flex-1 {
+  -ms-flex: 1;
+  flex: 1;
+}
+
 .footer-link {
   color: goldenrod;
 
@@ -35,6 +40,10 @@ body {
 
 .navbar-nav {
   margin-top: .5rem;
+}
+
+.cases-in-location-legend-container {
+  width: 20rem;
 }
 
 /* SharingButtons.io */
