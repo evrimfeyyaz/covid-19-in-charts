@@ -6,17 +6,14 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import domtoimage from 'dom-to-image';
-import FileSaver from 'file-saver';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 import ShareButtons from '../ShareButtons';
-import { COLORS } from '../../constants';
-import { uuidv4 } from '../../utilities/uuidv4';
 import Loading from '../Loading';
 import Helmet from 'react-helmet';
 import { createPageTitle } from '../../utilities/metaUtilities';
 import { useCanonicalURL } from '../../utilities/useCanonicalURL';
 import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
+import { downloadRechartsChart } from '../../utilities/downloadChartUtilities';
 
 interface CasesInLocationProps {
   store: CovidDataStore,
@@ -66,27 +63,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   function handleDownloadClick() {
     setAreChartAnimationsActive(false);
     const node = document.getElementById(chartId) as HTMLElement;
-    const horizontalPadding = 20;
-    const verticalPadding = 20;
-    const fileName = `${uuidv4()}.png`;
-
-    // Some of the code below is from
-    // https://github.com/tsayen/dom-to-image/issues/69#issuecomment-486146688
-    domtoimage
-      .toBlob(node, {
-        width: node.offsetWidth * 2 + horizontalPadding * 2 * 2,
-        height: node.offsetHeight * 2 + verticalPadding * 2 * 2,
-        bgcolor: COLORS.bgColor,
-        style: {
-          padding: `${verticalPadding}px ${horizontalPadding}px`,
-          transform: 'scale(2)',
-          transformOrigin: 'top left',
-          width: node.offsetWidth + horizontalPadding * 2 + 'px',
-          height: node.offsetHeight + verticalPadding * 2 + 'px',
-        },
-      })
-      .then(blob => FileSaver.saveAs(blob, fileName))
-      .finally(() => setAreChartAnimationsActive(true));
+    downloadRechartsChart(node).finally(() => setAreChartAnimationsActive(true));
   }
 
   let body = <Loading />;
@@ -99,9 +76,9 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
                                   exceedingProperty={exceedingProperty as ExceedingProperty}
                                   exceedingValue={exceedingValue}
                                   onValuesChange={handleOptionsChange} />
-          <div className='mt-auto'>
+          <div className='mt-auto d-none d-lg-block'>
             <h2 className='h5 mt-3'>Share</h2>
-            <ShareButtons title={title} url={window.location.href} />
+            <ShareButtons title={title} url={window.location.href} small />
 
             <h2 className='h5 mt-3'>Download</h2>
             <Button onClick={handleDownloadClick} className='ml-2'>
