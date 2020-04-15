@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../store/CovidDataStore';
-import { numToGroupedString } from '../utilities/numUtilities';
+import { DateValues } from '../../store/CovidDataStore';
+import { numToGroupedString } from '../../utilities/numUtilities';
 
-interface CaseInLocationLegendProps {
+interface CasesInLocationLegendProps {
   payload?: {
     color: string,
     dataKey: string,
@@ -12,7 +12,7 @@ interface CaseInLocationLegendProps {
   data?: DateValues
 }
 
-const CaseInLocationLegend: FunctionComponent<CaseInLocationLegendProps> = ({ payload, data }) => {
+const CasesInLocationLegend: FunctionComponent<CasesInLocationLegendProps> = ({ payload, data }) => {
   const latestValues = data?.[data?.length - 1];
   const latestConfirmed = latestValues?.confirmed;
   const latestNewConfirmed = latestValues?.newConfirmed;
@@ -64,4 +64,4 @@ const CaseInLocationLegend: FunctionComponent<CaseInLocationLegendProps> = ({ pa
   );
 };
 
-export default CaseInLocationLegend;
+export default CasesInLocationLegend;

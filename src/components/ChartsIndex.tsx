@@ -11,7 +11,7 @@ const ChartsIndex: FunctionComponent = () => {
     <Container>
       <Row>
         <Col sm={6} lg={4}>
-          <Card className='my-2'>
+          <Card className='my-3 m-sm-2'>
             <Card.Img variant="top" src={require('../images/cases-recoveries-and-deaths.jpg')} />
             <Card.Body>
               <Card.Title>
@@ -26,7 +26,7 @@ const ChartsIndex: FunctionComponent = () => {
         </Col>
 
         <Col sm={6} lg={4}>
-          <Card className='my-2'>
+          <Card className='my-3 m-sm-2'>
             <Card.Img variant="top" src={require('../images/more-charts-to-come.jpg')} />
             <Card.Body>
               <Card.Title>

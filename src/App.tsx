@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import CovidDataStore from './store/CovidDataStore';
-import CasesInLocation from './components/CasesInLocation';
+import CasesInLocation from './components/CasesInLocation/CasesInLocation';
 import { Switch, Route } from 'react-router-dom';
 import { ROUTE_PATHS, SITE_INFO } from './constants';
 import NavBar from './components/NavBar';
@@ -38,7 +38,7 @@ function App() {
         <>
           <NavBar />
 
-          <div className='py-4'>
+          <div className='py-4 flex-grow-1'>
             <Switch>
               <Route path={ROUTE_PATHS.casesInLocation}>
                 <CasesInLocation store={dataStore.current} />

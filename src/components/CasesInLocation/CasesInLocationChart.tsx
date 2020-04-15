@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../store/CovidDataStore';
+import { DateValues } from '../../store/CovidDataStore';
 import {
   Bar,
   CartesianGrid,
@@ -12,10 +12,10 @@ import {
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
 import CasesInLocationTooltip from './CasesInLocationTooltip';
-import { COLORS } from '../constants';
-import { prettifyMDYDate } from '../utilities/dateUtilities';
-import CaseInLocationLegend from './CaseInLocationLegend';
-import { numToGroupedString } from '../utilities/numUtilities';
+import { COLORS } from '../../constants';
+import { prettifyMDYDate } from '../../utilities/dateUtilities';
+import CasesInLocationLegend from './CasesInLocationLegend';
+import { numToGroupedString } from '../../utilities/numUtilities';
 
 interface CasesInLocationChartProps {
   data: DateValues,
@@ -64,7 +64,7 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
             tickFormatter={numToGroupedString}
           />
           <Tooltip content={CasesInLocationTooltip} offset={30} />
-          <Legend align='center' verticalAlign='top' content={<CaseInLocationLegend data={data} />} />
+          <Legend align='center' verticalAlign='top' content={<CasesInLocationLegend data={data} />} />
           <Bar
             dataKey='newConfirmed' yAxisId='right'
             fill={COLORS.newConfirmed} name='New Cases'

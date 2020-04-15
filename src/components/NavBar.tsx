@@ -32,7 +32,7 @@ const NavBar: FunctionComponent = () => {
           </Nav>
           <Nav className='ml-auto'>
             <Nav.Link
-              className='p-2' href={EXTERNAL_LINKS.gitHubRepo}
+              href={EXTERNAL_LINKS.gitHubRepo}
               target='_blank' rel='noopener noreferrer'
             >
               GitHub

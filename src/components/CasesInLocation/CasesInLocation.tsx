@@ -1,0 +1,146 @@
+import React, { FunctionComponent, useEffect, useState } from 'react';
+import CovidDataStore, { DateValues, LocationData } from '../../store/CovidDataStore';
+import CasesInLocationChart from './CasesInLocationChart';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import domtoimage from 'dom-to-image';
+import FileSaver from 'file-saver';
+import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
+import ShareButtons from '../ShareButtons';
+import { COLORS } from '../../constants';
+import { uuidv4 } from '../../utilities/uuidv4';
+import Loading from '../Loading';
+import Helmet from 'react-helmet';
+import { createPageTitle } from '../../utilities/metaUtilities';
+import { useCanonicalURL } from '../../utilities/useCanonicalURL';
+import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
+
+interface CasesInLocationProps {
+  store: CovidDataStore,
+}
+
+const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => {
+  const canonicalUrl = useCanonicalURL();
+  const defaultLocation = 'US';
+
+  const [locations] = useState(store.locations);
+  const [data, setData] = useState<LocationData>();
+  const [lastUpdated, setLastUpdated] = useState<Date>();
+  const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
+
+  const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
+  const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
+  const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
+
+  const firstDate = data?.values?.[0]?.date;
+  const lastDate = data?.values?.[data?.values?.length - 1]?.date;
+  const chartId = 'cases-in-location';
+  const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
+
+  useEffect(() => {
+    const data = store.getDataByLocation(location);
+    const lastUpdated = store.lastUpdated;
+    const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+
+    setData(strippedData);
+    setLastUpdated(lastUpdated);
+  }, [store, location, exceedingProperty, exceedingValue]);
+
+  function handleOptionsChange(locationNew: string, exceedingPropertyNew: ExceedingProperty, exceedingValueNew: number) {
+    if (location !== locationNew) {
+      setLocation(locationNew);
+    }
+
+    if (exceedingProperty !== exceedingPropertyNew) {
+      setExceedingProperty(exceedingPropertyNew);
+    }
+
+    if (exceedingValue !== exceedingValueNew) {
+      setExceedingValue(exceedingValueNew);
+    }
+  }
+
+  function handleDownloadClick() {
+    setAreChartAnimationsActive(false);
+    const node = document.getElementById(chartId) as HTMLElement;
+    const horizontalPadding = 20;
+    const verticalPadding = 20;
+    const fileName = `${uuidv4()}.png`;
+
+    // Some of the code below is from
+    // https://github.com/tsayen/dom-to-image/issues/69#issuecomment-486146688
+    domtoimage
+      .toBlob(node, {
+        width: node.offsetWidth * 2 + horizontalPadding * 2 * 2,
+        height: node.offsetHeight * 2 + verticalPadding * 2 * 2,
+        bgcolor: COLORS.bgColor,
+        style: {
+          padding: `${verticalPadding}px ${horizontalPadding}px`,
+          transform: 'scale(2)',
+          transformOrigin: 'top left',
+          width: node.offsetWidth + horizontalPadding * 2 + 'px',
+          height: node.offsetHeight + verticalPadding * 2 + 'px',
+        },
+      })
+      .then(blob => FileSaver.saveAs(blob, fileName))
+      .finally(() => setAreChartAnimationsActive(true));
+  }
+
+  let body = <Loading />;
+
+  if (data != null && lastUpdated != null) {
+    body = (
+      <Row>
+        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
+          <CasesInLocationOptions locations={locations} location={location} defaultLocation={defaultLocation}
+                                  exceedingProperty={exceedingProperty as ExceedingProperty}
+                                  exceedingValue={exceedingValue}
+                                  onValuesChange={handleOptionsChange} />
+          <div className='mt-auto'>
+            <h2 className='h5 mt-3'>Share</h2>
+            <ShareButtons title={title} url={window.location.href} />
+
+            <h2 className='h5 mt-3'>Download</h2>
+            <Button onClick={handleDownloadClick} className='ml-2'>
+              Download as PNG
+            </Button>
+          </div>
+        </Col>
+        <Col>
+          <div id={chartId}>
+            <CasesInLocationChart
+              title={title}
+              data={data?.values as DateValues}
+              lastUpdated={lastUpdated as Date}
+              firstDate={firstDate}
+              lastDate={lastDate}
+              exceedingProperty={exceedingProperty}
+              exceedingValue={exceedingValue}
+              isAnimationActive={areChartAnimationsActive}
+            />
+          </div>
+        </Col>
+      </Row>
+    );
+  }
+
+  const pageTitle = createPageTitle(title);
+  let pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
+
+  return (
+    <Container>
+      <Helmet>
+        <title>{pageTitle}</title>
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:url" content={canonicalUrl} />
+      </Helmet>
+      {body}
+    </Container>
+  );
+};
+
+export default CasesInLocation;
