@@ -3,6 +3,8 @@ $headings-font-family: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif 
 
 $body-bg: #e1e6ed;
 
+$min-screen-width: 430px;
+
 html {
   height: 100%;
 }
@@ -27,6 +29,22 @@ body {
 .flex-1 {
   -ms-flex: 1;
   flex: 1;
+}
+
+.d-block-when-width-sufficient {
+  display: none;
+
+  @media (min-width: $min-screen-width) {
+    display: block;
+  }
+}
+
+.d-flex-when-width-not-sufficient {
+  display: flex;
+
+  @media (min-width: $min-screen-width) {
+    display: none;
+  }
 }
 
 .footer-link {

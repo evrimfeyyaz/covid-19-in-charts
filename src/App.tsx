@@ -38,7 +38,7 @@ function App() {
         <>
           <NavBar />
 
-          <div className='py-4 flex-grow-1'>
+          <div className='py-4 flex-grow-1 d-block-when-width-sufficient'>
             <Switch>
               <Route path={ROUTE_PATHS.casesInLocation}>
                 <CasesInLocation store={dataStore.current} />
@@ -50,6 +50,17 @@ function App() {
                 <ChartsIndex />
               </Route>
             </Switch>
+          </div>
+
+          <div
+            className='d-flex-when-width-not-sufficient text-center px-5 py-4 flex-grow-1 flex-column justify-content-center'>
+            <h1 className='h4'>
+              Unfortunately, your screen is too small for viewing charts.
+            </h1>
+
+            <p>
+              If possible, try using your device in landscape mode, or use a device with larger screen.
+            </p>
           </div>
 
           <Footer />
