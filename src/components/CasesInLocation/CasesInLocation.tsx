@@ -14,6 +14,7 @@ import { createPageTitle } from '../../utilities/metaUtilities';
 import { useCanonicalURL } from '../../utilities/useCanonicalURL';
 import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
 import { downloadRechartsChart } from '../../utilities/downloadChartUtilities';
+import ShareAndDownload from '../ShareAndDownload';
 
 interface CasesInLocationProps {
   store: CovidDataStore,
@@ -77,13 +78,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
                                   exceedingValue={exceedingValue}
                                   onValuesChange={handleOptionsChange} />
           <div className='mt-auto d-none d-lg-block'>
-            <h2 className='h5 mt-3'>Share</h2>
-            <ShareButtons title={title} url={window.location.href} small />
-
-            <h2 className='h5 mt-3'>Download</h2>
-            <Button onClick={handleDownloadClick} className='ml-2'>
-              Download as PNG
-            </Button>
+            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} smallButtons />
           </div>
         </Col>
         <Col>
@@ -100,6 +95,11 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
             />
           </div>
         </Col>
+        <Row className='d-lg-none mt-3'>
+          <Col className='px-5'>
+            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} />
+          </Col>
+        </Row>
       </Row>
     );
   }

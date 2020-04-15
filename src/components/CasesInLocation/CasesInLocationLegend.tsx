@@ -26,40 +26,44 @@ const CasesInLocationLegend: FunctionComponent<CasesInLocationLegendProps> = ({ 
 
   return (
     <div
-      className='d-flex flex-column align-items-center small border
-       rounded-lg mx-auto cases-in-location-legend-container overflow-hidden mb-4'>
-      <div className='d-flex w-100'>
-        {latestConfirmed != null && (
-          <div className='py-1 flex-1 text-center'
-               style={{ backgroundColor: payloadConfirmed?.color }}>Confirmed</div>
-        )}
-        {latestNewConfirmed != null && (
-          <div className='py-1 flex-1 text-center'
-               style={{ backgroundColor: payloadNewConfirmed?.color }}>New</div>
-        )}
-        {latestRecovered != null && (
-          <div className='py-1 flex-1 text-center text-light'
-               style={{ backgroundColor: payloadRecovered?.color }}>Recovered</div>
-        )}
-        {latestDeaths != null && (
-          <div className='py-1 flex-1 text-center text-light'
-               style={{ backgroundColor: payloadDeaths?.color }}>Deaths</div>
-        )}
-      </div>
-      <div className='d-flex w-100'>
-        {latestConfirmed != null && (
-          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestConfirmed)}</div>
-        )}
-        {latestNewConfirmed != null && (
-          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestNewConfirmed)}</div>
-        )}
-        {latestRecovered != null && (
-          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestRecovered)}</div>
-        )}
-        {latestDeaths != null && (
-          <div className='py-1 flex-1 text-center'>{numToGroupedString(latestDeaths)}</div>
-        )}
-      </div>
+      className='d-flex small border text-center rounded-lg mx-auto
+      cases-in-location-legend-container overflow-hidden mb-4 flex-wrap'
+    >
+      {latestConfirmed != null && (
+        <div className='flex-1'>
+          <div className='py-1'
+               style={{ backgroundColor: payloadConfirmed?.color }}>Confirmed
+          </div>
+          <div className='py-1'>{numToGroupedString(latestConfirmed)}</div>
+        </div>
+      )}
+
+      {latestNewConfirmed != null && (
+        <div className='flex-1'>
+          <div className='py-1'
+               style={{ backgroundColor: payloadNewConfirmed?.color }}>New
+          </div>
+          <div className='py-1'>{numToGroupedString(latestNewConfirmed)}</div>
+        </div>
+      )}
+
+      {latestRecovered != null && (
+        <div className='flex-1'>
+          <div className='py-1 text-light'
+               style={{ backgroundColor: payloadRecovered?.color }}>Recovered
+          </div>
+          <div className='py-1'>{numToGroupedString(latestRecovered)}</div>
+        </div>
+      )}
+
+      {latestDeaths != null && (
+        <div className='flex-1'>
+          <div className='py-1 text-light'
+               style={{ backgroundColor: payloadDeaths?.color }}>Deaths
+          </div>
+          <div className='py-1'>{numToGroupedString(latestDeaths)}</div>
+        </div>
+      )}
     </div>
   );
 };
