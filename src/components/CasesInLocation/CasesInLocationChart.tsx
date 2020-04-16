@@ -90,10 +90,7 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
 
       <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
         <small>
-          covid19incharts.com | source:&nbsp;
-          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last
-          updated:&nbsp;
-          {lastUpdated.toUTCString()}
+          covid19incharts.com | source: <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last updated: {lastUpdated.toUTCString()}
         </small>
       </p>
     </div>

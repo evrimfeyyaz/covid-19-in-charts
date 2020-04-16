@@ -127,6 +127,7 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
                     <Form.Label>Start from the day</Form.Label>
                     <Form.Control
                       as="select"
+                      className='custom-select'
                       onChange={handleExceedingPropertyChange}
                       value={exceedingProperty}
                     >

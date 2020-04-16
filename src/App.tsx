@@ -55,7 +55,7 @@ function App() {
           <div
             className='d-flex-when-width-not-sufficient text-center px-5 py-4 flex-grow-1 flex-column justify-content-center'>
             <h1 className='h4'>
-              Unfortunately, your screen is too small for viewing charts.
+              Your screen is too small for viewing charts.
             </h1>
 
             <p>
