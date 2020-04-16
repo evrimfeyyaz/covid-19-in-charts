@@ -4,10 +4,13 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
 import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
+import packageJson from '../../package.json';
 
 const Footer: FunctionComponent = () => {
+
+
   return (
-    <footer className='bg-dark text-light pt-4 pb-3 mt-5 small text-center'>
+    <footer className='bg-dark text-light pt-4 pb-3 mt-3 small text-center'>
       <Container>
         <Row>
           <Col>
@@ -33,23 +36,30 @@ const Footer: FunctionComponent = () => {
         <Row>
           <Col className='pt-2'>
             <h1 className='h6'>Charts</h1>
-            <ul className='list-inline'>
-              <li className='list-inline-item'>
-                <Link to={ROUTE_PATHS.diseaseProgression} className='link footer-link'>
-                  Disease Progression
+            <ul className='list-unstyled'>
+              <li className='list-item'>
+                <Link to={ROUTE_PATHS.casesInLocation} className='link footer-link'>
+                  Cases, Recoveries & Deaths
                 </Link>
+              </li>
+              <li className='list-item'>
+                More Charts to Come
               </li>
             </ul>
           </Col>
         </Row>
         <Row>
           <Col className='pt-2'>
-            Created by <a className='footer-link' href={EXTERNAL_LINKS.authorTwitter}>Evrim Persembe</a>.
+            <p>
+              Created by <a className='footer-link' href={EXTERNAL_LINKS.authorTwitter}>Evrim Persembe</a>.
+              <br />
+              v{packageJson.version}
+            </p>
           </Col>
         </Row>
       </Container>
     </footer>
-  )
+  );
 };
 
 export default Footer;

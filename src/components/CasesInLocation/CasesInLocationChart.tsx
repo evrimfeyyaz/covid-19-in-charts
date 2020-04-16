@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../store/CovidDataStore';
+import { DateValues } from '../../store/CovidDataStore';
 import {
   Bar,
   CartesianGrid,
@@ -11,11 +11,13 @@ import {
   YAxis,
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
-import SingleLocationProgressionTooltip from './SingleLocationProgressionTooltip';
-import { COLORS } from '../constants';
-import { prettifyMDYDate } from '../utilities/dateUtilities';
+import CasesInLocationTooltip from './CasesInLocationTooltip';
+import { COLORS } from '../../constants';
+import { prettifyMDYDate } from '../../utilities/dateUtilities';
+import CasesInLocationLegend from './CasesInLocationLegend';
+import { numToGroupedString } from '../../utilities/numUtilities';
 
-interface SingleLocationProgressionChartProps {
+interface CasesInLocationChartProps {
   data: DateValues,
   title: string,
   firstDate: string | undefined,
@@ -26,13 +28,13 @@ interface SingleLocationProgressionChartProps {
   isAnimationActive: boolean,
 }
 
-const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressionChartProps> = ({
-                                                                                                  data, firstDate, lastDate,
-                                                                                                  title, lastUpdated,
-                                                                                                  exceedingProperty,
-                                                                                                  exceedingValue,
-                                                                                                  isAnimationActive,
-                                                                                                }) => {
+const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
+                                                                              data, firstDate, lastDate,
+                                                                              title, lastUpdated,
+                                                                              exceedingProperty,
+                                                                              exceedingValue,
+                                                                              isAnimationActive,
+                                                                            }) => {
   let exceedingPropertyText = 'confirmed cases';
   if (exceedingProperty === 'deaths') {
     exceedingPropertyText = 'deaths';
@@ -52,15 +54,17 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
           <YAxis
             yAxisId="left"
             label={{ value: 'Confirmed Cases', angle: -90, position: 'left', dy: -60, dx: -15 }}
+            tickFormatter={numToGroupedString}
           />
           <YAxis
             yAxisId="right"
             orientation="right"
             domain={[0, dataMax => dataMax * 2]}
             label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
+            tickFormatter={numToGroupedString}
           />
-          <Tooltip content={SingleLocationProgressionTooltip} offset={30} />
-          <Legend align='center' verticalAlign='top' height={45} />
+          <Tooltip content={CasesInLocationTooltip} offset={30} />
+          <Legend align='center' verticalAlign='top' content={<CasesInLocationLegend data={data} />} />
           <Bar
             dataKey='newConfirmed' yAxisId='right'
             fill={COLORS.newConfirmed} name='New Cases'
@@ -86,10 +90,7 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
 
       <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
         <small>
-          covid19incharts.com | source:&nbsp;
-          <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last
-          updated:&nbsp;
-          {lastUpdated.toUTCString()}
+          covid19incharts.com | source: <a className='text-decoration-none' href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last updated: {lastUpdated.toUTCString()}
         </small>
       </p>
     </div>
@@ -115,4 +116,4 @@ const SingleLocationProgressionChart: FunctionComponent<SingleLocationProgressio
   );
 };
 
-export default SingleLocationProgressionChart;
+export default CasesInLocationChart;

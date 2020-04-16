@@ -1,44 +1,38 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## COVID-19 in Charts
+This is the source code for the [COVID-19 in Charts](https://covid19incharts.com) website.
 
-## Available Scripts
+The codebase is currently somewhat messy. If you are interested in helping, I would appreciate help with any of the following:
 
-In the project directory, you can run:
+1. Accessibility.
+2. Design.
+3. Testing.
+4. New chart ideas and implementations.
 
-### `yarn start`
+## About COVID-19 in Charts
+I created this website to help people see the COVID-19 data in a visual way, and give everyone a way to easily create shareable images of these visualizations.
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This website uses the [data provided by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19). This data isn't perfect, so, I wouldn't recommend using this website in any official manner.
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+## Running the app
+This application was developed in React.
 
-### `yarn test`
+To run the application, use:
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+yarn start
 
-### `yarn build`
+OR
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+npm start
+```
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+Afterwards, you should be able to visit the app at http://localhost:3000.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Looking for a web or mobile app developer?
 
-### `yarn eject`
+If you are looking for a web or mobile app developer, I might be available for freelance work. You can [find out more about me on my website](https://evrim.io).
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+---
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Author
+[evrimfeyyaz (Evrim Persembe)](https://evrim.io)

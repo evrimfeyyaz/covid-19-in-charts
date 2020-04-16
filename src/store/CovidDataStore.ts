@@ -36,6 +36,7 @@ export default class CovidDataStore {
   private static INDEX_OF_FIRST_DATE_COLUMN = 4;
   private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
   private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
+  private static LOCAL_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
 
   private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
@@ -81,13 +82,20 @@ export default class CovidDataStore {
   private _lastUpdated: Date | undefined;
 
   async loadData(): Promise<void> {
-    this._lastUpdated = await CovidDataStore.getDateOfLastCommitIncludingRepoDirectory();
-    const parsedConfirmedData = await this.getParsedDataFromURL(CovidDataStore.CONFIRMED_URL);
-    const parsedDeathsData = await this.getParsedDataFromURL(CovidDataStore.DEATHS_URL);
-    const parsedRecoveredData = await this.getParsedDataFromURL(CovidDataStore.RECOVERED_URL);
-    this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
-    this._locations = Object.keys(this.dataByLocation).sort((location1, location2) => location1.localeCompare(location2));
-    this.dataSetLength = this.dataByLocation[this._locations[0]].values.length;
+    const localStorageLoadResult = this.loadDataFromLocalStorage();
+
+    if (!localStorageLoadResult) {
+      this._lastUpdated = await CovidDataStore.getDateOfLastCommitIncludingRepoDirectory();
+      const parsedConfirmedData = await this.getParsedDataFromURL(CovidDataStore.CONFIRMED_URL);
+      const parsedDeathsData = await this.getParsedDataFromURL(CovidDataStore.DEATHS_URL);
+      const parsedRecoveredData = await this.getParsedDataFromURL(CovidDataStore.RECOVERED_URL);
+      this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
+
+      this.saveDataToLocalStorage();
+    }
+
+    this._locations = Object.keys(this.dataByLocation as DataByLocation).sort((location1, location2) => location1.localeCompare(location2));
+    this.dataSetLength = this.dataByLocation?.[this._locations[0]].values.length as number;
   }
 
   get locations(): string[] {
@@ -116,6 +124,47 @@ export default class CovidDataStore {
     }
 
     return _.cloneDeep(this.dataByLocation[location]);
+  }
+
+  private loadDataFromLocalStorage(): boolean {
+    const localDataExpirationTimeStr = localStorage.getItem('localDataExpirationTimeStr');
+
+    if (localDataExpirationTimeStr != null) {
+      const localDataExpirationTime = parseInt(localDataExpirationTimeStr);
+
+      if (Date.now() > localDataExpirationTime) {
+        return false;
+      }
+    }
+
+    const lastUpdatedTimeStr = localStorage.getItem('lastUpdatedTimeStr');
+    const dataByLocationJson = localStorage.getItem('dataByLocationJson');
+
+    if (lastUpdatedTimeStr != null && dataByLocationJson != null) {
+      const lastUpdatedTime = parseInt(lastUpdatedTimeStr);
+      const dataByLocation = JSON.parse(dataByLocationJson);
+
+      this._lastUpdated = new Date(lastUpdatedTime);
+      this.dataByLocation = dataByLocation;
+
+      return true;
+    }
+
+    return false;
+  }
+
+  private saveDataToLocalStorage() {
+    if (this._lastUpdated == null || this.dataByLocation == null) {
+      throw new Error('Attempted to save corrupt data to local storage.');
+    }
+
+    const localDataExpirationTimeStr = (Date.now() + CovidDataStore.LOCAL_DATA_VALIDITY_MS).toString();
+    const lastUpdatedTimeStr = this._lastUpdated?.getTime().toString();
+    const dataByLocationJson = JSON.stringify(this.dataByLocation);
+
+    localStorage.setItem('localDataExpirationTimeStr', localDataExpirationTimeStr);
+    localStorage.setItem('lastUpdatedTimeStr', lastUpdatedTimeStr);
+    localStorage.setItem('dataByLocationJson', dataByLocationJson);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {

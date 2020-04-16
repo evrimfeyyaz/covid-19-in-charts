@@ -3,14 +3,15 @@ import React, { FunctionComponent } from 'react';
 interface ShareButtonsProps {
   title: string,
   url: string,
+  small?: boolean
 }
 
-const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url }) => {
+const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url, small = false }) => {
   const encodedTitle = encodeURIComponent(title);
   const encodedURL = encodeURIComponent(url);
 
   return (
-    <div>
+    <div className={small ? 'small' : undefined}>
       <a className="resp-sharing-button__link"
          href={`https://facebook.com/sharer/sharer.php?u=${encodedURL}`} target="_blank"
          rel="noopener noreferrer" aria-label="">
