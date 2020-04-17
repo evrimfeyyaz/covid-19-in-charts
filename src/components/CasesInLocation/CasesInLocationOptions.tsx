@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { getAliasesForLocation } from '../../utilities/countryUtilities';
 
 export type ExceedingProperty = 'confirmed' | 'deaths';
 
@@ -97,13 +98,25 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     setInputValues({ ...inputValues, locations: locations });
   }
 
+  function filterLocationsBy(option: string, props: { text: string }) {
+    const location = option.toLowerCase().trim();
+    const text = props.text.toLowerCase().trim();
+    const aliases = getAliasesForLocation(option).map(alias => alias.toLowerCase().trim());
+
+    const allNames = [location, ...aliases];
+
+    return allNames.some(name => name.includes(text));
+  }
+
   return (
     <>
       <Form.Group>
         <Form.Label>Location</Form.Label>
+
         <Typeahead
           id='location-selection'
           options={locations}
+          filterBy={filterLocationsBy}
           placeholder="Select location..."
           highlightOnlyResult
           selectHintOnEnter

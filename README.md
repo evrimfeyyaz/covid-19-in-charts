@@ -28,6 +28,10 @@ npm start
 
 Afterwards, you should be able to visit the app at http://localhost:3000.
 
+## Attributions
+- GitHub Mark SVG: https://commons.wikimedia.org/wiki/File:Octicons-mark-github.svg
+- Sharing buttons: https://sharingbuttons.io/
+
 ## Looking for a web or mobile app developer?
 
 If you are looking for a web or mobile app developer, I might be available for freelance work. You can [find out more about me on my website](https://evrim.io).

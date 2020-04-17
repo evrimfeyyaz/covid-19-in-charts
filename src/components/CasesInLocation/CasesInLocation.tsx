@@ -37,6 +37,14 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
 
   useEffect(() => {
+    // Set current query params in the URL, just in case they are missing.
+    setLocation(location);
+    setExceedingProperty(exceedingProperty);
+    setExceedingValue(exceedingValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const data = store.getDataByLocation(location);
     const lastUpdated = store.lastUpdated;
     const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
