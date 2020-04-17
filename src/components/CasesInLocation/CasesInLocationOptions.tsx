@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { getAliasesForLocation } from '../../utilities/countryUtilities';
 
 export type ExceedingProperty = 'confirmed' | 'deaths';
 
@@ -46,6 +47,8 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     exceedingValue: [],
   });
 
+  const [locationsWithAliases, setLocationsWithAliases] = useState<{ location: string, aliases: string[] }[]>();
+
   useEffect(() => {
     const { locations, exceedingValue, exceedingProperty } = inputValues;
     const errors = validateInputs(locations, exceedingValue);
@@ -79,6 +82,13 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     }
   }, [inputValues, locations, onValuesChange, defaultLocation]);
 
+  useEffect(() => {
+    setLocationsWithAliases(locations.map(location => ({
+      location,
+      aliases: getAliasesForLocation(location),
+    })));
+  }, [locations]);
+
   function handleLocationMenuBlur() {
     if (inputValues.locations.length === 0) {
       setInputValues({ ...inputValues, locations: [location] });
@@ -101,9 +111,12 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     <>
       <Form.Group>
         <Form.Label>Location</Form.Label>
+
         <Typeahead
           id='location-selection'
-          options={locations}
+          labelKey={'location' as any}
+          options={locationsWithAliases as any}
+          filterBy={['aliases']}
           placeholder="Select location..."
           highlightOnlyResult
           selectHintOnEnter
