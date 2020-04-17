@@ -9,7 +9,7 @@ const About: FunctionComponent = () => {
   return (
     <Container>
       <Row>
-        <Col lg={{ span: 10, offset: 1 }}>
+        <Col xs={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }} xl={{ span: 6, offset: 3 }}>
           <h1 className='h3'>About COVID-19 in Charts</h1>
           <p>
             I created this website to help people see the COVID-19 data in a visual way, and give everyone a way
@@ -31,10 +31,6 @@ const About: FunctionComponent = () => {
             If you have any suggestions or comments, feel free to send them to <a
             href={`mailto:${EXTERNAL_LINKS.feedbackEmail}`}>{EXTERNAL_LINKS.feedbackEmail}</a>.
           </p>
-        </Col>
-      </Row>
-      <Row>
-        <Col lg={{ span: 8, offset: 2 }} className='mt-3'>
           <Card>
             <Card.Body>
               <Card.Title>
