@@ -9,6 +9,7 @@ interface ShareButtonsProps {
 const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url, small = false }) => {
   const encodedTitle = encodeURIComponent(title);
   const encodedURL = encodeURIComponent(url);
+  const twitterHashtags = 'covid19incharts,covid19';
 
   return (
     <div className={small ? 'small' : undefined}>
@@ -26,7 +27,7 @@ const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url, small 
       </a>
 
       <a className="resp-sharing-button__link"
-         href={`https://twitter.com/intent/tweet/?text=${encodedTitle}&url=${encodedURL}`}
+         href={`https://twitter.com/intent/tweet/?text=${encodedTitle}&url=${encodedURL}&hashtags=${twitterHashtags}`}
          target="_blank" rel="noopener noreferrer" aria-label="">
         <div className="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
           <div aria-hidden="true" className="resp-sharing-button__icon resp-sharing-button__icon--solid">
