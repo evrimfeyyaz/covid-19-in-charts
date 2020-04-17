@@ -47,8 +47,6 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     exceedingValue: [],
   });
 
-  const [locationsWithAliases, setLocationsWithAliases] = useState<{ location: string, aliases: string[] }[]>();
-
   useEffect(() => {
     const { locations, exceedingValue, exceedingProperty } = inputValues;
     const errors = validateInputs(locations, exceedingValue);
@@ -82,13 +80,6 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     }
   }, [inputValues, locations, onValuesChange, defaultLocation]);
 
-  useEffect(() => {
-    setLocationsWithAliases(locations.map(location => ({
-      location,
-      aliases: getAliasesForLocation(location),
-    })));
-  }, [locations]);
-
   function handleLocationMenuBlur() {
     if (inputValues.locations.length === 0) {
       setInputValues({ ...inputValues, locations: [location] });
@@ -107,6 +98,16 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     setInputValues({ ...inputValues, locations: locations });
   }
 
+  function filterLocationsBy(option: string, props: { text: string }) {
+    const location = option.toLowerCase().trim();
+    const text = props.text.toLowerCase().trim();
+    const aliases = getAliasesForLocation(option).map(alias => alias.toLowerCase().trim());
+
+    const allNames = [location, ...aliases];
+
+    return allNames.some(name => name.includes(text));
+  }
+
   return (
     <>
       <Form.Group>
@@ -114,9 +115,8 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
 
         <Typeahead
           id='location-selection'
-          labelKey={'location' as any}
-          options={locationsWithAliases as any}
-          filterBy={['aliases']}
+          options={locations}
+          filterBy={filterLocationsBy}
           placeholder="Select location..."
           highlightOnlyResult
           selectHintOnEnter
