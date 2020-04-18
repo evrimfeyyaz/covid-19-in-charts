@@ -1,8 +1,8 @@
 import { useLocation } from 'react-router-dom';
-import { SITE_INFO } from '../constants';
+import { getAbsoluteUrl } from './urlUtilities';
 
 export function useCanonicalURL() {
   const { pathname, search } = useLocation();
 
-  return `${SITE_INFO.baseUrl}${pathname}${search}`;
+  return getAbsoluteUrl(`${pathname}${search}`);
 }
