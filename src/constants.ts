@@ -20,7 +20,7 @@ export const EXTERNAL_LINKS = {
 };
 
 export const SITE_INFO = {
-  baseUrl: 'https://covid19incharts.com',
+  baseUrl: process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : 'https://covid19incharts.com',
   baseTitle: 'COVID-19 in Charts',
-  description: 'Various data related to COVID-10 visualized.',
+  description: 'Various data related to COVID-19 visualized.',
 };

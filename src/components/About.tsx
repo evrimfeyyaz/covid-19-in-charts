@@ -6,6 +6,7 @@ import { EXTERNAL_LINKS, ROUTE_PATHS, SITE_INFO } from '../constants';
 import Card from 'react-bootstrap/Card';
 import { createPageTitle } from '../utilities/metaUtilities';
 import { Helmet } from 'react-helmet';
+import { getAbsoluteUrl } from '../utilities/urlUtilities';
 
 const About: FunctionComponent = () => {
   return (
@@ -13,7 +14,7 @@ const About: FunctionComponent = () => {
       <Helmet>
         <title>{createPageTitle()}</title>
         <meta property="og:title" content={createPageTitle('About')} />
-        <meta property="og:url" content={`${SITE_INFO.baseUrl}${ROUTE_PATHS.about}`} />
+        <meta property="og:url" content={getAbsoluteUrl(ROUTE_PATHS.about)} />
       </Helmet>
 
       <Container>
