@@ -18,8 +18,23 @@ const ChartsIndex: FunctionComponent = () => {
                 Cases, Recoveries and Deaths
               </Card.Title>
               <Card.Text>
-                See the number of confirmed cases, new cases, recoveries and deaths.
+                See the number of confirmed cases, new cases, recoveries and deaths over time.
                 <Link to={ROUTE_PATHS.casesInLocation} className='stretched-link' />
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        <Col sm={6} lg={4}>
+          <Card className='my-3 m-sm-2'>
+            {/*<Card.Img variant="top" src={require('../images/cases-recoveries-and-deaths.jpg')} />*/}
+            <Card.Body>
+              <Card.Title>
+                Daily Numbers
+              </Card.Title>
+              <Card.Text>
+                See the daily number of confirmed cases, recoveries, deaths and other data points.
+                <Link to={ROUTE_PATHS.dailyNumbers} className='stretched-link' />
               </Card.Text>
             </Card.Body>
           </Card>
