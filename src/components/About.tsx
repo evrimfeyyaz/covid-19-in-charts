@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { EXTERNAL_LINKS, ROUTE_PATHS, SITE_INFO } from '../constants';
+import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
 import Card from 'react-bootstrap/Card';
 import { createPageTitle } from '../utilities/metaUtilities';
 import { Helmet } from 'react-helmet';
