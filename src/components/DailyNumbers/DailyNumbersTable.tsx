@@ -2,11 +2,10 @@ import React, { FunctionComponent } from 'react';
 import { DateValue } from '../../store/CovidDataStore';
 import { prettifyDate } from '../../utilities/dateUtilities';
 import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
 import { COLORS } from '../../constants';
 import { numToGroupedString } from '../../utilities/numUtilities';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
-import CardGroup from 'react-bootstrap/CardGroup';
+import CardDeck from 'react-bootstrap/CardDeck';
 
 interface DailyNumbersTableProps {
   data?: DateValue,
@@ -23,49 +22,51 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
   );
 
   if (data != null) {
-    const noData = 'No Data';
-
-    const confirmedValue = numToGroupedString(data.confirmed);
-    const newConfirmedValue = numToGroupedString(data.newConfirmed);
-    const recoveredValue = data.recovered ? numToGroupedString(data.recovered) : noData;
-    const deathsValue = data.deaths ? numToGroupedString(data.deaths) : noData;
+    const {
+      confirmed,
+      newConfirmed,
+      recovered,
+      deaths,
+      newRecovered,
+      newDeaths,
+      mortalityRate,
+      recoveryRate,
+    } = data;
 
     body = (
-      <Card.Body>
-        <CardGroup>
-          <Col>
-            <DailyNumbersTableItem
-              bgColor={COLORS.confirmed}
-              title='Confirmed Cases'
-              value={confirmedValue}
-            />
-          </Col>
+      <Card.Body className='px-5 py-4'>
+        <CardDeck>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.confirmed}
+            title='Confirmed Cases'
+            value={confirmed}
+          />
 
-          <Col>
-            <DailyNumbersTableItem
-              bgColor={COLORS.newConfirmed}
-              title='New Cases'
-              value={newConfirmedValue}
-            />
-          </Col>
-        </CardGroup>
-        <CardGroup className='mt-4'>
-          <Col>
-            <DailyNumbersTableItem
-              bgColor={COLORS.recovered}
-              title='Recovered'
-              value={recoveredValue}
-            />
-          </Col>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.newConfirmed}
+            title='New Cases'
+            value={newConfirmed}
+          />
+        </CardDeck>
+        <CardDeck>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.recovered}
+            title='Recovered'
+            value={recovered}
+            rateValue={recoveryRate}
+            newValue={newRecovered}
+            headerClassName='text-light'
+          />
 
-          <Col>
-            <DailyNumbersTableItem
-              bgColor={COLORS.deaths}
-              title='Deaths'
-              value={deathsValue}
-            />
-          </Col>
-        </CardGroup>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.deaths}
+            title='Deaths'
+            value={deaths}
+            rateValue={mortalityRate}
+            newValue={newDeaths}
+            headerClassName='text-light'
+          />
+        </CardDeck>
       </Card.Body>
     );
   }

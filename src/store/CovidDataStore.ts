@@ -1,6 +1,7 @@
 import parse from 'csv-parse';
 import _ from 'lodash';
 import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
+import packageJson from '../../package.json';
 
 interface ParsedCsvRow {
   readonly [key: string]: string | number
@@ -13,7 +14,11 @@ export interface DateValue {
   confirmed: number,
   newConfirmed: number,
   deaths: number | null,
-  recovered: number | null
+  newDeaths: number | null,
+  mortalityRate: number | null,
+  recovered: number | null,
+  newRecovered: number | null,
+  recoveryRate: number | null
 }
 
 export type DateValues = DateValue[];
@@ -25,8 +30,13 @@ export interface LocationData {
   values: DateValues,
 }
 
+type PartialDateValue = Pick<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'> &
+  Partial<Omit<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'>>
+
+type PartialLocationData = Omit<LocationData, 'values'> & { values: PartialDateValue[] }
+
 interface DataByLocation {
-  [location: string]: LocationData
+  [location: string]: PartialLocationData
 }
 
 export default class CovidDataStore {
@@ -43,8 +53,6 @@ export default class CovidDataStore {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
 
     const response = await fetch(commitDataUrl);
-
-    console.log(response);
 
     if (!response.ok) {
       throw this.fetchFailedError(response.status, response.statusText);
@@ -169,7 +177,50 @@ export default class CovidDataStore {
       throw CovidDataStore.invalidLocationError(location);
     }
 
-    return _.cloneDeep(this.dataByLocation[location]);
+    const locationData = this.dataByLocation[location];
+    const detailedLocationDataValues = locationData.values.map((value, index) => {
+      let newConfirmed = 0;
+      let newRecovered = null;
+      let newDeaths = null;
+      let recoveryRate: number | null = 0;
+      let mortalityRate: number | null = 0;
+
+      if (index > 0) {
+        const { confirmed, recovered, deaths } = value;
+        const yesterdaysData = locationData.values[index - 1];
+
+        if (recovered != null && yesterdaysData.recovered != null) {
+          newRecovered = recovered - yesterdaysData.recovered;
+        }
+
+        if (deaths != null && yesterdaysData.deaths != null) {
+          newDeaths = deaths - yesterdaysData.deaths;
+        }
+
+        if (confirmed != null && yesterdaysData.confirmed != null) {
+          newConfirmed = confirmed - yesterdaysData.confirmed;
+        }
+
+        if (confirmed != null && confirmed > 0) {
+          recoveryRate = recovered != null ? recovered / confirmed : null;
+          mortalityRate = deaths != null ? deaths / confirmed : null;
+        }
+      }
+
+      return {
+        ..._.cloneDeep(value),
+        newConfirmed,
+        newRecovered,
+        newDeaths,
+        recoveryRate,
+        mortalityRate,
+      };
+    });
+
+    return {
+      ..._.cloneDeep(_.omit(locationData, 'values')),
+      values: detailedLocationDataValues,
+    };
   }
 
   getDataByLocationAndDate(location: string, date: Date): DateValue {
@@ -187,11 +238,13 @@ export default class CovidDataStore {
 
   private loadDataFromLocalStorage(): boolean {
     const localDataExpirationTimeStr = localStorage.getItem('localDataExpirationTimeStr');
+    const version = localStorage.getItem('version');
+    const currentVersion = packageJson.version;
 
     if (localDataExpirationTimeStr != null) {
       const localDataExpirationTime = parseInt(localDataExpirationTimeStr);
 
-      if (Date.now() > localDataExpirationTime) {
+      if (Date.now() > localDataExpirationTime || version !== currentVersion) {
         return false;
       }
     }
@@ -223,7 +276,9 @@ export default class CovidDataStore {
 
     localStorage.setItem('localDataExpirationTimeStr', localDataExpirationTimeStr);
     localStorage.setItem('lastUpdatedTimeStr', lastUpdatedTimeStr);
+    console.log(dataByLocationJson);
     localStorage.setItem('dataByLocationJson', dataByLocationJson);
+    localStorage.setItem('version', packageJson.version);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
@@ -323,8 +378,7 @@ export default class CovidDataStore {
         location = `${location} (${provinceOrState})`;
       }
 
-      let prevDateStr: string | null = null;
-      const values = Object.keys(confirmedData).reduce<DateValue[]>((result, dateStr, index) => {
+      const values = Object.keys(confirmedData).reduce<PartialDateValue[]>((result, dateStr, index) => {
         if (CovidDataStore.isIndexOfDateColumn(index)) {
           const confirmed = confirmedData[dateStr] as number;
 
@@ -338,14 +392,7 @@ export default class CovidDataStore {
             recovered = recoveredData[dateStr] as number;
           }
 
-          let newConfirmed = 0;
-          if (prevDateStr != null) {
-            const yesterdaysConfirmed = confirmedData[prevDateStr] as number;
-            newConfirmed = Math.max(0, confirmed - yesterdaysConfirmed);
-          }
-
-          result = [...result, { date: dateStr, confirmed, newConfirmed, deaths, recovered }];
-          prevDateStr = dateStr;
+          result = [...result, { date: dateStr, confirmed, deaths, recovered }];
         }
 
         return result;
@@ -389,7 +436,7 @@ export default class CovidDataStore {
     Object.keys(formattedData).forEach((location) => {
       const locationData = formattedData[location];
 
-      let countryTotalData: LocationData;
+      let countryTotalData: PartialLocationData;
       if (location.includes('China')) {
         countryTotalData = chinaTotalData;
       } else if (location.includes('Australia')) {
@@ -405,7 +452,6 @@ export default class CovidDataStore {
       } else {
         countryTotalData.values.forEach((value, index) => {
           countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
-          countryTotalData.values[index].newConfirmed += locationData.values[index].newConfirmed;
 
           const totalDeaths = countryTotalData.values[index].deaths;
           const locationDeaths = locationData.values[index].deaths;
