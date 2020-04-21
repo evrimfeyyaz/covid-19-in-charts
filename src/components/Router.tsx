@@ -19,7 +19,7 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
           <CasesInLocation store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.dailyNumbers}>
-          <DailyNumbers />
+          <DailyNumbers store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.about}>
           <About />

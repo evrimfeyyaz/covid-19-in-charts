@@ -1,21 +1,19 @@
-export function prettifyMDYDate(dateStr: string) {
-  const dateStrSplit = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
-  const dayStr = dateStrSplit?.[2];
-  const monthStr = dateStrSplit?.[1];
-  const yearStr = dateStrSplit?.[3];
+import { format, parse } from 'date-fns';
 
-  if (
-    typeof dayStr !== 'string' ||
-    typeof monthStr !== 'string' ||
-    typeof yearStr !== 'string'
-  ) {
-    throw new Error('Invalid M/D/Y string.');
-  }
+const dateStrFormat = 'M/d/yy';
 
-  const day = parseInt(dayStr);
-  const month = parseInt(monthStr) - 1;
-  const year = parseInt(`20${yearStr}`);
-  const dateObj = new Date(year, month, day);
+export function MDYStringToDate(dateStr: string): Date {
+  return parse(dateStr, dateStrFormat, new Date());
+}
 
-  return dateObj.toDateString();
+export function prettifyDate(date: Date): string {
+  return format(date, 'PP');
+}
+
+export function prettifyMDYDate(dateStr: string): string {
+  return prettifyDate(MDYStringToDate(dateStr));
+}
+
+export function dateToMDYString(date: Date): string {
+  return format(date, dateStrFormat);
 }

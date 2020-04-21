@@ -1,5 +1,6 @@
 import parse from 'csv-parse';
 import _ from 'lodash';
+import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
 
 interface ParsedCsvRow {
   readonly [key: string]: string | number
@@ -42,6 +43,13 @@ export default class CovidDataStore {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
 
     const response = await fetch(commitDataUrl);
+
+    console.log(response);
+
+    if (!response.ok) {
+      throw this.fetchFailedError(response.status, response.statusText);
+    }
+
     const json = await response.json();
 
     return new Date(json[0]['commit']['author']['date']);
@@ -76,10 +84,20 @@ export default class CovidDataStore {
     return new Error('Store is not populated. Make sure to first call the `loadData` method.');
   }
 
+  private static fetchedDataAnomalyError() {
+    return new Error('The data fetched from the server seems to be empty or in wrong format.');
+  }
+
+  private static fetchFailedError(status: number, statusText: string) {
+    return new Error(`There was an error fetching the data. Response status: ${status} - ${statusText}`);
+  }
+
   private dataByLocation: DataByLocation | undefined;
   private dataSetLength: number = 0;
   private _locations: string[] | undefined;
   private _lastUpdated: Date | undefined;
+  private _firstDate: Date | undefined;
+  private _lastDate: Date | undefined;
 
   async loadData(): Promise<void> {
     const localStorageLoadResult = this.loadDataFromLocalStorage();
@@ -95,7 +113,19 @@ export default class CovidDataStore {
     }
 
     this._locations = Object.keys(this.dataByLocation as DataByLocation).sort((location1, location2) => location1.localeCompare(location2));
-    this.dataSetLength = this.dataByLocation?.[this._locations[0]].values.length as number;
+
+    if (this._locations.length === 0) {
+      throw CovidDataStore.fetchedDataAnomalyError();
+    }
+
+    const firstLocationData = this.dataByLocation?.[this._locations[0]].values;
+    if (firstLocationData == null || firstLocationData.length === 0) {
+      throw CovidDataStore.fetchedDataAnomalyError();
+    }
+
+    this.dataSetLength = firstLocationData.length as number;
+    this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
+    this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
   }
 
   get locations(): string[] {
@@ -114,6 +144,22 @@ export default class CovidDataStore {
     return new Date(this._lastUpdated.getTime());
   }
 
+  get firstDate(): Date {
+    if (this._firstDate == null) {
+      throw CovidDataStore.notLoadedError();
+    }
+
+    return new Date(this._firstDate.getTime());
+  }
+
+  get lastDate(): Date {
+    if (this._lastDate == null) {
+      throw CovidDataStore.notLoadedError();
+    }
+
+    return new Date(this._lastDate.getTime());
+  }
+
   getDataByLocation(location: string): LocationData {
     if (this.dataByLocation == null) {
       throw CovidDataStore.notLoadedError();
@@ -124,6 +170,19 @@ export default class CovidDataStore {
     }
 
     return _.cloneDeep(this.dataByLocation[location]);
+  }
+
+  getDataByLocationAndDate(location: string, date: Date): DateValue {
+    const locationData = this.getDataByLocation(location);
+    const dateStr = dateToMDYString(date);
+
+    const data = locationData.values.find(dateValues => dateValues.date === dateStr);
+
+    if (data == null) {
+      throw new Error(`Cannot find any data for ${date.toDateString()}`);
+    }
+
+    return data;
   }
 
   private loadDataFromLocalStorage(): boolean {
@@ -169,6 +228,11 @@ export default class CovidDataStore {
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
     const rawResponse = await fetch(url);
+
+    if (!rawResponse.ok) {
+      throw CovidDataStore.fetchFailedError(rawResponse.status, rawResponse.statusText);
+    }
+
     const rawData = await rawResponse.text();
 
     return await this.parseCsv(rawData);
