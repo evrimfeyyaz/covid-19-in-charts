@@ -25,8 +25,8 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
   }
 
   return (
-    <Card className='shadow rounded-lg mb-4'>
-      <Card.Header style={{ backgroundColor: headerBgColor }} className={headerClassName}>
+    <Card className='shadow rounded-lg mb-4 text-center'>
+      <Card.Header style={{ backgroundColor: headerBgColor }} className={'h5 ' + headerClassName}>
         {fullTitle}
       </Card.Header>
       <Card.Body>

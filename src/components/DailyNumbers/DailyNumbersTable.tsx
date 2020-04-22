@@ -3,9 +3,9 @@ import { DateValue } from '../../store/CovidDataStore';
 import { prettifyDate } from '../../utilities/dateUtilities';
 import Card from 'react-bootstrap/Card';
 import { COLORS } from '../../constants';
-import { numToGroupedString } from '../../utilities/numUtilities';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
-import CardDeck from 'react-bootstrap/CardDeck';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 interface DailyNumbersTableProps {
   data?: DateValue,
@@ -35,38 +35,52 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
 
     body = (
       <Card.Body className='px-5 py-4'>
-        <CardDeck>
-          <DailyNumbersTableItem
-            headerBgColor={COLORS.confirmed}
-            title='Confirmed Cases'
-            value={confirmed}
-          />
+        <Row>
+          <Col>
+            <DailyNumbersTableItem
+              headerBgColor={COLORS.confirmed}
+              title='Confirmed Cases'
+              value={confirmed}
+            />
+          </Col>
+          <Col>
+            <DailyNumbersTableItem
+              headerBgColor={COLORS.newConfirmed}
+              title='New Cases'
+              value={newConfirmed}
+            />
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <DailyNumbersTableItem
+              headerBgColor={COLORS.recovered}
+              title='Recovered'
+              value={recovered}
+              rateValue={recoveryRate}
+              newValue={newRecovered}
+              headerClassName='text-light'
+            />
+          </Col>
+          <Col>
+            <DailyNumbersTableItem
+              headerBgColor={COLORS.deaths}
+              title='Deaths'
+              value={deaths}
+              rateValue={mortalityRate}
+              newValue={newDeaths}
+              headerClassName='text-light'
+            />
+          </Col>
+        </Row>
 
-          <DailyNumbersTableItem
-            headerBgColor={COLORS.newConfirmed}
-            title='New Cases'
-            value={newConfirmed}
-          />
-        </CardDeck>
-        <CardDeck>
-          <DailyNumbersTableItem
-            headerBgColor={COLORS.recovered}
-            title='Recovered'
-            value={recovered}
-            rateValue={recoveryRate}
-            newValue={newRecovered}
-            headerClassName='text-light'
-          />
-
-          <DailyNumbersTableItem
-            headerBgColor={COLORS.deaths}
-            title='Deaths'
-            value={deaths}
-            rateValue={mortalityRate}
-            newValue={newDeaths}
-            headerClassName='text-light'
-          />
-        </CardDeck>
+        <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
+          <small>
+            covid19incharts.com | source: <a className='text-decoration-none'
+                                             href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last
+            updated: {lastUpdated.toUTCString()}
+          </small>
+        </p>
       </Card.Body>
     );
   }
@@ -77,13 +91,6 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
       <p className='small text-muted ml-1'>{prettifyDate(date)}</p>
       <Card className='shadow-lg border-0 mt-3' style={{ borderRadius: 15 }}>
         {body}
-        <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
-          <small>
-            covid19incharts.com | source: <a className='text-decoration-none'
-                                             href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> | last
-            updated: {lastUpdated.toUTCString()}
-          </small>
-        </p>
       </Card>
     </>
   );
