@@ -11,7 +11,7 @@ import Helmet from 'react-helmet';
 import { createPageTitle } from '../../utilities/metaUtilities';
 import { useCanonicalURL } from '../../utilities/useCanonicalURL';
 import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
-import { downloadRechartsChart } from '../../utilities/chartToImageUtilities';
+import { downloadNode } from '../../utilities/nodeToImageUtilities';
 import ShareAndDownload from '../ShareAndDownload';
 
 interface CasesInLocationProps {
@@ -70,7 +70,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   function handleDownloadClick() {
     setAreChartAnimationsActive(false);
     const node = document.getElementById(chartId) as HTMLElement;
-    downloadRechartsChart(node)
+    downloadNode(node)
       .finally(() => setAreChartAnimationsActive(true));
   }
 

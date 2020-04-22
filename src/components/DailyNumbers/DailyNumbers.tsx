@@ -8,7 +8,7 @@ import Helmet from 'react-helmet';
 import { useCanonicalURL } from '../../utilities/useCanonicalURL';
 import CovidDataStore, { DateValue } from '../../store/CovidDataStore';
 import { StringParam, DateParam, useQueryParam } from 'use-query-params';
-import { downloadRechartsChart } from '../../utilities/chartToImageUtilities';
+import { downloadNode } from '../../utilities/nodeToImageUtilities';
 import ShareAndDownload from '../ShareAndDownload';
 import DailyNumbersOptions from './DailyNumbersOptions';
 import DailyNumbersTable from './DailyNumbersTable';
@@ -70,7 +70,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   function handleDownloadClick() {
     const node = document.getElementById(tableId) as HTMLElement;
-    downloadRechartsChart(node);
+    downloadNode(node);
   }
 
   let body = <Loading />;

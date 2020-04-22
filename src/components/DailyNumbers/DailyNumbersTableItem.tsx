@@ -19,15 +19,12 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
   const rateValueStr = rateValue ? (rateValue * 100).toFixed(2) : undefined;
   const newValueStr = newValue ? `+${numToGroupedString(newValue)}` : undefined;
 
-  let fullTitle = title;
-  if (rateValueStr != null) {
-    fullTitle += ` (${rateValueStr}%)`;
-  }
-
   return (
     <Card className='shadow rounded-lg mb-4 text-center'>
       <Card.Header style={{ backgroundColor: headerBgColor }} className={'h5 ' + headerClassName}>
-        {fullTitle}
+        {title} {rateValueStr && (
+          <small>({rateValueStr}%)</small>
+        )}
       </Card.Header>
       <Card.Body>
         <Card.Text>

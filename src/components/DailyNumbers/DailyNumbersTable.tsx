@@ -36,14 +36,14 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
     body = (
       <Card.Body className='px-5 py-4'>
         <Row>
-          <Col>
+          <Col xs={6}>
             <DailyNumbersTableItem
               headerBgColor={COLORS.confirmed}
               title='Confirmed Cases'
               value={confirmed}
             />
           </Col>
-          <Col>
+          <Col xs={6}>
             <DailyNumbersTableItem
               headerBgColor={COLORS.newConfirmed}
               title='New Cases'
@@ -52,7 +52,7 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
           </Col>
         </Row>
         <Row>
-          <Col>
+          <Col xs={6}>
             <DailyNumbersTableItem
               headerBgColor={COLORS.recovered}
               title='Recovered'
@@ -62,7 +62,7 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data, da
               headerClassName='text-light'
             />
           </Col>
-          <Col>
+          <Col xs={6}>
             <DailyNumbersTableItem
               headerBgColor={COLORS.deaths}
               title='Deaths'
