@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
-import { DateValue } from '../../store/CovidDataStore';
-import { prettifyDate } from '../../utilities/dateUtilities';
+import { DateValue } from '../../../store/CovidDataStore';
+import { prettifyDate } from '../../../utilities/dateUtilities';
 import Card from 'react-bootstrap/Card';
-import { COLORS } from '../../constants';
+import { COLORS } from '../../../constants';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';

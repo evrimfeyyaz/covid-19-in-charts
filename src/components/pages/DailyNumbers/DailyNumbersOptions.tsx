@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { getAliasesForLocation } from '../../utilities/countryUtilities';
+import { getAliasesForLocation } from '../../../utilities/countryUtilities';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import ReactDatePicker from 'react-datepicker';

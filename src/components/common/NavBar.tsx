@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { EXTERNAL_LINKS, ROUTE_PATHS } from '../constants';
+import { EXTERNAL_LINKS, ROUTE_PATHS } from '../../constants';
 import { useLocation } from 'react-router-dom';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 

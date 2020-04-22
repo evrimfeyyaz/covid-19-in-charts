@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
-import { numToGroupedString } from '../../utilities/numUtilities';
+import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface DailyNumbersTableItemProps {
   headerBgColor: string,

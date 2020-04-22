@@ -1,18 +1,18 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { DateValues, LocationData } from '../../store/CovidDataStore';
+import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
 import CasesInLocationChart from './CasesInLocationChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
-import Loading from '../Loading';
+import Loading from '../../common/Loading';
 import Helmet from 'react-helmet';
-import { createPageTitle } from '../../utilities/metaUtilities';
-import { useCanonicalURL } from '../../utilities/useCanonicalURL';
+import { createPageTitle } from '../../../utilities/metaUtilities';
+import { useCanonicalURL } from '../../../utilities/useCanonicalURL';
 import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
-import { downloadNode } from '../../utilities/nodeToImageUtilities';
-import ShareAndDownload from '../ShareAndDownload';
+import { downloadNode } from '../../../utilities/nodeToImageUtilities';
+import ShareAndDownload from '../../common/ShareAndDownload';
 
 interface CasesInLocationProps {
   store: CovidDataStore,

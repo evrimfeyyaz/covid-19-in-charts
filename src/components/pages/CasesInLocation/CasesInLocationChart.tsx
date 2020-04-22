@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../../store/CovidDataStore';
+import { DateValues } from '../../../store/CovidDataStore';
 import {
   Bar,
   CartesianGrid,
@@ -12,10 +12,10 @@ import {
 } from 'recharts';
 import Card from 'react-bootstrap/Card';
 import CasesInLocationTooltip from './CasesInLocationTooltip';
-import { COLORS } from '../../constants';
-import { prettifyMDYDate } from '../../utilities/dateUtilities';
+import { COLORS } from '../../../constants';
+import { prettifyMDYDate } from '../../../utilities/dateUtilities';
 import CasesInLocationLegend from './CasesInLocationLegend';
-import { numToGroupedString } from '../../utilities/numUtilities';
+import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesInLocationChartProps {
   data: DateValues,

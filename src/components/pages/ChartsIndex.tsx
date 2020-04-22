@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
-import { ROUTE_PATHS } from '../constants';
+import { ROUTE_PATHS } from '../../constants';
 
 const ChartsIndex: FunctionComponent = () => {
   return (
@@ -12,7 +12,7 @@ const ChartsIndex: FunctionComponent = () => {
       <Row>
         <Col sm={6} lg={4}>
           <Card className='my-3 m-sm-2'>
-            <Card.Img variant="top" src={require('../images/cases-recoveries-and-deaths.jpg')} />
+            <Card.Img variant="top" src={require('../../images/cases-recoveries-and-deaths.jpg')} />
             <Card.Body>
               <Card.Title>
                 Cases, Recoveries and Deaths
@@ -42,7 +42,7 @@ const ChartsIndex: FunctionComponent = () => {
 
         <Col sm={6} lg={4}>
           <Card className='my-3 m-sm-2'>
-            <Card.Img variant="top" src={require('../images/more-charts-to-come.jpg')} />
+            <Card.Img variant="top" src={require('../../images/more-charts-to-come.jpg')} />
             <Card.Body>
               <Card.Title>
                 More Visualizations to Come

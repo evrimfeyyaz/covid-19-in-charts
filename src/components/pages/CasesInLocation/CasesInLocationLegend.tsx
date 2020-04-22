@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../../store/CovidDataStore';
-import { numToGroupedString } from '../../utilities/numUtilities';
+import { DateValues } from '../../../store/CovidDataStore';
+import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesInLocationLegendProps {
   payload?: {
