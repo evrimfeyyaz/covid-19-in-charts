@@ -1,26 +1,20 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Loading from '../../common/Loading';
-import { createPageTitle } from '../../../utilities/metaUtilities';
-import Container from 'react-bootstrap/Container';
-import Helmet from 'react-helmet';
-import { useCanonicalURL } from '../../../utilities/useCanonicalURL';
 import CovidDataStore, { DateValue } from '../../../store/CovidDataStore';
 import { StringParam, DateParam, BooleanParam, useQueryParam } from 'use-query-params';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
-import ShareAndDownload from '../../common/ShareAndDownload';
 import DailyNumbersOptions from './DailyNumbersOptions';
 import DailyNumbersTable from './DailyNumbersTable';
 import { isSameDay } from 'date-fns';
+import DataPage from '../../common/DataPage';
+import { SETTINGS } from '../../../constants';
+import { prettifyDate } from '../../../utilities/dateUtilities';
 
 interface DailyNumbersProps {
   store: CovidDataStore,
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
-  const canonicalUrl = useCanonicalURL();
-  const defaultLocation = 'US';
+  const { defaultLocation } = SETTINGS;
 
   const [locations] = useState(store.locations);
   const [data, setData] = useState<DateValue>();
@@ -34,6 +28,8 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   const tableId = 'daily-numbers';
   const title = `COVID-19 Daily Numbers: ${location}`;
+  const subtitle = (date != null || lastDate != null) ? prettifyDate(date ?? lastDate as Date) : '';
+  const pageDescription = `See the daily COVID-19 data for ${location}.`;
 
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
@@ -78,7 +74,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
       setDate(undefined);
       setLatest(true);
     } else {
-      setDate(dateNew)
+      setDate(dateNew);
       setLatest(undefined);
     }
   }
@@ -88,54 +84,43 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     downloadNode(node);
   }
 
-  let body = <Loading />;
-
-  if (data != null && lastUpdated != null && firstDate != null && lastDate != null && (date != null || latest != null)) {
-    const dateToUse = (latest ? lastDate : date) as Date;
-
-    body = (
-      <Row>
-        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          <DailyNumbersOptions
-            locations={locations}
-            location={location}
-            date={dateToUse}
-            minDate={firstDate}
-            maxDate={lastDate}
-            onLocationChange={handleLocationChange}
-            onDateChange={handleDateChange}
-          />
-          <div className='mt-auto d-none d-lg-block'>
-            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} smallButtons />
-          </div>
-        </Col>
-        <Col>
-          <div id={tableId}>
-            <DailyNumbersTable date={dateToUse} title={title} lastUpdated={lastUpdated} data={data} />
-          </div>
-        </Col>
-        <Row className='d-lg-none mt-3'>
-          <Col className='px-5'>
-            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} />
-          </Col>
-        </Row>
-      </Row>
+  function hasLoaded() {
+    return (
+      data != null &&
+      lastUpdated != null &&
+      firstDate != null &&
+      lastDate != null &&
+      (date != null || latest != null)
     );
   }
 
-  const pageTitle = createPageTitle(title);
-  let pageDescription = `See the daily COVID-19 data for ${location}.`;
+  const dateToUse = (latest ? lastDate : date) as Date;
+  const bodyComponent = (<DailyNumbersTable data={data} />);
+
+  const optionsComponent = (
+    <DailyNumbersOptions
+      locations={locations}
+      location={location}
+      date={dateToUse}
+      minDate={firstDate as Date}
+      maxDate={lastDate as Date}
+      onLocationChange={handleLocationChange}
+      onDateChange={handleDateChange}
+    />
+  );
 
   return (
-    <Container>
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:url" content={canonicalUrl} />
-      </Helmet>
-      {body}
-    </Container>
+    <DataPage
+      title={title}
+      subTitle={subtitle}
+      pageDescription={pageDescription}
+      lastUpdated={lastUpdated as Date}
+      hasLoaded={hasLoaded()}
+      bodyComponent={bodyComponent}
+      optionsComponent={optionsComponent}
+      dataContainerId={tableId}
+      onDownloadClick={handleDownloadClick}
+    />
   );
 };
 

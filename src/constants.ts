@@ -25,3 +25,7 @@ export const SITE_INFO = {
   baseTitle: 'COVID-19 in Charts',
   description: 'Various data related to COVID-19 visualized.',
 };
+
+export const SETTINGS = {
+  defaultLocation: 'US',
+};
