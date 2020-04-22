@@ -7,11 +7,12 @@ import Container from 'react-bootstrap/Container';
 import Helmet from 'react-helmet';
 import { useCanonicalURL } from '../../utilities/useCanonicalURL';
 import CovidDataStore, { DateValue } from '../../store/CovidDataStore';
-import { StringParam, DateParam, useQueryParam } from 'use-query-params';
+import { StringParam, DateParam, BooleanParam, useQueryParam } from 'use-query-params';
 import { downloadNode } from '../../utilities/nodeToImageUtilities';
 import ShareAndDownload from '../ShareAndDownload';
 import DailyNumbersOptions from './DailyNumbersOptions';
 import DailyNumbersTable from './DailyNumbersTable';
+import { isSameDay } from 'date-fns';
 
 interface DailyNumbersProps {
   store: CovidDataStore,
@@ -29,6 +30,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
   const [date, setDate] = useQueryParam('date', DateParam);
+  const [latest, setLatest] = useQueryParam('latest', BooleanParam);
 
   const tableId = 'daily-numbers';
   const title = `COVID-19 Daily Numbers: ${location}`;
@@ -36,9 +38,13 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
     setLocation(location);
-    setDate(date ?? lastDate);
+    if (date == null) {
+      setLatest(true);
+    } else {
+      setDate(date);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lastDate]);
+  }, []);
 
   useEffect(() => {
     const firstDate = store.firstDate;
@@ -47,24 +53,33 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     setFirstDate(firstDate);
     setLastDate(lastDate);
 
-    if (date == null) {
-      return;
+    let dateToUse: Date;
+    if (latest) {
+      dateToUse = lastDate;
+    } else if (date != null) {
+      dateToUse = date;
+    } else {
+      dateToUse = lastDate;
     }
 
-    const data = store.getDataByLocationAndDate(location, date);
+    const data = store.getDataByLocationAndDate(location, dateToUse);
     const lastUpdated = store.lastUpdated;
 
     setData(data);
     setLastUpdated(lastUpdated);
-  }, [store, location, date]);
+  }, [store, location, date, latest]);
 
-  function handleOptionsChange(locationNew: string, dateNew: Date) {
-    if (location !== locationNew) {
-      setLocation(locationNew);
-    }
+  function handleLocationChange(locationNew: string) {
+    setLocation(locationNew);
+  }
 
-    if (date?.getTime() !== dateNew.getTime()) {
-      setDate(dateNew);
+  function handleDateChange(dateNew: Date) {
+    if (lastDate && isSameDay(dateNew, lastDate)) {
+      setDate(undefined);
+      setLatest(true);
+    } else {
+      setDate(dateNew)
+      setLatest(undefined);
     }
   }
 
@@ -75,25 +90,28 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   let body = <Loading />;
 
-  if (data != null && lastUpdated != null && firstDate != null && lastDate != null && date != null) {
+  if (data != null && lastUpdated != null && firstDate != null && lastDate != null && (date != null || latest != null)) {
+    const dateToUse = (latest ? lastDate : date) as Date;
+
     body = (
       <Row>
         <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
           <DailyNumbersOptions
             locations={locations}
             location={location}
-            defaultLocation={defaultLocation}
-            date={date}
+            date={dateToUse}
             minDate={firstDate}
             maxDate={lastDate}
-            onValuesChange={handleOptionsChange} />
+            onLocationChange={handleLocationChange}
+            onDateChange={handleDateChange}
+          />
           <div className='mt-auto d-none d-lg-block'>
             <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} smallButtons />
           </div>
         </Col>
         <Col>
           <div id={tableId}>
-            <DailyNumbersTable date={date} title={title} lastUpdated={lastUpdated} data={data} />
+            <DailyNumbersTable date={dateToUse} title={title} lastUpdated={lastUpdated} data={data} />
           </div>
         </Col>
         <Row className='d-lg-none mt-3'>

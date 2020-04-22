@@ -1,71 +1,40 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
+import React, { FunctionComponent } from 'react';
 import { getAliasesForLocation } from '../../utilities/countryUtilities';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-interface InputValues {
-  locations: string[],
-  date: Date,
-}
-
-interface InputErrors {
-  locations: string[]
-}
+import { isSameDay } from 'date-fns';
 
 interface DailyNumbersOptionsProps {
-  defaultLocation: string,
   minDate: Date,
   maxDate: Date,
   locations: string[],
   location: string,
   date: Date,
-  onValuesChange: (location: string, date: Date) => void,
+  onDateChange: (date: Date) => void,
+  onLocationChange: (location: string) => void,
 }
 
 const DailyNumbersOptions: FunctionComponent<DailyNumbersOptionsProps> = ({
-                                                                            defaultLocation, locations,
-                                                                            minDate, maxDate,
-                                                                            location, date, onValuesChange,
+                                                                            locations, minDate, maxDate,
+                                                                            location, date,
+                                                                            onDateChange, onLocationChange,
                                                                           }) => {
-  const [inputValues, setInputValues] = useState<InputValues>({
-    locations: [location],
-    date,
-  });
-
-  useEffect(() => {
-    const { locations, date } = inputValues;
-    const errors = validateInputs(locations);
-
-    if (errors.locations.length === 0) {
-      let selectedLocation = inputValues.locations[0];
-
-      if (locations.indexOf(selectedLocation) === -1) {
-        selectedLocation = defaultLocation;
-
-        setInputValues({
-          ...inputValues,
-          locations: [selectedLocation],
-        });
-      }
-
-      onValuesChange(selectedLocation, date);
-    }
-  }, [inputValues, locations, onValuesChange, defaultLocation]);
-
-  function handleLocationMenuBlur() {
-    if (inputValues.locations.length === 0) {
-      setInputValues({ ...inputValues, locations: [location] });
-    }
-  }
-
   function handleLocationChange(locations: string[]) {
-    setInputValues({ ...inputValues, locations: locations });
+    if (locations != null && locations.length > 0 && locations[0] !== location) {
+      onLocationChange(locations[0]);
+    }
   }
 
-  function handleDateChange(date: Date) {
-    setInputValues({ ...inputValues, date });
+  function handleDateChange(newDate: Date) {
+    if (newDate != null && !isSameDay(newDate, date)) {
+      onDateChange(newDate);
+    }
+  }
+
+  function handleShowLatestClick() {
+    handleDateChange(maxDate);
   }
 
   function filterLocationsBy(option: string, props: { text: string }) {
@@ -91,14 +60,22 @@ const DailyNumbersOptions: FunctionComponent<DailyNumbersOptionsProps> = ({
           selectHintOnEnter
           clearButton
           onChange={handleLocationChange}
-          onBlur={handleLocationMenuBlur}
-          selected={inputValues.locations}
+          defaultInputValue={location}
           paginationText='Show more locations'
         />
       </Form.Group>
 
       <Form.Group>
-        <Form.Label>Date</Form.Label>
+        <div className='d-flex align-items-baseline justify-content-between'>
+          <Form.Label>Date</Form.Label>
+          <button
+            type="button"
+            className="btn btn-sm btn-primary"
+            onClick={handleShowLatestClick}
+          >
+            Show Latest
+          </button>
+        </div>
         <ReactDatePicker
           selected={date}
           onChange={handleDateChange}
@@ -112,19 +89,5 @@ const DailyNumbersOptions: FunctionComponent<DailyNumbersOptionsProps> = ({
     </>
   );
 };
-
-function validateInputs(selectedLocations: string[]): InputErrors {
-  let errors: InputErrors = {
-    locations: [],
-  };
-
-  if (selectedLocations.length === 0) {
-    errors.locations = ['No location selected.'];
-  } else {
-    errors.locations = [];
-  }
-
-  return errors;
-}
 
 export default DailyNumbersOptions;
