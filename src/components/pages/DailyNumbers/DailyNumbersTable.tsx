@@ -29,46 +29,42 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data }) 
     } = data;
 
     body = (
-      <>
-        <Row>
-          <Col xs={6}>
-            <DailyNumbersTableItem
-              headerBgColor={COLORS.confirmed}
-              title='Confirmed Cases'
-              value={confirmed}
-            />
-          </Col>
-          <Col xs={6}>
-            <DailyNumbersTableItem
-              headerBgColor={COLORS.newConfirmed}
-              title='New Cases'
-              value={newConfirmed}
-            />
-          </Col>
-        </Row>
-        <Row>
-          <Col xs={6}>
-            <DailyNumbersTableItem
-              headerBgColor={COLORS.recovered}
-              title='Recovered'
-              value={recovered}
-              rateValue={recoveryRate}
-              newValue={newRecovered}
-              headerClassName='text-light'
-            />
-          </Col>
-          <Col xs={6}>
-            <DailyNumbersTableItem
-              headerBgColor={COLORS.deaths}
-              title='Deaths'
-              value={deaths}
-              rateValue={mortalityRate}
-              newValue={newDeaths}
-              headerClassName='text-light'
-            />
-          </Col>
-        </Row>
-      </>
+      <Row className='mx-sm-2 my-sm-2'>
+        <Col xs={6}>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.confirmed}
+            title='Confirmed Cases'
+            value={confirmed}
+          />
+        </Col>
+        <Col xs={6}>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.newConfirmed}
+            title='New Cases'
+            value={newConfirmed}
+          />
+        </Col>
+        <Col xs={6}>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.recovered}
+            title='Recovered'
+            value={recovered}
+            rateValue={recoveryRate}
+            newValue={newRecovered}
+            headerClassName='text-light'
+          />
+        </Col>
+        <Col xs={6}>
+          <DailyNumbersTableItem
+            headerBgColor={COLORS.deaths}
+            title='Deaths'
+            value={deaths}
+            rateValue={mortalityRate}
+            newValue={newDeaths}
+            headerClassName='text-light'
+          />
+        </Col>
+      </Row>
     );
   }
 

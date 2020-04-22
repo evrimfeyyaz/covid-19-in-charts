@@ -43,7 +43,7 @@ const DataPage: FunctionComponent<DataPageProps> = ({
             <h1 className='h4 mb-1'>{title}</h1>
             <p className='small text-muted ml-1'>{subTitle}</p>
             <Card className='shadow-lg border-0 mt-3' style={{ borderRadius: 15 }}>
-              <Card.Body className='px-5 py-4'>
+              <Card.Body className='px-4 py-4'>
                 {bodyComponent}
                 <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
                   <small>
