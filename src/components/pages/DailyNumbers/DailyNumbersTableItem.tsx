@@ -27,7 +27,7 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
         )}
       </Card.Header>
       <Card.Body>
-        <Card.Text>
+        <Card.Text as='div'>
           <span className='h2 text-shadow-dark'>
             {valueStr}
           </span>
