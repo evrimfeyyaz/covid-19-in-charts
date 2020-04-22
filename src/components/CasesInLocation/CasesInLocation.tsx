@@ -53,18 +53,16 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
     setLastUpdated(lastUpdated);
   }, [store, location, exceedingProperty, exceedingValue]);
 
-  function handleOptionsChange(locationNew: string, exceedingPropertyNew: ExceedingProperty, exceedingValueNew: number) {
-    if (location !== locationNew) {
-      setLocation(locationNew);
-    }
+  function handleLocationChange(locationNew: string) {
+    setLocation(locationNew);
+  }
 
-    if (exceedingProperty !== exceedingPropertyNew) {
-      setExceedingProperty(exceedingPropertyNew);
-    }
+  function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
+    setExceedingProperty(exceedingPropertyNew)
+  }
 
-    if (exceedingValue !== exceedingValueNew) {
-      setExceedingValue(exceedingValueNew);
-    }
+  function handleExceedingValueChange(exceedingValueNew: number) {
+    setExceedingValue(exceedingValueNew);
   }
 
   function handleDownloadClick() {
@@ -80,10 +78,14 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
     body = (
       <Row>
         <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          <CasesInLocationOptions locations={locations} location={location} defaultLocation={defaultLocation}
-                                  exceedingProperty={exceedingProperty as ExceedingProperty}
-                                  exceedingValue={exceedingValue}
-                                  onValuesChange={handleOptionsChange} />
+          <CasesInLocationOptions
+            locations={locations} location={location}
+            exceedingProperty={exceedingProperty as ExceedingProperty}
+            exceedingValue={exceedingValue}
+            onLocationChange={handleLocationChange}
+            onExceedingPropertyChange={handleExceedingPropertyChange}
+            onExceedingValueChange={handleExceedingValueChange}
+          />
           <div className='mt-auto d-none d-lg-block'>
             <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} smallButtons />
           </div>
