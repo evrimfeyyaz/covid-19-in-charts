@@ -2,39 +2,38 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
 import CasesInLocationChart from './CasesInLocationChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
-import Loading from '../../common/Loading';
-import Helmet from 'react-helmet';
-import { createPageTitle } from '../../../utilities/metaUtilities';
-import { useCanonicalURL } from '../../../utilities/useCanonicalURL';
 import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
-import ShareAndDownload from '../../common/ShareAndDownload';
+import DataPage from '../../common/DataPage';
+import { prettifyDate } from '../../../utilities/dateUtilities';
 
 interface CasesInLocationProps {
   store: CovidDataStore,
 }
 
 const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => {
-  const canonicalUrl = useCanonicalURL();
   const defaultLocation = 'US';
 
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
+  const [firstDate, setFirstDate] = useState<Date>();
+  const [lastDate, setLastDate] = useState<Date>();
 
   const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
-  const firstDate = data?.values?.[0]?.date;
-  const lastDate = data?.values?.[data?.values?.length - 1]?.date;
   const chartId = 'cases-in-location';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
+  const pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
+
+  let subtitle = '';
+  if (firstDate != null && lastDate != null) {
+    subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`
+  }
 
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
@@ -45,6 +44,12 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   }, []);
 
   useEffect(() => {
+    const firstDate = store.firstDate;
+    const lastDate = store.lastDate;
+
+    setFirstDate(firstDate);
+    setLastDate(lastDate);
+
     const data = store.getDataByLocation(location);
     const lastUpdated = store.lastUpdated;
     const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
@@ -58,7 +63,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   }
 
   function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
-    setExceedingProperty(exceedingPropertyNew)
+    setExceedingProperty(exceedingPropertyNew);
   }
 
   function handleExceedingValueChange(exceedingValueNew: number) {
@@ -72,60 +77,43 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
       .finally(() => setAreChartAnimationsActive(true));
   }
 
-  let body = <Loading />;
-
-  if (data != null && lastUpdated != null) {
-    body = (
-      <Row>
-        <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          <CasesInLocationOptions
-            locations={locations} location={location}
-            exceedingProperty={exceedingProperty as ExceedingProperty}
-            exceedingValue={exceedingValue}
-            onLocationChange={handleLocationChange}
-            onExceedingPropertyChange={handleExceedingPropertyChange}
-            onExceedingValueChange={handleExceedingValueChange}
-          />
-          <div className='mt-auto d-none d-lg-block'>
-            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} smallButtons />
-          </div>
-        </Col>
-        <Col>
-          <div id={chartId}>
-            <CasesInLocationChart
-              title={title}
-              data={data?.values as DateValues}
-              lastUpdated={lastUpdated as Date}
-              firstDate={firstDate}
-              lastDate={lastDate}
-              exceedingProperty={exceedingProperty}
-              exceedingValue={exceedingValue}
-              isAnimationActive={areChartAnimationsActive}
-            />
-          </div>
-        </Col>
-        <Row className='d-lg-none mt-3'>
-          <Col className='px-5'>
-            <ShareAndDownload title={title} onDownloadClick={handleDownloadClick} />
-          </Col>
-        </Row>
-      </Row>
-    );
+  function hasLoaded() {
+    return (data != null && lastUpdated != null);
   }
 
-  const pageTitle = createPageTitle(title);
-  let pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
+  const optionsComponent = (
+    <CasesInLocationOptions
+      locations={locations}
+      location={location}
+      exceedingProperty={exceedingProperty as ExceedingProperty}
+      exceedingValue={exceedingValue}
+      onLocationChange={handleLocationChange}
+      onExceedingPropertyChange={handleExceedingPropertyChange}
+      onExceedingValueChange={handleExceedingValueChange}
+    />
+  );
+
+  const bodyComponent = (
+    <CasesInLocationChart
+      data={data?.values as DateValues}
+      exceedingProperty={exceedingProperty}
+      exceedingValue={exceedingValue}
+      isAnimationActive={areChartAnimationsActive}
+    />
+  );
 
   return (
-    <Container>
-      <Helmet>
-        <title>{pageTitle}</title>
-        <meta property="og:title" content={pageTitle} />
-        <meta property="og:description" content={pageDescription} />
-        <meta property="og:url" content={canonicalUrl} />
-      </Helmet>
-      {body}
-    </Container>
+    <DataPage
+      title={title}
+      subTitle={subtitle}
+      pageDescription={pageDescription}
+      lastUpdated={lastUpdated as Date}
+      hasLoaded={hasLoaded()}
+      bodyComponent={bodyComponent}
+      optionsComponent={optionsComponent}
+      dataContainerId={chartId}
+      onDownloadClick={handleDownloadClick}
+    />
   );
 };
 
