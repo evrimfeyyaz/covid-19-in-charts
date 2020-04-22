@@ -4,17 +4,14 @@ import { COLORS } from '../../../constants';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import NoData from '../../common/NoData';
 
 interface DailyNumbersTableProps {
   data?: DateValue,
 }
 
 const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data }) => {
-  let body = (
-    <h2 className='h5 text-center my-5'>
-      No data to show.
-    </h2>
-  );
+  let body = (<NoData />);
 
   if (data != null) {
     const {

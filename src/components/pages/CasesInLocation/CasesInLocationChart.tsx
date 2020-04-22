@@ -14,6 +14,7 @@ import CasesInLocationTooltip from './CasesInLocationTooltip';
 import { COLORS } from '../../../constants';
 import CasesInLocationLegend from './CasesInLocationLegend';
 import { numToGroupedString } from '../../../utilities/numUtilities';
+import NoData from '../../common/NoData';
 
 interface CasesInLocationChartProps {
   data: DateValues,
@@ -31,11 +32,7 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
     exceedingPropertyText = 'deaths';
   }
 
-  let body = (
-    <h2 className='h6 text-center my-auto'>
-      No data to show.
-    </h2>
-  );
+  let body = (<NoData />);
 
   if (data.length > 0) {
     body = (
