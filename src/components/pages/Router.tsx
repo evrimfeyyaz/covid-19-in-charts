@@ -3,7 +3,7 @@ import { Route, Switch } from 'react-router-dom';
 import { ROUTE_PATHS } from '../../constants';
 import CasesInLocation from './CasesInLocation/CasesInLocation';
 import About from './About';
-import ChartsIndex from './ChartsIndex';
+import ChartsIndex from './ChartsIndex/ChartsIndex';
 import CovidDataStore from '../../store/CovidDataStore';
 import DailyNumbers from './DailyNumbers/DailyNumbers';
 
