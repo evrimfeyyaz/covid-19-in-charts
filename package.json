@@ -11,7 +11,7 @@
     "lodash": "^4.17.15",
     "node-sass": "^4.13.1",
     "react": "^16.13.1",
-    "react-bootstrap": "^1.0.0",
+    "react-bootstrap": "^1.0.1",
     "react-bootstrap-typeahead": "^5.0.0-alpha.1",
     "react-datepicker": "^2.14.1",
     "react-dom": "^16.13.1",

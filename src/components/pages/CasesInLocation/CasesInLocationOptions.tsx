@@ -1,4 +1,4 @@
-import React, { FormEvent, FunctionComponent } from 'react';
+import React, { ChangeEvent, FormEvent, FunctionComponent } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import Accordion from 'react-bootstrap/Accordion';
@@ -26,7 +26,7 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
                                                                                   onLocationChange, onExceedingPropertyChange,
                                                                                   onExceedingValueChange,
                                                                                 }) => {
-  function handleExceedingPropertyChange(event: FormEvent<HTMLInputElement>) {
+  function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
     const newExceedingProperty = event.currentTarget.value as ExceedingProperty;
 
     if (newExceedingProperty !== exceedingProperty) {
@@ -34,7 +34,7 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     }
   }
 
-  function handleExceedingValueChange(event: FormEvent<HTMLInputElement>) {
+  function handleExceedingValueChange(event: ChangeEvent<HTMLInputElement>) {
     const { value } = event.currentTarget;
     let newExceedingValue = parseInt(value);
 
