@@ -23,7 +23,7 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
   const newValueStr = newValue ? `+${numToGroupedString(newValue)}` : undefined;
 
   return (
-    <Card className='shadow rounded-lg mb-4 text-center'>
+    <Card className='rounded-lg bg-light mb-4 text-center'>
       <Card.Header style={{ backgroundColor: headerBgColor }} className={'h5 ' + headerClassName}>
         {title} {rateValueStr && (
         <small>({rateValueStr}%)</small>
