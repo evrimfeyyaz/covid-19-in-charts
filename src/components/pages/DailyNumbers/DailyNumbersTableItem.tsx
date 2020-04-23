@@ -1,6 +1,9 @@
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
 import { numToGroupedString } from '../../../utilities/numUtilities';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
+import _ from 'lodash';
 
 interface DailyNumbersTableItemProps {
   headerBgColor: string,
@@ -23,8 +26,8 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
     <Card className='shadow rounded-lg mb-4 text-center'>
       <Card.Header style={{ backgroundColor: headerBgColor }} className={'h5 ' + headerClassName}>
         {title} {rateValueStr && (
-          <small>({rateValueStr}%)</small>
-        )}
+        <small>({rateValueStr}%)</small>
+      )}
       </Card.Header>
       <Card.Body>
         <Card.Text as='div'>
@@ -32,7 +35,16 @@ const DailyNumbersTableItem: FunctionComponent<DailyNumbersTableItemProps> = ({
             {valueStr}
           </span>
           {newValueStr && (
-            <div className='text-muted'>{newValueStr}</div>
+            <OverlayTrigger
+              placement='bottom'
+              overlay={
+                <Tooltip id={`tooltip-${_.snakeCase(title)}`}>
+                  Increase from the day before.
+                </Tooltip>
+              }
+            >
+              <div className='text-muted'>{newValueStr}</div>
+            </OverlayTrigger>
           )}
         </Card.Text>
       </Card.Body>
