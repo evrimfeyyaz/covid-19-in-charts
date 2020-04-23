@@ -1,28 +1,26 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { DateValue } from '../../../store/CovidDataStore';
-import { StringParam, DateParam, BooleanParam, useQueryParam } from 'use-query-params';
+import { DateParam, BooleanParam, useQueryParam } from 'use-query-params';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DailyNumbersOptions from './DailyNumbersOptions';
 import DailyNumbersTable from './DailyNumbersTable';
 import { isSameDay } from 'date-fns';
 import DataPage from '../../common/DataPage';
-import { SETTINGS } from '../../../constants';
 import { prettifyDate } from '../../../utilities/dateUtilities';
+import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
 
 interface DailyNumbersProps {
   store: CovidDataStore,
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
-  const { defaultLocation } = SETTINGS;
-
   const [locations] = useState(store.locations);
   const [data, setData] = useState<DateValue>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
+  const [location, locationInputComponent] = useSingleLocationSelection(locations);
   const [date, setDate] = useQueryParam('date', DateParam);
   const [latest, setLatest] = useQueryParam('latest', BooleanParam);
 
@@ -33,7 +31,6 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
-    setLocation(location);
     if (date == null) {
       setLatest(true);
     } else {
@@ -65,10 +62,6 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     setLastUpdated(lastUpdated);
   }, [store, location, date, latest]);
 
-  function handleLocationChange(locationNew: string) {
-    setLocation(locationNew);
-  }
-
   function handleDateChange(dateNew: Date) {
     if (lastDate && isSameDay(dateNew, lastDate)) {
       setDate(undefined);
@@ -99,12 +92,10 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
   const optionsComponent = (
     <DailyNumbersOptions
-      locations={locations}
-      location={location}
+      locationInputComponent={locationInputComponent}
       date={dateToUse}
       minDate={firstDate as Date}
       maxDate={lastDate as Date}
-      onLocationChange={handleLocationChange}
       onDateChange={handleDateChange}
     />
   );

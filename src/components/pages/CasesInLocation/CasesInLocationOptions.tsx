@@ -1,29 +1,25 @@
-import React, { ChangeEvent, FormEvent, FunctionComponent } from 'react';
+import React, { ChangeEvent, FunctionComponent } from 'react';
 import Form from 'react-bootstrap/Form';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { getAliasesForLocation } from '../../../utilities/countryUtilities';
 
 export type ExceedingProperty = 'confirmed' | 'deaths';
 
 interface CasesInLocationOptionsProps {
-  locations: string[],
-  location: string,
+  locationInputComponent: JSX.Element,
   exceedingProperty: ExceedingProperty,
   exceedingValue: number,
-  onLocationChange: (location: string) => void,
   onExceedingPropertyChange: (exceedingProperty: ExceedingProperty) => void,
   onExceedingValueChange: (exceedingValue: number) => void
 }
 
 const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = ({
-                                                                                  locations, location,
+                                                                                  locationInputComponent,
                                                                                   exceedingProperty, exceedingValue,
-                                                                                  onLocationChange, onExceedingPropertyChange,
+                                                                                  onExceedingPropertyChange,
                                                                                   onExceedingValueChange,
                                                                                 }) => {
   function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
@@ -43,39 +39,9 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
     }
   }
 
-  function handleLocationChange(locations: string[]) {
-    if (locations != null && locations.length > 0 && locations[0] !== location) {
-      onLocationChange(locations[0]);
-    }
-  }
-
-  function filterLocationsBy(option: string, props: { text: string }) {
-    const location = option.toLowerCase().trim();
-    const text = props.text.toLowerCase().trim();
-    const aliases = getAliasesForLocation(option).map(alias => alias.toLowerCase().trim());
-
-    const allNames = [location, ...aliases];
-
-    return allNames.some(name => name.includes(text));
-  }
-
   return (
     <>
-      <Form.Group>
-        <Form.Label>Location</Form.Label>
-        <Typeahead
-          id='location-selection'
-          options={locations}
-          filterBy={filterLocationsBy}
-          placeholder="Select location..."
-          highlightOnlyResult
-          selectHintOnEnter
-          clearButton
-          onChange={handleLocationChange}
-          defaultInputValue={location}
-          paginationText='Show more locations'
-        />
-      </Form.Group>
+      {locationInputComponent}
       <Accordion>
         <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
           More Options

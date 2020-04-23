@@ -7,14 +7,13 @@ import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOpti
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { prettifyDate } from '../../../utilities/dateUtilities';
+import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
 
 interface CasesInLocationProps {
   store: CovidDataStore,
 }
 
 const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => {
-  const defaultLocation = 'US';
-
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -22,7 +21,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [location = defaultLocation, setLocation] = useQueryParam('location', StringParam);
+  const [location, locationInputComponent] = useSingleLocationSelection(locations);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
@@ -32,12 +31,11 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
 
   let subtitle = '';
   if (firstDate != null && lastDate != null) {
-    subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`
+    subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`;
   }
 
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
-    setLocation(location);
     setExceedingProperty(exceedingProperty);
     setExceedingValue(exceedingValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -57,10 +55,6 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
     setData(strippedData);
     setLastUpdated(lastUpdated);
   }, [store, location, exceedingProperty, exceedingValue]);
-
-  function handleLocationChange(locationNew: string) {
-    setLocation(locationNew);
-  }
 
   function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
     setExceedingProperty(exceedingPropertyNew);
@@ -83,11 +77,9 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
 
   const optionsComponent = (
     <CasesInLocationOptions
-      locations={locations}
-      location={location}
+      locationInputComponent={locationInputComponent}
       exceedingProperty={exceedingProperty as ExceedingProperty}
       exceedingValue={exceedingValue}
-      onLocationChange={handleLocationChange}
       onExceedingPropertyChange={handleExceedingPropertyChange}
       onExceedingValueChange={handleExceedingValueChange}
     />
