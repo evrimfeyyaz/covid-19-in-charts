@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
-import { DateValue } from '../../store/CovidDataStore';
-import { prettifyMDYDate } from '../../utilities/dateUtilities';
+import { DateValue } from '../../../store/CovidDataStore';
+import { prettifyMDYDate } from '../../../utilities/dateUtilities';
 import Table from 'react-bootstrap/Table';
-import { COLORS } from '../../constants';
-import { numToGroupedString } from '../../utilities/numUtilities';
+import { COLORS } from '../../../constants';
+import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesInLocationTooltip {
   payload: { payload: DateValue }[],

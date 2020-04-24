@@ -1,5 +1,7 @@
 import parse from 'csv-parse';
 import _ from 'lodash';
+import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
+import packageJson from '../../package.json';
 
 interface ParsedCsvRow {
   readonly [key: string]: string | number
@@ -12,7 +14,11 @@ export interface DateValue {
   confirmed: number,
   newConfirmed: number,
   deaths: number | null,
-  recovered: number | null
+  newDeaths: number | null,
+  mortalityRate: number | null,
+  recovered: number | null,
+  newRecovered: number | null,
+  recoveryRate: number | null
 }
 
 export type DateValues = DateValue[];
@@ -24,8 +30,13 @@ export interface LocationData {
   values: DateValues,
 }
 
+type PartialDateValue = Pick<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'> &
+  Partial<Omit<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'>>
+
+type PartialLocationData = Omit<LocationData, 'values'> & { values: PartialDateValue[] }
+
 interface DataByLocation {
-  [location: string]: LocationData
+  [location: string]: PartialLocationData
 }
 
 export default class CovidDataStore {
@@ -42,6 +53,11 @@ export default class CovidDataStore {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
 
     const response = await fetch(commitDataUrl);
+
+    if (!response.ok) {
+      throw this.fetchFailedError(response.status, response.statusText);
+    }
+
     const json = await response.json();
 
     return new Date(json[0]['commit']['author']['date']);
@@ -76,10 +92,20 @@ export default class CovidDataStore {
     return new Error('Store is not populated. Make sure to first call the `loadData` method.');
   }
 
+  private static fetchedDataAnomalyError() {
+    return new Error('The data fetched from the server seems to be empty or in wrong format.');
+  }
+
+  private static fetchFailedError(status: number, statusText: string) {
+    return new Error(`There was an error fetching the data. Response status: ${status} - ${statusText}`);
+  }
+
   private dataByLocation: DataByLocation | undefined;
   private dataSetLength: number = 0;
   private _locations: string[] | undefined;
   private _lastUpdated: Date | undefined;
+  private _firstDate: Date | undefined;
+  private _lastDate: Date | undefined;
 
   async loadData(): Promise<void> {
     const localStorageLoadResult = this.loadDataFromLocalStorage();
@@ -95,7 +121,19 @@ export default class CovidDataStore {
     }
 
     this._locations = Object.keys(this.dataByLocation as DataByLocation).sort((location1, location2) => location1.localeCompare(location2));
-    this.dataSetLength = this.dataByLocation?.[this._locations[0]].values.length as number;
+
+    if (this._locations.length === 0) {
+      throw CovidDataStore.fetchedDataAnomalyError();
+    }
+
+    const firstLocationData = this.dataByLocation?.[this._locations[0]].values;
+    if (firstLocationData == null || firstLocationData.length === 0) {
+      throw CovidDataStore.fetchedDataAnomalyError();
+    }
+
+    this.dataSetLength = firstLocationData.length as number;
+    this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
+    this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
   }
 
   get locations(): string[] {
@@ -114,6 +152,22 @@ export default class CovidDataStore {
     return new Date(this._lastUpdated.getTime());
   }
 
+  get firstDate(): Date {
+    if (this._firstDate == null) {
+      throw CovidDataStore.notLoadedError();
+    }
+
+    return new Date(this._firstDate.getTime());
+  }
+
+  get lastDate(): Date {
+    if (this._lastDate == null) {
+      throw CovidDataStore.notLoadedError();
+    }
+
+    return new Date(this._lastDate.getTime());
+  }
+
   getDataByLocation(location: string): LocationData {
     if (this.dataByLocation == null) {
       throw CovidDataStore.notLoadedError();
@@ -123,16 +177,74 @@ export default class CovidDataStore {
       throw CovidDataStore.invalidLocationError(location);
     }
 
-    return _.cloneDeep(this.dataByLocation[location]);
+    const locationData = this.dataByLocation[location];
+    const detailedLocationDataValues = locationData.values.map((value, index) => {
+      let newConfirmed = 0;
+      let newRecovered = null;
+      let newDeaths = null;
+      let recoveryRate: number | null = 0;
+      let mortalityRate: number | null = 0;
+
+      if (index > 0) {
+        const { confirmed, recovered, deaths } = value;
+        const yesterdaysData = locationData.values[index - 1];
+
+        if (recovered != null && yesterdaysData.recovered != null) {
+          newRecovered = recovered - yesterdaysData.recovered;
+        }
+
+        if (deaths != null && yesterdaysData.deaths != null) {
+          newDeaths = deaths - yesterdaysData.deaths;
+        }
+
+        if (confirmed != null && yesterdaysData.confirmed != null) {
+          newConfirmed = confirmed - yesterdaysData.confirmed;
+        }
+
+        if (confirmed != null && confirmed > 0) {
+          recoveryRate = recovered != null ? recovered / confirmed : null;
+          mortalityRate = deaths != null ? deaths / confirmed : null;
+        }
+      }
+
+      return {
+        ..._.cloneDeep(value),
+        newConfirmed,
+        newRecovered,
+        newDeaths,
+        recoveryRate,
+        mortalityRate,
+      };
+    });
+
+    return {
+      ..._.cloneDeep(_.omit(locationData, 'values')),
+      values: detailedLocationDataValues,
+    };
+  }
+
+  getDataByLocationAndDate(location: string, date: Date): DateValue {
+    const locationData = this.getDataByLocation(location);
+    const dateStr = dateToMDYString(date);
+
+    const data = locationData.values.find(dateValues => dateValues.date === dateStr);
+
+    if (data == null) {
+      throw new Error(`Cannot find any data for ${date.toDateString()}`);
+    }
+
+    return data;
   }
 
   private loadDataFromLocalStorage(): boolean {
     const localDataExpirationTimeStr = localStorage.getItem('localDataExpirationTimeStr');
+    const version = localStorage.getItem('version');
+    const currentVersion = packageJson.version;
 
     if (localDataExpirationTimeStr != null) {
       const localDataExpirationTime = parseInt(localDataExpirationTimeStr);
 
-      if (Date.now() > localDataExpirationTime) {
+      if (Date.now() > localDataExpirationTime || version !== currentVersion) {
         return false;
       }
     }
@@ -165,10 +277,16 @@ export default class CovidDataStore {
     localStorage.setItem('localDataExpirationTimeStr', localDataExpirationTimeStr);
     localStorage.setItem('lastUpdatedTimeStr', lastUpdatedTimeStr);
     localStorage.setItem('dataByLocationJson', dataByLocationJson);
+    localStorage.setItem('version', packageJson.version);
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
     const rawResponse = await fetch(url);
+
+    if (!rawResponse.ok) {
+      throw CovidDataStore.fetchFailedError(rawResponse.status, rawResponse.statusText);
+    }
+
     const rawData = await rawResponse.text();
 
     return await this.parseCsv(rawData);
@@ -259,8 +377,7 @@ export default class CovidDataStore {
         location = `${location} (${provinceOrState})`;
       }
 
-      let prevDateStr: string | null = null;
-      const values = Object.keys(confirmedData).reduce<DateValue[]>((result, dateStr, index) => {
+      const values = Object.keys(confirmedData).reduce<PartialDateValue[]>((result, dateStr, index) => {
         if (CovidDataStore.isIndexOfDateColumn(index)) {
           const confirmed = confirmedData[dateStr] as number;
 
@@ -274,14 +391,7 @@ export default class CovidDataStore {
             recovered = recoveredData[dateStr] as number;
           }
 
-          let newConfirmed = 0;
-          if (prevDateStr != null) {
-            const yesterdaysConfirmed = confirmedData[prevDateStr] as number;
-            newConfirmed = Math.max(0, confirmed - yesterdaysConfirmed);
-          }
-
-          result = [...result, { date: dateStr, confirmed, newConfirmed, deaths, recovered }];
-          prevDateStr = dateStr;
+          result = [...result, { date: dateStr, confirmed, deaths, recovered }];
         }
 
         return result;
@@ -325,7 +435,7 @@ export default class CovidDataStore {
     Object.keys(formattedData).forEach((location) => {
       const locationData = formattedData[location];
 
-      let countryTotalData: LocationData;
+      let countryTotalData: PartialLocationData;
       if (location.includes('China')) {
         countryTotalData = chinaTotalData;
       } else if (location.includes('Australia')) {
@@ -341,7 +451,6 @@ export default class CovidDataStore {
       } else {
         countryTotalData.values.forEach((value, index) => {
           countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
-          countryTotalData.values[index].newConfirmed += locationData.values[index].newConfirmed;
 
           const totalDeaths = countryTotalData.values[index].deaths;
           const locationDeaths = locationData.values[index].deaths;
