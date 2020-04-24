@@ -47,7 +47,7 @@ const DataPage: FunctionComponent<DataPageProps> = ({
             <Card className='shadow-lg border-0 mt-3' style={{ borderRadius: 15 }}>
               <Card.Body className='px-4 py-4'>
                 {bodyComponent}
-                <p className='text-center mt-0 mb-2 font-weight-light font-italic text-muted'>
+                <p className='text-center my-0 font-weight-light font-italic text-muted'>
                   <small>
                     covid19incharts.com | source: <a className='text-decoration-none'
                                                      href='https://github.com/CSSEGISandData/COVID-19'>JHU CSSE</a> |
