@@ -27,7 +27,7 @@ function App() {
         <meta property="og:title" content={createPageTitle()} />
         <meta property="og:description" content={SITE_INFO.description} />
         <meta property="og:url" content={SITE_INFO.baseUrl} />
-        <meta property="og:image" content={getAbsoluteUrl(`images/${IMAGES.og}`)} />
+        <meta property="og:image" content={getAbsoluteUrl(IMAGES.og)} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:site_name" content="COVID-19 in Charts" />
         <meta name="twitter:image:alt" content="COVID-19 in Charts" />
