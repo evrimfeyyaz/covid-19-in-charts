@@ -6,7 +6,7 @@ import Col from 'react-bootstrap/Col';
 interface ChartsIndexCardProps {
   title: string,
   description?: string,
-  image: any,
+  image: string,
   link?: string
 }
 

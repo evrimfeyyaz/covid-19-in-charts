@@ -77,7 +77,7 @@ const DataPage: FunctionComponent<DataPageProps> = ({
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:image" content={getAbsoluteUrl(`images/${ogImage}`)} />
+        <meta property="og:image" content={getAbsoluteUrl(ogImage)} />
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
       {body}

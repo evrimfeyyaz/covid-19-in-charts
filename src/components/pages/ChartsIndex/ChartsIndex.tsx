@@ -11,20 +11,20 @@ const ChartsIndex: FunctionComponent = () => {
         <ChartsIndexCard
           title='Cases, Recoveries and Deaths'
           description='See the number of confirmed cases, new cases, recoveries and deaths over time.'
-          image={require(`../../../images/${IMAGES.casesInLocationCard}`)}
+          image={IMAGES.casesInLocationCard}
           link={ROUTE_PATHS.casesInLocation}
         />
 
         <ChartsIndexCard
           title='Daily Numbers'
           description='See the daily number of confirmed cases, recoveries, deaths and other data points.'
-          image={require(`../../../images/${IMAGES.dailyNumbersCard}`)}
+          image={IMAGES.dailyNumbersCard}
           link={ROUTE_PATHS.dailyNumbers}
         />
 
         <ChartsIndexCard
           title='More Visualizations to Come'
-          image={require(`../../../images/${IMAGES.moreVisualizationsCard}`)}
+          image={IMAGES.moreVisualizationsCard}
         />
       </Row>
     </Container>
