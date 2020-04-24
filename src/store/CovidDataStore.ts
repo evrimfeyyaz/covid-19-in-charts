@@ -276,7 +276,6 @@ export default class CovidDataStore {
 
     localStorage.setItem('localDataExpirationTimeStr', localDataExpirationTimeStr);
     localStorage.setItem('lastUpdatedTimeStr', lastUpdatedTimeStr);
-    console.log(dataByLocationJson);
     localStorage.setItem('dataByLocationJson', dataByLocationJson);
     localStorage.setItem('version', packageJson.version);
   }

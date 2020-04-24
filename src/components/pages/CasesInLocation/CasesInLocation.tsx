@@ -8,6 +8,7 @@ import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { prettifyDate } from '../../../utilities/dateUtilities';
 import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
+import { IMAGES } from '../../../constants';
 
 interface CasesInLocationProps {
   store: CovidDataStore,
@@ -99,6 +100,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
       title={title}
       subTitle={subtitle}
       pageDescription={pageDescription}
+      ogImage={IMAGES.casesInLocationOg}
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}

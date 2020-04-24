@@ -1,4 +1,4 @@
-import { uuidv4 } from './uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 import domtoimage from 'dom-to-image';
 import { COLORS } from '../constants';
 import FileSaver from 'file-saver';

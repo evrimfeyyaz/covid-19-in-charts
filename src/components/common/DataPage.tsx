@@ -8,11 +8,13 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ShareAndDownload from './ShareAndDownload';
 import Card from 'react-bootstrap/Card';
+import { getAbsoluteUrl } from '../../utilities/urlUtilities';
 
 interface DataPageProps {
   title: string,
   subTitle: string,
   pageDescription: string,
+  ogImage: string,
   lastUpdated: Date,
   hasLoaded: boolean,
   bodyComponent: JSX.Element,
@@ -24,7 +26,7 @@ interface DataPageProps {
 const DataPage: FunctionComponent<DataPageProps> = ({
                                                       title, subTitle, pageDescription, hasLoaded,
                                                       bodyComponent, optionsComponent, lastUpdated,
-                                                      dataContainerId, onDownloadClick,
+                                                      ogImage, dataContainerId, onDownloadClick,
                                                     }) => {
   const canonicalUrl = useCanonicalURL();
 
@@ -75,6 +77,8 @@ const DataPage: FunctionComponent<DataPageProps> = ({
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
+        <meta property="og:image" content={getAbsoluteUrl(`images/${ogImage}`)} />
+        <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
       {body}
     </Container>
