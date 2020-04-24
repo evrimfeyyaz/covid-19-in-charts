@@ -1,9 +1,9 @@
-import { format, parse } from 'date-fns';
+import { format, formatISO, isSameDay, isWithinInterval, parse } from 'date-fns';
 
-const dateStrFormat = 'M/d/yy';
+const dataStoreDateStrFormat = 'M/d/yy';
 
 export function MDYStringToDate(dateStr: string): Date {
-  return parse(dateStr, dateStrFormat, new Date());
+  return parse(dateStr, dataStoreDateStrFormat, new Date());
 }
 
 export function prettifyDate(date: Date): string {
@@ -15,5 +15,17 @@ export function prettifyMDYDate(dateStr: string): string {
 }
 
 export function dateToMDYString(date: Date): string {
-  return format(date, dateStrFormat);
+  return format(date, dataStoreDateStrFormat);
+}
+
+export function dateToYMDString(date: Date): string {
+  return formatISO(date, { representation: 'date' });
+}
+
+export function isDateBetween(date: Date, earlierDate: Date, laterDate: Date) {
+  return (
+    isWithinInterval(date, { start: earlierDate, end: laterDate }) ||
+    isSameDay(date, earlierDate) ||
+    isSameDay(date, laterDate)
+  );
 }

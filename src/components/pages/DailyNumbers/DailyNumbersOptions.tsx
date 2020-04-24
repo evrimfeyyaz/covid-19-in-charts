@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from 'react';
 import Form from 'react-bootstrap/Form';
-import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { isSameDay } from 'date-fns';
+import DatePicker from '../../common/DatePicker';
 
 interface DailyNumbersOptionsProps {
   locationInputComponent: JSX.Element,
@@ -41,14 +41,11 @@ const DailyNumbersOptions: FunctionComponent<DailyNumbersOptionsProps> = ({
             Show Latest
           </button>
         </div>
-        <ReactDatePicker
+        <DatePicker
           selected={date}
           onChange={handleDateChange}
           minDate={minDate}
           maxDate={maxDate}
-          dateFormat='yyyy-MM-dd'
-          className='form-control'
-          wrapperClassName='d-block'
         />
       </Form.Group>
     </>
