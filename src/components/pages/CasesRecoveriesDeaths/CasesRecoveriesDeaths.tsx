@@ -1,20 +1,20 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
-import CasesInLocationChart from './CasesInLocationChart';
+import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
-import CasesInLocationOptions, { ExceedingProperty } from './CasesInLocationOptions';
+import CasesRecoveriesDeathsOptions, { ExceedingProperty } from './CasesRecoveriesDeathsOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { prettifyDate } from '../../../utilities/dateUtilities';
 import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
 import { IMAGES } from '../../../constants';
 
-interface CasesInLocationProps {
+interface CasesRecoveriesDeathsProps {
   store: CovidDataStore,
 }
 
-const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => {
+const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
   const [locations] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -26,7 +26,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
-  const chartId = 'cases-in-location';
+  const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
   const pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
 
@@ -77,7 +77,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   }
 
   const optionsComponent = (
-    <CasesInLocationOptions
+    <CasesRecoveriesDeathsOptions
       locationInputComponent={locationInputComponent}
       exceedingProperty={exceedingProperty as ExceedingProperty}
       exceedingValue={exceedingValue}
@@ -87,7 +87,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   );
 
   const bodyComponent = (
-    <CasesInLocationChart
+    <CasesRecoveriesDeathsChart
       data={data?.values as DateValues}
       exceedingProperty={exceedingProperty}
       exceedingValue={exceedingValue}
@@ -100,7 +100,7 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
       title={title}
       subTitle={subtitle}
       pageDescription={pageDescription}
-      ogImage={IMAGES.casesInLocationOg}
+      ogImage={IMAGES.casesRecoveriesDeathsOg}
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}
@@ -111,4 +111,4 @@ const CasesInLocation: FunctionComponent<CasesInLocationProps> = ({ store }) => 
   );
 };
 
-export default CasesInLocation;
+export default CasesRecoveriesDeaths;

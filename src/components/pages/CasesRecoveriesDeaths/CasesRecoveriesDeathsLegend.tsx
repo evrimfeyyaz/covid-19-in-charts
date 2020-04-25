@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { DateValues } from '../../../store/CovidDataStore';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 
-interface CasesInLocationLegendProps {
+interface CasesRecoveriesDeathsLegendProps {
   payload?: {
     color: string,
     dataKey: string,
@@ -12,7 +12,7 @@ interface CasesInLocationLegendProps {
   data?: DateValues
 }
 
-const CasesInLocationLegend: FunctionComponent<CasesInLocationLegendProps> = ({ payload, data }) => {
+const CasesRecoveriesDeathsLegend: FunctionComponent<CasesRecoveriesDeathsLegendProps> = ({ payload, data }) => {
   const latestValues = data?.[data?.length - 1];
   const latestConfirmed = latestValues?.confirmed;
   const latestNewConfirmed = latestValues?.newConfirmed;
@@ -27,7 +27,7 @@ const CasesInLocationLegend: FunctionComponent<CasesInLocationLegendProps> = ({ 
   return (
     <div
       className='d-flex small border text-center rounded-lg mx-auto
-      cases-in-location-legend-container overflow-hidden mb-4 flex-wrap'
+      cases-recoveries-deaths-legend-container overflow-hidden mb-4 flex-wrap'
     >
       {latestConfirmed != null && (
         <div className='flex-1'>
@@ -68,4 +68,4 @@ const CasesInLocationLegend: FunctionComponent<CasesInLocationLegendProps> = ({ 
   );
 };
 
-export default CasesInLocationLegend;
+export default CasesRecoveriesDeathsLegend;

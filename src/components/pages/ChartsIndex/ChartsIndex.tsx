@@ -11,8 +11,8 @@ const ChartsIndex: FunctionComponent = () => {
         <ChartsIndexCard
           title='Cases, Recoveries and Deaths'
           description='See the number of confirmed cases, new cases, recoveries and deaths over time.'
-          image={IMAGES.casesInLocationCard}
-          link={ROUTE_PATHS.casesInLocation}
+          image={IMAGES.casesRecoveriesDeathsCard}
+          link={ROUTE_PATHS.casesRecoveriesDeaths}
         />
 
         <ChartsIndexCard

@@ -27,7 +27,7 @@ const NavBar: FunctionComponent = () => {
         <Navbar.Collapse>
           <Nav className="mr-auto">
             <NavDropdown title="Visualizations" id='navbar-dropdown-visualizations'>
-              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesInLocation)}>
+              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesRecoveriesDeaths)}>
                 Cases, Recoveries & Deaths
               </NavDropdown.Item>
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.dailyNumbers)}>

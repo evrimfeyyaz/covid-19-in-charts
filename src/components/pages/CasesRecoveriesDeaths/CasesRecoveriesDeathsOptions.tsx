@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 
 export type ExceedingProperty = 'confirmed' | 'deaths';
 
-interface CasesInLocationOptionsProps {
+interface CasesRecoveriesDeathsOptionsProps {
   locationInputComponent: JSX.Element,
   exceedingProperty: ExceedingProperty,
   exceedingValue: number,
@@ -16,12 +16,12 @@ interface CasesInLocationOptionsProps {
   onExceedingValueChange: (exceedingValue: number) => void
 }
 
-const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = ({
-                                                                                  locationInputComponent,
-                                                                                  exceedingProperty, exceedingValue,
-                                                                                  onExceedingPropertyChange,
-                                                                                  onExceedingValueChange,
-                                                                                }) => {
+const CasesRecoveriesDeathsOptions: FunctionComponent<CasesRecoveriesDeathsOptionsProps> = ({
+                                                                                              locationInputComponent,
+                                                                                              exceedingProperty, exceedingValue,
+                                                                                              onExceedingPropertyChange,
+                                                                                              onExceedingValueChange,
+                                                                                            }) => {
   function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
     const newExceedingProperty = event.currentTarget.value as ExceedingProperty;
 
@@ -82,4 +82,4 @@ const CasesInLocationOptions: FunctionComponent<CasesInLocationOptionsProps> = (
   );
 };
 
-export default CasesInLocationOptions;
+export default CasesRecoveriesDeathsOptions;

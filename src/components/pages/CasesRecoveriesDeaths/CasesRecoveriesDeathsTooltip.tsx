@@ -6,13 +6,13 @@ import Table from 'react-bootstrap/Table';
 import { COLORS } from '../../../constants';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 
-interface CasesInLocationTooltip {
+interface CasesRecoveriesDeathsTooltip {
   payload: { payload: DateValue }[],
   label: string,
   active: boolean
 }
 
-const CasesInLocationTooltip: FunctionComponent<CasesInLocationTooltip> = ({ payload, label, active }) => {
+const CasesRecoveriesDeathsTooltip: FunctionComponent<CasesRecoveriesDeathsTooltip> = ({ payload, label, active }) => {
   if (!active) {
     return null;
   }
@@ -59,4 +59,4 @@ const CasesInLocationTooltip: FunctionComponent<CasesInLocationTooltip> = ({ pay
   );
 };
 
-export default CasesInLocationTooltip;
+export default CasesRecoveriesDeathsTooltip;
