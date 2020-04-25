@@ -6,6 +6,7 @@ import About from './About';
 import ChartsIndex from './ChartsIndex/ChartsIndex';
 import CovidDataStore from '../../store/CovidDataStore';
 import DailyNumbers from './DailyNumbers/DailyNumbers';
+import CountryStateComparison from './CountryStateComparison/CountryStateComparison';
 
 interface RouterProps {
   dataStore: CovidDataStore;
@@ -17,6 +18,9 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
       <Switch>
         <Route path={ROUTE_PATHS.casesRecoveriesDeaths}>
           <CasesRecoveriesDeaths store={dataStore} />
+        </Route>
+        <Route path={ROUTE_PATHS.countryStateComparison}>
+          <CountryStateComparison store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.dailyNumbers}>
           <DailyNumbers store={dataStore} />

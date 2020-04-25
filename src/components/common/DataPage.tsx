@@ -12,7 +12,7 @@ import { getAbsoluteUrl } from '../../utilities/urlUtilities';
 
 interface DataPageProps {
   title: string,
-  subTitle: string,
+  subTitle?: string,
   pageDescription: string,
   ogImage: string,
   lastUpdated: Date,
@@ -43,7 +43,9 @@ const DataPage: FunctionComponent<DataPageProps> = ({
         <Col>
           <div id={dataContainerId}>
             <h1 className='h4 mb-1'>{title}</h1>
-            <p className='small text-muted ml-1'>{subTitle}</p>
+            {subTitle && (
+              <p className='small text-muted ml-1'>{subTitle}</p>
+            )}
             <Card className='shadow border-0 mt-3' style={{ borderRadius: 15 }}>
               <Card.Body className='px-4 py-4'>
                 {bodyComponent}

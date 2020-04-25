@@ -30,6 +30,9 @@ const NavBar: FunctionComponent = () => {
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesRecoveriesDeaths)}>
                 Cases, Recoveries & Deaths
               </NavDropdown.Item>
+              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.countryStateComparison)}>
+                Country and State Comparison
+              </NavDropdown.Item>
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.dailyNumbers)}>
                 Daily Numbers
               </NavDropdown.Item>
