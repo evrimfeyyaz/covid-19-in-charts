@@ -6,7 +6,7 @@ import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 import CasesRecoveriesDeathsOptions, { ExceedingProperty } from './CasesRecoveriesDeathsOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
-import { prettifyDate } from '../../../utilities/dateUtilities';
+import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
 import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
 import { IMAGES } from '../../../constants';
 
@@ -43,15 +43,17 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   }, []);
 
   useEffect(() => {
-    const firstDate = store.firstDate;
-    const lastDate = store.lastDate;
-
-    setFirstDate(firstDate);
-    setLastDate(lastDate);
-
     const data = store.getDataByLocation(location);
     const lastUpdated = store.lastUpdated;
     const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+
+    if (strippedData.values.length > 0) {
+      const firstDate = MDYStringToDate(strippedData.values[0].date);
+      const lastDate = MDYStringToDate(strippedData.values[strippedData.values.length - 1].date);
+
+      setFirstDate(firstDate);
+      setLastDate(lastDate);
+    }
 
     setData(strippedData);
     setLastUpdated(lastUpdated);
