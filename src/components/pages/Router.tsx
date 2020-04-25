@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { ROUTE_PATHS } from '../../constants';
-import CasesInLocation from './CasesInLocation/CasesInLocation';
+import CasesRecoveriesDeaths from './CasesRecoveriesDeaths/CasesRecoveriesDeaths';
 import About from './About';
 import ChartsIndex from './ChartsIndex/ChartsIndex';
 import CovidDataStore from '../../store/CovidDataStore';
@@ -15,8 +15,8 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
   return (
     <div className='py-4 flex-grow-1 d-block-when-width-sufficient'>
       <Switch>
-        <Route path={ROUTE_PATHS.casesInLocation}>
-          <CasesInLocation store={dataStore} />
+        <Route path={ROUTE_PATHS.casesRecoveriesDeaths}>
+          <CasesRecoveriesDeaths store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.dailyNumbers}>
           <DailyNumbers store={dataStore} />

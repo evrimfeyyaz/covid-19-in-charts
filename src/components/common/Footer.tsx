@@ -38,7 +38,7 @@ const Footer: FunctionComponent = () => {
             <h1 className='h6'>Charts</h1>
             <ul className='list-unstyled'>
               <li className='list-item'>
-                <Link to={ROUTE_PATHS.casesInLocation} className='link footer-link'>
+                <Link to={ROUTE_PATHS.casesRecoveriesDeaths} className='link footer-link'>
                   Cases, Recoveries & Deaths
                 </Link>
               </li>

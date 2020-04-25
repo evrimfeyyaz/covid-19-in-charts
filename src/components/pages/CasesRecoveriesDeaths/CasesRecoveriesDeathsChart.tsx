@@ -10,23 +10,23 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import CasesInLocationTooltip from './CasesInLocationTooltip';
+import CasesRecoveriesDeathsTooltip from './CasesRecoveriesDeathsTooltip';
 import { COLORS } from '../../../constants';
-import CasesInLocationLegend from './CasesInLocationLegend';
+import CasesRecoveriesDeathsLegend from './CasesRecoveriesDeathsLegend';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 
-interface CasesInLocationChartProps {
+interface CasesRecoveriesDeathsChartProps {
   data: DateValues,
   exceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
 }
 
-const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
-                                                                              data, exceedingProperty,
-                                                                              exceedingValue, isAnimationActive,
-                                                                            }) => {
+const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartProps> = ({
+                                                                                          data, exceedingProperty,
+                                                                                          exceedingValue, isAnimationActive,
+                                                                                        }) => {
   let exceedingPropertyText = 'confirmed cases';
   if (exceedingProperty === 'deaths') {
     exceedingPropertyText = 'deaths';
@@ -57,8 +57,8 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
             label={{ value: 'Deaths, New & Recovered Cases', angle: 90, position: 'right', dy: -110, dx: 5 }}
             tickFormatter={numToGroupedString}
           />
-          <Tooltip content={CasesInLocationTooltip} offset={30} />
-          <Legend align='center' verticalAlign='top' content={<CasesInLocationLegend data={data} />} />
+          <Tooltip content={CasesRecoveriesDeathsTooltip} offset={30} />
+          <Legend align='center' verticalAlign='top' content={<CasesRecoveriesDeathsLegend data={data} />} />
           <Bar
             dataKey='newConfirmed' yAxisId='right'
             fill={COLORS.newConfirmed} name='New Cases'
@@ -87,4 +87,4 @@ const CasesInLocationChart: FunctionComponent<CasesInLocationChartProps> = ({
   return body;
 };
 
-export default CasesInLocationChart;
+export default CasesRecoveriesDeathsChart;
