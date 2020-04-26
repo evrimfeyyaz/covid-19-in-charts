@@ -19,15 +19,17 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
   const [locations, locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
+  const [property = 'confirmed', setProperty] = useQueryParam('property', StringParam)
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
   const chartId = 'country-state-comparison-chart';
-  const title = `COVID-19 Comparison: ${locations}`;
+  const title = `COVID-19 ${property} Comparison`;
   const pageDescription = `DRAFT`;
 
   useEffect(() => {
     // Set current query params in the URL, just in case they are missing.
+    setProperty(property);
     setExceedingProperty(exceedingProperty);
     setExceedingValue(exceedingValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -52,6 +54,10 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     return;
   }
 
+  function handlePropertyChange(propertyNew: string) {
+    setProperty(propertyNew);
+  }
+
   function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
     setExceedingProperty(exceedingPropertyNew);
   }
@@ -63,16 +69,19 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const optionsComponent = (
     <CountryStateComparisonOptions
       locationInputComponent={locationInputComponent}
+      property={property}
       exceedingProperty={exceedingProperty as ExceedingProperty}
       exceedingValue={exceedingValue}
       onExceedingPropertyChange={handleExceedingPropertyChange}
       onExceedingValueChange={handleExceedingValueChange}
+      onPropertyChange={handlePropertyChange}
     />
   );
 
   const bodyComponent = (
     <CountryStateComparisonChart
       data={data}
+      property={property}
       exceedingProperty={exceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}

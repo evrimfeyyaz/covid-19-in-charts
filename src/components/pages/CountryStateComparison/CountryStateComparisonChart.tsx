@@ -16,13 +16,14 @@ import _ from 'lodash';
 
 interface CountryStateComparisonChartProps {
   data: LocationData[],
+  property: string,
   exceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
 }
 
 const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChartProps> = ({
-                                                                                            data, exceedingProperty,
+                                                                                            data, exceedingProperty, property,
                                                                                             exceedingValue, isAnimationActive,
                                                                                           }) => {
   let exceedingPropertyText = 'confirmed cases';
@@ -52,7 +53,7 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
           </XAxis>
 
           <YAxis
-            label={{ value: 'Confirmed Cases', angle: -90, position: 'left', dy: -60, dx: -15 }}
+            label={{ value: property, angle: -90, position: 'left', dy: -60, dx: -15 }}
             tickFormatter={numToGroupedString}
           />
 
@@ -61,9 +62,16 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
 
           {dataWithIndex.map((locationData, index) => (
             <Line
-              type='monotone' data={locationData.values} dataKey='deaths' opacity={.8}
-              stroke={COLORS.graphColors[index % 20]} strokeWidth={3} key={`deaths-${index}`} name={locationData.location}
-              dot={false} isAnimationActive={isAnimationActive}
+              type='monotone'
+              data={locationData.values}
+              dataKey={property}
+              opacity={.8}
+              stroke={COLORS.graphColors[index % COLORS.graphColors.length]}
+              strokeWidth={3}
+              key={`${property}-${index}`}
+              name={locationData.location}
+              dot={false}
+              isAnimationActive={isAnimationActive}
             />
           ))}
         </LineChart>

@@ -10,18 +10,31 @@ export type ExceedingProperty = 'confirmed' | 'deaths';
 
 interface CountryStateComparisonOptionsProps {
   locationInputComponent: JSX.Element,
+  property: string,
   exceedingProperty: ExceedingProperty,
   exceedingValue: number,
+  onPropertyChange: (property: string) => void,
   onExceedingPropertyChange: (exceedingProperty: ExceedingProperty) => void,
   onExceedingValueChange: (exceedingValue: number) => void
 }
 
 const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOptionsProps> = ({
-                                                                                              locationInputComponent,
-                                                                                              exceedingProperty, exceedingValue,
-                                                                                              onExceedingPropertyChange,
-                                                                                              onExceedingValueChange,
-                                                                                            }) => {
+                                                                                                locationInputComponent,
+                                                                                                property,
+                                                                                                exceedingProperty,
+                                                                                                exceedingValue,
+                                                                                                onPropertyChange,
+                                                                                                onExceedingPropertyChange,
+                                                                                                onExceedingValueChange,
+                                                                                              }) => {
+  function handlePropertyChange(event: ChangeEvent<HTMLInputElement>) {
+    const newProperty = event.currentTarget.value;
+
+    if (newProperty !== property) {
+      onPropertyChange(newProperty);
+    }
+  }
+
   function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
     const newExceedingProperty = event.currentTarget.value as ExceedingProperty;
 
@@ -42,6 +55,24 @@ const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOpt
   return (
     <>
       {locationInputComponent}
+      <Form.Group>
+        <Form.Label>Compare</Form.Label>
+        <Form.Control
+          as="select"
+          className='custom-select'
+          onChange={handlePropertyChange}
+          value={property}
+        >
+          <option value='confirmed'>confirmed cases</option>
+          <option value='deaths'>deaths</option>
+          <option value='recovered'>recoveries</option>
+          <option value='mortalityRate'>mortality rate</option>
+          <option value='recoveryRate'>recovery rate</option>
+          <option value='newConfirmed'>new cases</option>
+          <option value='newDeaths'>new deaths</option>
+          <option value='newRecovered'>new recoveries</option>
+        </Form.Control>
+      </Form.Group>
       <Accordion>
         <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
           More Options
