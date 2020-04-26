@@ -1,13 +1,13 @@
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
-import { DateValue } from '../../../store/CovidDataStore';
+import { DateValues } from '../../../store/CovidDataStore';
 import { prettifyMDYDate } from '../../../utilities/dateUtilities';
 import Table from 'react-bootstrap/Table';
 import { COLORS } from '../../../constants';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesRecoveriesDeathsTooltip {
-  payload: { payload: DateValue }[],
+  payload: { payload: DateValues }[],
   label: string,
   active: boolean
 }

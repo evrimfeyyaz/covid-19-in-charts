@@ -9,7 +9,7 @@ interface CasesRecoveriesDeathsLegendProps {
     inactive: boolean,
     value: string
   }[]
-  data?: DateValues
+  data?: DateValues[]
 }
 
 const CasesRecoveriesDeathsLegend: FunctionComponent<CasesRecoveriesDeathsLegendProps> = ({ payload, data }) => {

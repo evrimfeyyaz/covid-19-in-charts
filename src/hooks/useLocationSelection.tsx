@@ -31,8 +31,8 @@ function useLocationSelection(
 
   const locationInputComponent = (
     <LocationSelectionInput
-      locations={locationsList}
-      defaultLocations={defaultLocations}
+      locationsList={locationsList}
+      defaultLocations={locations}
       id='location-selection-input'
       placeholder={placeholder}
       multiple={multiple}

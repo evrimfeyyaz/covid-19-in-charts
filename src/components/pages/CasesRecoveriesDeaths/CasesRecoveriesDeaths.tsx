@@ -90,7 +90,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
 
   const bodyComponent = (
     <CasesRecoveriesDeathsChart
-      data={data?.values as DateValues}
+      data={data?.values as DateValues[]}
       exceedingProperty={exceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}

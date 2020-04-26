@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { DateValue } from '../../../store/CovidDataStore';
+import CovidDataStore, { DateValues } from '../../../store/CovidDataStore';
 import { DateParam, BooleanParam, useQueryParam } from 'use-query-params';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DailyNumbersOptions from './DailyNumbersOptions';
@@ -16,7 +16,7 @@ interface DailyNumbersProps {
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const [locationsList] = useState(store.locations);
-  const [data, setData] = useState<DateValue>();
+  const [data, setData] = useState<DateValues>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();

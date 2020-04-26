@@ -9,7 +9,7 @@ interface ParsedCsvRow {
 
 type ParsedCsv = readonly ParsedCsvRow[];
 
-export interface DateValue {
+export interface DateValues {
   date: string,
   confirmed: number,
   newConfirmed: number,
@@ -21,19 +21,17 @@ export interface DateValue {
   recoveryRate: number | null
 }
 
-export type DateValues = DateValue[];
-
 export interface LocationData {
   location: string,
   latitude: string,
   longitude: string,
-  values: DateValues,
+  values: DateValues[],
 }
 
-type PartialDateValue = Pick<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'> &
-  Partial<Omit<DateValue, 'date' | 'confirmed' | 'recovered' | 'deaths'>>
+type PartialDateValues = Pick<DateValues, 'date' | 'confirmed' | 'recovered' | 'deaths'> &
+  Partial<Omit<DateValues, 'date' | 'confirmed' | 'recovered' | 'deaths'>>
 
-type PartialLocationData = Omit<LocationData, 'values'> & { values: PartialDateValue[] }
+type PartialLocationData = Omit<LocationData, 'values'> & { values: PartialDateValues[] }
 
 interface DataByLocation {
   [location: string]: PartialLocationData
@@ -223,7 +221,11 @@ export default class CovidDataStore {
     };
   }
 
-  getDataByLocationAndDate(location: string, date: Date): DateValue {
+  getDataByLocations(locations: string[]): LocationData[] {
+    return locations.map(location => this.getDataByLocation(location));
+  }
+
+  getDataByLocationAndDate(location: string, date: Date): DateValues {
     const locationData = this.getDataByLocation(location);
     const dateStr = dateToMDYString(date);
 
@@ -377,7 +379,7 @@ export default class CovidDataStore {
         location = `${location} (${provinceOrState})`;
       }
 
-      const values = Object.keys(confirmedData).reduce<PartialDateValue[]>((result, dateStr, index) => {
+      const values = Object.keys(confirmedData).reduce<PartialDateValues[]>((result, dateStr, index) => {
         if (CovidDataStore.isIndexOfDateColumn(index)) {
           const confirmed = confirmedData[dateStr] as number;
 

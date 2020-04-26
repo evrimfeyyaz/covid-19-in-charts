@@ -17,7 +17,7 @@ import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 
 interface CasesRecoveriesDeathsChartProps {
-  data: DateValues,
+  data: DateValues[],
   exceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,

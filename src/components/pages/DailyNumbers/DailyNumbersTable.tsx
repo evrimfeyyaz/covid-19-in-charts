@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValue } from '../../../store/CovidDataStore';
+import { DateValues } from '../../../store/CovidDataStore';
 import { COLORS } from '../../../constants';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
 import Row from 'react-bootstrap/Row';
@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import NoData from '../../common/NoData';
 
 interface DailyNumbersTableProps {
-  data?: DateValue,
+  data?: DateValues,
 }
 
 const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data }) => {
