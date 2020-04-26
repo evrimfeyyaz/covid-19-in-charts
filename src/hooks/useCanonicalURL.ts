@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import { getAbsoluteUrl } from './urlUtilities';
+import { getAbsoluteUrl } from '../utilities/urlUtilities';
 
 export function useCanonicalURL() {
   const { pathname, search } = useLocation();

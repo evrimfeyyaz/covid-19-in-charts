@@ -1,21 +1,24 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { LocationData } from '../../../store/CovidDataStore';
+import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
 import DataPage from '../../common/DataPage';
-import { IMAGES } from '../../../constants';
-import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
+import { IMAGES, SETTINGS } from '../../../constants';
 import { NumberParam, StringParam, useQueryParam } from 'use-query-params';
+import { ExceedingProperty } from '../CasesRecoveriesDeaths/CasesRecoveriesDeathsOptions';
+import CountryStateComparisonOptions from './CountryStateComparisonOptions';
+import CountryStateComparisonChart from './CountryStateComparisonChart';
+import useLocationSelection from '../../../hooks/useLocationSelection';
 
 interface CountryStateComparisonProps {
   store: CovidDataStore
 }
 
 const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = ({ store }) => {
-  const [locations] = useState(store.locations);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
-  const [location, locationInputComponent] = useSingleLocationSelection(locations);
+  const [location, locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
@@ -31,7 +34,7 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   }, []);
 
   useEffect(() => {
-    const data = store.getDataByLocation(location);
+    const data = store.getDataByLocation(location[0]);
     const lastUpdated = store.lastUpdated;
     const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
@@ -47,12 +50,31 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     return;
   }
 
+  function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
+    setExceedingProperty(exceedingPropertyNew);
+  }
+
+  function handleExceedingValueChange(exceedingValueNew: number) {
+    setExceedingValue(exceedingValueNew);
+  }
+
   const optionsComponent = (
-    <></>
+    <CountryStateComparisonOptions
+      locationInputComponent={locationInputComponent}
+      exceedingProperty={exceedingProperty as ExceedingProperty}
+      exceedingValue={exceedingValue}
+      onExceedingPropertyChange={handleExceedingPropertyChange}
+      onExceedingValueChange={handleExceedingValueChange}
+    />
   );
 
   const bodyComponent = (
-    <></>
+    <CountryStateComparisonChart
+      data={data?.values as DateValues}
+      exceedingProperty={exceedingProperty}
+      exceedingValue={exceedingValue}
+      isAnimationActive={areChartAnimationsActive}
+    />
   );
 
   return (

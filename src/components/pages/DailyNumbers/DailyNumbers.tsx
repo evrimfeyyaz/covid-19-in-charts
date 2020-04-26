@@ -7,21 +7,21 @@ import DailyNumbersTable from './DailyNumbersTable';
 import { isSameDay } from 'date-fns';
 import DataPage from '../../common/DataPage';
 import { prettifyDate } from '../../../utilities/dateUtilities';
-import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
-import { IMAGES } from '../../../constants';
+import { IMAGES, SETTINGS } from '../../../constants';
+import useLocationSelection from '../../../hooks/useLocationSelection';
 
 interface DailyNumbersProps {
   store: CovidDataStore,
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
-  const [locations] = useState(store.locations);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<DateValue>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [location, locationInputComponent] = useSingleLocationSelection(locations);
+  const [[location], locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
   const [date, setDate] = useQueryParam('date', DateParam);
   const [latest, setLatest] = useQueryParam('latest', BooleanParam);
 

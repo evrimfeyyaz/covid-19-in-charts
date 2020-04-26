@@ -7,22 +7,22 @@ import CasesRecoveriesDeathsOptions, { ExceedingProperty } from './CasesRecoveri
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
-import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
-import { IMAGES } from '../../../constants';
+import { IMAGES, SETTINGS } from '../../../constants';
+import useLocationSelection from '../../../hooks/useLocationSelection';
 
 interface CasesRecoveriesDeathsProps {
   store: CovidDataStore,
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
-  const [locations] = useState(store.locations);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [location, locationInputComponent] = useSingleLocationSelection(locations);
+  const [[location], locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 

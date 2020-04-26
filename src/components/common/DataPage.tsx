@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import { createPageTitle } from '../../utilities/metaUtilities';
 import Container from 'react-bootstrap/Container';
 import Helmet from 'react-helmet';
-import { useCanonicalURL } from '../../utilities/useCanonicalURL';
+import { useCanonicalURL } from '../../hooks/useCanonicalURL';
 import Loading from './Loading';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
