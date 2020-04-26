@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { LocationData } from '../../../store/CovidDataStore';
+import CovidDataStore, { DateValuesProperties, LocationData } from '../../../store/CovidDataStore';
 import {
   CartesianGrid,
   Label,
@@ -26,10 +26,8 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
                                                                                             data, exceedingProperty, property,
                                                                                             exceedingValue, isAnimationActive,
                                                                                           }) => {
-  let exceedingPropertyText = 'confirmed cases';
-  if (exceedingProperty === 'deaths') {
-    exceedingPropertyText = 'deaths';
-  }
+  const humanizedProperty = _.startCase(CovidDataStore.humanizePropertyName(property as DateValuesProperties));
+  const humanizedExceedingProperty = CovidDataStore.humanizePropertyName(exceedingProperty as DateValuesProperties);
 
   let body = (<NoData />);
 
@@ -46,14 +44,14 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey='index' type='category' allowDuplicatedCategory={false}>
             <Label
-              value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`}
+              value={`Number of days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`}
               position='bottom'
               offset={10}
             />
           </XAxis>
 
           <YAxis
-            label={{ value: property, angle: -90, position: 'left', dy: -60, dx: -15 }}
+            label={{ value: humanizedProperty, angle: -90, position: 'left', dy: -60, dx: -15 }}
             tickFormatter={numToGroupedString}
           />
 

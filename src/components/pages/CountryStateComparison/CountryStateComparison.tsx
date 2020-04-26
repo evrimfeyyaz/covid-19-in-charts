@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { LocationData } from '../../../store/CovidDataStore';
+import CovidDataStore, { LocationData, DateValuesProperties } from '../../../store/CovidDataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
 import { NumberParam, StringParam, useQueryParam } from 'use-query-params';
@@ -7,6 +7,7 @@ import { ExceedingProperty } from '../CasesRecoveriesDeaths/CasesRecoveriesDeath
 import CountryStateComparisonOptions from './CountryStateComparisonOptions';
 import CountryStateComparisonChart from './CountryStateComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
+import _ from 'lodash';
 
 interface CountryStateComparisonProps {
   store: CovidDataStore
@@ -19,12 +20,13 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
   const [locations, locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
-  const [property = 'confirmed', setProperty] = useQueryParam('property', StringParam)
+  const [property = 'confirmed', setProperty] = useQueryParam('property', StringParam);
   const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
   const chartId = 'country-state-comparison-chart';
-  const title = `COVID-19 ${property} Comparison`;
+  const humanizedProperty = _.startCase(CovidDataStore.humanizePropertyName(property as DateValuesProperties));
+  const title = `COVID-19 ${humanizedProperty} Comparison`;
   const pageDescription = `DRAFT`;
 
   useEffect(() => {

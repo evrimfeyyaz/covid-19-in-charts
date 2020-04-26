@@ -21,6 +21,17 @@ export interface DateValues {
   recoveryRate: number | null
 }
 
+export type DateValuesProperties =
+  'date'
+  | 'confirmed'
+  | 'newConfirmed'
+  | 'deaths'
+  | 'newDeaths'
+  | 'mortalityRate'
+  | 'recovered'
+  | 'newRecovered'
+  | 'recoveryRate'
+
 export interface LocationData {
   location: string,
   latitude: string,
@@ -72,6 +83,31 @@ export default class CovidDataStore {
       ...dataClone,
       values: dataClone.values.filter(value => (value[property] ?? 0) > n),
     };
+  }
+
+  static humanizePropertyName(propertyName: DateValuesProperties): string {
+    switch (propertyName) {
+      case 'confirmed':
+        return 'confirmed cases';
+      case 'date':
+        return 'date';
+      case 'deaths':
+        return 'deaths';
+      case 'mortalityRate':
+        return 'mortality rate';
+      case 'newConfirmed':
+        return 'new confirmed cases';
+      case 'newDeaths':
+        return 'new deaths';
+      case 'newRecovered':
+        return 'new recoveries';
+      case 'recovered':
+        return 'recoveries';
+      case 'recoveryRate':
+        return 'rate of recoveries';
+      default:
+        throw new Error(`"${propertyName}" is not a valid property name.`);
+    }
   }
 
   private static isIndexOfDateColumn(index: number): boolean {
