@@ -9,14 +9,10 @@ interface ParsedCsvRow {
 
 type ParsedCsv = readonly ParsedCsvRow[];
 
-export interface ValuesOnDate {
-  date: string,
-  confirmed: number,
+export interface ValuesOnDate extends InternalValuesOnDate {
   newConfirmed: number,
-  deaths: number | null,
   newDeaths: number | null,
   mortalityRate: number | null,
-  recovered: number | null,
   newRecovered: number | null,
   recoveryRate: number | null
 }
@@ -37,17 +33,21 @@ export interface Location {
   provinceOrState?: string,
 }
 
-export interface LocationData extends Location {
-  latitude: string,
-  longitude: string,
+export interface LocationData extends Omit<InternalLocationData, 'provinceOrStateData'> {
   values: ValuesOnDate[],
 }
 
-type InternalDateValues = Pick<ValuesOnDate, 'date' | 'confirmed' | 'recovered' | 'deaths'> &
-  Partial<Omit<ValuesOnDate, 'date' | 'confirmed' | 'recovered' | 'deaths'>>
+type InternalValuesOnDate = {
+  date: string,
+  confirmed: number,
+  deaths: number | null,
+  recovered: number | null,
+}
 
-type InternalLocationData = Omit<LocationData, 'values'> & {
-  values: InternalDateValues[],
+interface InternalLocationData extends Location {
+  latitude: string,
+  longitude: string,
+  values: InternalValuesOnDate[],
   provinceOrStateData?: {
     [provinceOrState: string]: InternalLocationData
   }
@@ -69,20 +69,6 @@ export default class Covid19DataStore {
   private static LOCAL_STORAGE_LAST_UPDATED_KEY = 'covid19DataStoreLastUpdatedAt';
   private static LOCAL_STORAGE_DATA_KEY = 'covid19DataStoreData';
   private static LOCAL_STORAGE_VERSION_KEY = 'covid19DataStoreVersion';
-
-  private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
-    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
-
-    const response = await fetch(commitDataUrl);
-
-    if (!response.ok) {
-      throw this.fetchFailedError(response.status, response.statusText);
-    }
-
-    const json = await response.json();
-
-    return new Date(json[0]['commit']['author']['date']);
-  }
 
   static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: string, n: number): LocationData {
     const dataClone = _.cloneDeep(locationData);
@@ -119,6 +105,96 @@ export default class Covid19DataStore {
         return 'rate of recoveries';
       default:
         throw new Error(`"${propertyName}" is not a valid property name.`);
+    }
+  }
+
+  private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
+    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
+
+    const response = await fetch(commitDataUrl);
+
+    if (!response.ok) {
+      throw this.fetchFailedError(response.status, response.statusText);
+    }
+
+    const json = await response.json();
+
+    return new Date(json[0]['commit']['author']['date']);
+  }
+
+  private static addCountryTotalsToInternalData(internalData: InternalDataByCountryOrRegion): InternalDataByCountryOrRegion {
+    // All latitudes and longitudes below are taken from Google.
+    const australiaData = {
+      ...internalData['Australia'],
+      latitude: '-25.2744',
+      longitude: '133.7751',
+    };
+
+    const canadaData = {
+      ...internalData['China'],
+      latitude: '56.1304',
+      longitude: '-106.3468',
+    };
+
+    const chinaData = {
+      ...internalData['China'],
+      latitude: '35.8617',
+      longitude: '104.1954',
+    };
+
+    if (
+      australiaData.provinceOrStateData == null ||
+      canadaData.provinceOrStateData == null ||
+      chinaData.provinceOrStateData == null
+    ) {
+      throw Covid19DataStore.fetchedDataAnomalyError();
+    }
+
+    australiaData.values = Object.values(australiaData.provinceOrStateData)
+      .reduce<InternalValuesOnDate[]>(reduceCountryTotals, []);
+
+    canadaData.values = Object.values(canadaData.provinceOrStateData)
+      .reduce<InternalValuesOnDate[]>(reduceCountryTotals, []);
+
+    chinaData.values = Object.values(chinaData.provinceOrStateData)
+      .reduce<InternalValuesOnDate[]>(reduceCountryTotals, []);
+
+    return {
+      ...internalData,
+      'Australia': australiaData,
+      'Canada': canadaData,
+      'China': chinaData,
+    };
+
+    function reduceCountryTotals(
+      countryValues: InternalValuesOnDate[],
+      stateData: InternalLocationData,
+      index: number,
+    ) {
+      const stateValues = stateData.values;
+
+      if (index === 0) {
+        return stateValues;
+      }
+
+      return countryValues.map((dateValues, index) => {
+        const date = dateValues.date;
+        const confirmed = dateValues.confirmed + stateValues[index].confirmed;
+
+        let deaths = dateValues.deaths;
+        const stateDeaths = stateValues[index].deaths;
+        if (stateDeaths != null) {
+          deaths = (deaths ?? 0) + stateDeaths;
+        }
+
+        let recovered = dateValues.recovered;
+        const locationRecovered = stateValues[index].recovered;
+        if (locationRecovered != null) {
+          recovered = (recovered ?? 0) + locationRecovered;
+        }
+
+        return { date, confirmed, deaths, recovered };
+      });
     }
   }
 
@@ -247,7 +323,7 @@ export default class Covid19DataStore {
       internalLocationData = internalLocationData.provinceOrStateData?.[provinceOrState] as InternalLocationData;
     }
 
-    const locationDataValues = internalLocationData.values.map((valuesOnDate, index) => {
+    const locationDataValues: ValuesOnDate[] = internalLocationData.values.map((valuesOnDate, index) => {
       let newConfirmed = 0;
       let newRecovered = null;
       let newDeaths = null;
@@ -404,7 +480,7 @@ export default class Covid19DataStore {
 
       try {
         internalData = this.formatDataByCountryOrRegion(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
-        internalData = this.addCountryTotalsToInternalData(internalData);
+        internalData = Covid19DataStore.addCountryTotalsToInternalData(internalData);
         internalData = this.addCanadaRecoveredDataToInternalData(internalData, parsedRecoveredData);
       } catch (err) {
         reject(err);
@@ -445,7 +521,7 @@ export default class Covid19DataStore {
           && recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
         );
 
-      const values = Object.keys(confirmedData).reduce<InternalDateValues[]>((result, columnName) => {
+      const values = Object.keys(confirmedData).reduce<InternalValuesOnDate[]>((result, columnName) => {
         if (Covid19DataStore.isDateColumn(columnName)) {
           const dateStr = columnName;
 
@@ -497,82 +573,6 @@ export default class Covid19DataStore {
     }
 
     return internalData;
-  }
-
-  private addCountryTotalsToInternalData(internalData: InternalDataByCountryOrRegion): InternalDataByCountryOrRegion {
-    // All latitudes and longitudes below are taken from Google.
-    const australiaData = {
-      ...internalData['Australia'],
-      latitude: '-25.2744',
-      longitude: '133.7751',
-    };
-
-    const canadaData = {
-      ...internalData['China'],
-      latitude: '56.1304',
-      longitude: '-106.3468',
-    };
-
-    const chinaData = {
-      ...internalData['China'],
-      latitude: '35.8617',
-      longitude: '104.1954',
-    };
-
-    if (
-      australiaData.provinceOrStateData == null ||
-      canadaData.provinceOrStateData == null ||
-      chinaData.provinceOrStateData == null
-    ) {
-      throw Covid19DataStore.fetchedDataAnomalyError();
-    }
-
-    australiaData.values = Object.values(australiaData.provinceOrStateData)
-      .reduce<InternalDateValues[]>(reduceCountryTotals, []);
-
-    canadaData.values = Object.values(canadaData.provinceOrStateData)
-      .reduce<InternalDateValues[]>(reduceCountryTotals, []);
-
-    chinaData.values = Object.values(chinaData.provinceOrStateData)
-      .reduce<InternalDateValues[]>(reduceCountryTotals, []);
-
-    return {
-      ...internalData,
-      'Australia': australiaData,
-      'Canada': canadaData,
-      'China': chinaData,
-    };
-
-    function reduceCountryTotals(
-      countryValues: InternalDateValues[],
-      stateData: InternalLocationData,
-      index: number,
-    ) {
-      const stateValues = stateData.values;
-
-      if (index === 0) {
-        return stateValues;
-      }
-
-      return countryValues.map((dateValues, index) => {
-        const date = dateValues.date;
-        const confirmed = dateValues.confirmed + stateValues[index].confirmed;
-
-        let deaths = dateValues.deaths;
-        const stateDeaths = stateValues[index].deaths;
-        if (stateDeaths != null) {
-          deaths = (deaths ?? 0) + stateDeaths;
-        }
-
-        let recovered = dateValues.recovered;
-        const locationRecovered = stateValues[index].recovered;
-        if (locationRecovered != null) {
-          recovered = (recovered ?? 0) + locationRecovered;
-        }
-
-        return { date, confirmed, deaths, recovered };
-      });
-    }
   }
 
   private addCanadaRecoveredDataToInternalData(internalData: InternalDataByCountryOrRegion, parsedRecoveredData: ParsedCsv) {
