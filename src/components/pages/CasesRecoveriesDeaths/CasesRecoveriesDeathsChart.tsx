@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../../../store/CovidDataStore';
+import { ValuesOnDate } from '../../../store/Covid19DataStore';
 import {
   Bar,
   CartesianGrid,
@@ -17,7 +17,7 @@ import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 
 interface CasesRecoveriesDeathsChartProps {
-  data: DateValues[],
+  data: ValuesOnDate[],
   exceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import { DateValues } from '../../../store/CovidDataStore';
+import { ValuesOnDate } from '../../../store/Covid19DataStore';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesRecoveriesDeathsLegendProps {
@@ -9,7 +9,7 @@ interface CasesRecoveriesDeathsLegendProps {
     inactive: boolean,
     value: string
   }[]
-  data?: DateValues[]
+  data?: ValuesOnDate[]
 }
 
 const CasesRecoveriesDeathsLegend: FunctionComponent<CasesRecoveriesDeathsLegendProps> = ({ payload, data }) => {

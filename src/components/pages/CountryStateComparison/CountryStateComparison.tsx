@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { LocationData, DateValuesProperties } from '../../../store/CovidDataStore';
+import Covid19DataStore, { LocationData, DateValuesProperties } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
 import { NumberParam, StringParam, useQueryParam } from 'use-query-params';
@@ -10,11 +10,11 @@ import useLocationSelection from '../../../hooks/useLocationSelection';
 import _ from 'lodash';
 
 interface CountryStateComparisonProps {
-  store: CovidDataStore
+  store: Covid19DataStore
 }
 
 const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = ({ store }) => {
-  const [locationsList] = useState(store.locations);
+  const [locationsList] = useState(store.countriesAndRegions);
   const [data, setData] = useState<LocationData[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
@@ -25,7 +25,7 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
 
   const chartId = 'country-state-comparison-chart';
-  const humanizedProperty = _.startCase(CovidDataStore.humanizePropertyName(property as DateValuesProperties));
+  const humanizedProperty = _.startCase(Covid19DataStore.humanizePropertyName(property as DateValuesProperties));
   const title = `COVID-19 ${humanizedProperty} Comparison`;
   const pageDescription = `DRAFT`;
 
@@ -41,7 +41,7 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     const data = store.getDataByLocations(locations);
     const lastUpdated = store.lastUpdated;
     const strippedData = data.map(locationData =>
-      CovidDataStore.stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
+      Covid19DataStore.stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
     );
 
     setData(strippedData);

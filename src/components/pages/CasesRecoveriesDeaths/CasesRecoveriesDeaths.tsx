@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
+import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
@@ -11,11 +11,11 @@ import { IMAGES, SETTINGS } from '../../../constants';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 
 interface CasesRecoveriesDeathsProps {
-  store: CovidDataStore,
+  store: Covid19DataStore,
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
-  const [locationsList] = useState(store.locations);
+  const [locationsList] = useState(store.countriesAndRegions);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
@@ -45,7 +45,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   useEffect(() => {
     const data = store.getDataByLocation(location);
     const lastUpdated = store.lastUpdated;
-    const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+    const strippedData = Covid19DataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
     if (strippedData.values.length > 0) {
       const firstDate = MDYStringToDate(strippedData.values[0].date);
@@ -90,7 +90,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
 
   const bodyComponent = (
     <CasesRecoveriesDeathsChart
-      data={data?.values as DateValues[]}
+      data={data?.values as ValuesOnDate[]}
       exceedingProperty={exceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}

@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from 'react';
-import CovidDataStore, { DateValuesProperties, LocationData } from '../../../store/CovidDataStore';
+import Covid19DataStore, { DateValuesProperties, LocationData } from '../../../store/Covid19DataStore';
 import {
   CartesianGrid,
   Label,
@@ -26,8 +26,8 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
                                                                                             data, exceedingProperty, property,
                                                                                             exceedingValue, isAnimationActive,
                                                                                           }) => {
-  const humanizedProperty = _.startCase(CovidDataStore.humanizePropertyName(property as DateValuesProperties));
-  const humanizedExceedingProperty = CovidDataStore.humanizePropertyName(exceedingProperty as DateValuesProperties);
+  const humanizedProperty = _.startCase(Covid19DataStore.humanizePropertyName(property as DateValuesProperties));
+  const humanizedExceedingProperty = Covid19DataStore.humanizePropertyName(exceedingProperty as DateValuesProperties);
 
   let body = (<NoData />);
 

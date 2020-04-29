@@ -4,7 +4,7 @@ import LocationSelectionInput from '../components/common/LocationSelectionInput'
 import { hasSameElements } from '../utilities/arrayUtilities';
 
 type UseLocationSelectionReturnValue = [
-  string[], // selected locations
+  string[], // selected countriesAndRegions
   JSX.Element // locationInputComponent
 ]
 
@@ -27,7 +27,7 @@ function useLocationSelection(
     }
   }
 
-  const placeholder = multiple ? 'Select locations...' : 'Select location...';
+  const placeholder = multiple ? 'Select countriesAndRegions...' : 'Select location...';
 
   const locationInputComponent = (
     <LocationSelectionInput
