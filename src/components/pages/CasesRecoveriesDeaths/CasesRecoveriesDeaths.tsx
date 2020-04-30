@@ -2,15 +2,13 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import CasesRecoveriesDeathsOptions  from './CasesRecoveriesDeathsOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
 import { IMAGES, SETTINGS } from '../../../constants';
 import useLocationSelection from '../../../hooks/useLocationSelection';
-import { NumberParam } from 'use-query-params';
-import { useAlwaysPresentQueryParam } from '../../../hooks/useAlwaysPresentQueryParam';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
+import { useNumberSelection } from '../../../hooks/useNumberSelection';
 
 interface CasesRecoveriesDeathsProps {
   store: Covid19DataStore,
@@ -24,17 +22,19 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [[location], locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
+  const [
+    [location],
+    locationInputComponent
+  ] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent
   ] = usePropertySelection('exceedingProperty', 'confirmed', 'Start from the day', true);
-  const [exceedingValue, setExceedingValue] = useAlwaysPresentQueryParam(
-    'exceedingValue',
-    100,
-    NumberParam,
-  );
+  const [
+    exceedingValue,
+    exceedingValueInputComponent
+  ] = useNumberSelection('exceedingValue', 100, 'exceeded');
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
@@ -62,10 +62,6 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     setLastUpdated(lastUpdated);
   }, [store, location, exceedingProperty, exceedingValue]);
 
-  function handleExceedingValueChange(exceedingValueNew: number) {
-    setExceedingValue(exceedingValueNew);
-  }
-
   function handleDownloadClick() {
     setAreChartAnimationsActive(false);
     const node = document.getElementById(chartId) as HTMLElement;
@@ -76,15 +72,6 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   function hasLoaded() {
     return (data != null && lastUpdated != null);
   }
-
-  const optionsComponent = (
-    <CasesRecoveriesDeathsOptions
-      locationInputComponent={locationInputComponent}
-      exceedingPropertyInputComponent={exceedingPropertyInputComponent}
-      exceedingValue={exceedingValue}
-      onExceedingValueChange={handleExceedingValueChange}
-    />
-  );
 
   const bodyComponent = (
     <CasesRecoveriesDeathsChart
@@ -104,7 +91,8 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}
-      optionsComponent={optionsComponent}
+      optionsComponents={[locationInputComponent]}
+      advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
       onDownloadClick={handleDownloadClick}
     />

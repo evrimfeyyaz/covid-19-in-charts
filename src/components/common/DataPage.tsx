@@ -9,6 +9,8 @@ import Row from 'react-bootstrap/Row';
 import ShareAndDownload from './ShareAndDownload';
 import Card from 'react-bootstrap/Card';
 import { getAbsoluteUrl } from '../../utilities/urlUtilities';
+import Accordion from 'react-bootstrap/Accordion';
+import Button from 'react-bootstrap/Button';
 
 interface DataPageProps {
   title: string,
@@ -18,14 +20,16 @@ interface DataPageProps {
   lastUpdated: Date,
   hasLoaded: boolean,
   bodyComponent: JSX.Element,
-  optionsComponent: JSX.Element,
+  optionsComponents: JSX.Element[],
+  advancedOptionsComponents?: JSX.Element[],
   dataContainerId: string,
   onDownloadClick: () => void,
 }
 
 const DataPage: FunctionComponent<DataPageProps> = ({
                                                       title, subTitle, pageDescription, hasLoaded,
-                                                      bodyComponent, optionsComponent, lastUpdated,
+                                                      bodyComponent, optionsComponents,
+                                                      advancedOptionsComponents, lastUpdated,
                                                       ogImage, dataContainerId, onDownloadClick,
                                                     }) => {
   const canonicalUrl = useCanonicalURL();
@@ -35,7 +39,27 @@ const DataPage: FunctionComponent<DataPageProps> = ({
     body = (
       <Row>
         <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          {optionsComponent}
+          {optionsComponents}
+          {advancedOptionsComponents && advancedOptionsComponents.length > 0 && (
+            <Accordion>
+              <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
+                More Options
+              </Accordion.Toggle>
+              <Accordion.Collapse eventKey="0" className='py-2'>
+                <Card className='bg-transparent border-white'>
+                  <Card.Body>
+                    {advancedOptionsComponents.map(component => (
+                      <Row>
+                        <Col xs={12}>
+                          {component}
+                        </Col>
+                      </Row>
+                    ))}
+                  </Card.Body>
+                </Card>
+              </Accordion.Collapse>
+            </Accordion>
+          )}
           <div className='mt-auto d-none d-lg-block'>
             <ShareAndDownload title={title} onDownloadClick={onDownloadClick} smallButtons />
           </div>

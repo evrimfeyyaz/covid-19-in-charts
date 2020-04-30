@@ -2,7 +2,6 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
-import CountryStateComparisonOptions from './CountryStateComparisonOptions';
 import CountryStateComparisonChart from './CountryStateComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
@@ -61,15 +60,6 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     return;
   }
 
-  const optionsComponent = (
-    <CountryStateComparisonOptions
-      locationInputComponent={locationInputComponent}
-      propertyInputComponent={propertyInputComponent}
-      exceedingPropertyInputComponent={exceedingPropertyInputComponent}
-      exceedingValueInputComponent={exceedingValueInputComponent}
-    />
-  );
-
   const bodyComponent = (
     <CountryStateComparisonChart
       data={data}
@@ -88,7 +78,8 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}
-      optionsComponent={optionsComponent}
+      optionsComponents={[locationInputComponent, propertyInputComponent]}
+      advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
       onDownloadClick={handleDownloadClick}
     />
