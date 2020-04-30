@@ -49,11 +49,6 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   }
 
   function hasLoaded() {
-    // console.log(data);
-    // console.log(lastUpdated);
-    // console.log(firstDate);
-    // console.log(lastDate);
-    // console.log(date);
     return (
       data != null &&
       lastUpdated != null &&

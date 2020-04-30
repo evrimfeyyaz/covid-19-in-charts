@@ -14,7 +14,10 @@ function useLocationSelection(
   defaultLocations: string[],
   multiple = false,
 ): UseLocationSelectionReturnValue {
-  const [locations, setLocations] = useAlwaysPresentQueryParam('location', defaultLocations, NonNullElementArrayParam);
+  const [
+    locations,
+    setLocations,
+  ] = useAlwaysPresentQueryParam('location', defaultLocations, NonNullElementArrayParam);
 
   function handleLocationChange(selectedLocations: string[]) {
     if (selectedLocations.length > 0 && !hasSameElements(selectedLocations, locations)) {
@@ -22,7 +25,7 @@ function useLocationSelection(
     }
   }
 
-  const placeholder = multiple ? 'Select countriesAndRegions...' : 'Select location...';
+  const placeholder = multiple ? 'Select locations...' : 'Select location...';
 
   const locationInputComponent = (
     <LocationSelectionInput
@@ -32,6 +35,7 @@ function useLocationSelection(
       placeholder={placeholder}
       multiple={multiple}
       onLocationChange={handleLocationChange}
+      key={encodeURIComponent(locations.join('-'))}
     />
   );
 

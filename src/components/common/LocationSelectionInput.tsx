@@ -37,6 +37,7 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
       <Typeahead
         id={id}
         options={locationsList}
+        defaultSelected={defaultLocations}
         filterBy={filterLocationsBy}
         placeholder={placeholder}
         highlightOnlyResult
@@ -44,8 +45,8 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
         clearButton
         multiple={multiple}
         onChange={onLocationChange}
-        defaultSelected={defaultLocations}
         paginationText='Show more locations'
+        inputProps={{}}
       />
     </Form.Group>
   );

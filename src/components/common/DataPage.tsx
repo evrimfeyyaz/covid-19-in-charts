@@ -34,8 +34,6 @@ const DataPage: FunctionComponent<DataPageProps> = ({
                                                     }) => {
   const canonicalUrl = useCanonicalURL();
 
-  console.log(optionsComponents[0]);
-
   let body = <Loading />;
   if (hasLoaded) {
     body = (
