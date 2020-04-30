@@ -15,7 +15,7 @@ interface DailyNumbersProps {
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
-  const [locationsList] = useState(store.countriesAndRegions);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<ValuesOnDate>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
@@ -37,8 +37,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     } else {
       setDate(date);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [date, setDate, setLatest]);
 
   useEffect(() => {
     const firstDate = store.firstDate;

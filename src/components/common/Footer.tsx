@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
 import { EXTERNAL_LINKS, ROUTE_PATHS } from '../../constants';
-import packageJson from '../../../package.json';
+import { getCurrentVersion } from '../../utilities/versionUtilities';
 
 const Footer: FunctionComponent = () => {
 
@@ -53,7 +53,7 @@ const Footer: FunctionComponent = () => {
             <p>
               Created by <a className='footer-link' href={EXTERNAL_LINKS.authorTwitter}>Evrim Persembe</a>.
               <br />
-              v{packageJson.version}
+              v{getCurrentVersion()}
             </p>
           </Col>
         </Row>

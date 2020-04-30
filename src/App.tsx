@@ -9,12 +9,15 @@ import Footer from './components/common/Footer';
 import Router from './components/pages/Router';
 import ScreenTooSmall from './components/common/ScreenTooSmall';
 import { getAbsoluteUrl } from './utilities/urlUtilities';
+import { localStorageCleanup } from './utilities/localStorageUtilities';
 
 function App() {
   const dataStore = useRef<Covid19DataStore>(new Covid19DataStore());
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    localStorageCleanup();
+
     dataStore.current.loadData().then(() => {
       setLoaded(true);
     });

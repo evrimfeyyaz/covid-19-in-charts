@@ -5,6 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { isValuesOnDateProperty, ValuesOnDateProperty } from '../../../store/Covid19DataStore';
 
 export type ExceedingProperty = 'confirmed' | 'deaths';
 
@@ -13,7 +14,7 @@ interface CountryStateComparisonOptionsProps {
   property: string,
   exceedingProperty: ExceedingProperty,
   exceedingValue: number,
-  onPropertyChange: (property: string) => void,
+  onPropertyChange: (property: ValuesOnDateProperty) => void,
   onExceedingPropertyChange: (exceedingProperty: ExceedingProperty) => void,
   onExceedingValueChange: (exceedingValue: number) => void
 }
@@ -30,7 +31,7 @@ const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOpt
   function handlePropertyChange(event: ChangeEvent<HTMLInputElement>) {
     const newProperty = event.currentTarget.value;
 
-    if (newProperty !== property) {
+    if (isValuesOnDateProperty(newProperty) && newProperty !== property) {
       onPropertyChange(newProperty);
     }
   }

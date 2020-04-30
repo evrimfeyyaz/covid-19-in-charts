@@ -1,41 +1,45 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import Covid19DataStore, { LocationData, DateValuesProperties } from '../../../store/Covid19DataStore';
+import Covid19DataStore, { LocationData, ValuesOnDateProperty } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
-import { NumberParam, StringParam, useQueryParam } from 'use-query-params';
+import { NumberParam } from 'use-query-params';
 import { ExceedingProperty } from '../CasesRecoveriesDeaths/CasesRecoveriesDeathsOptions';
 import CountryStateComparisonOptions from './CountryStateComparisonOptions';
 import CountryStateComparisonChart from './CountryStateComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
-import _ from 'lodash';
+import { ValuesOnDatePropertyParam } from '../../../utilities/useQueryParamsUtilities';
+import { useAlwaysPresentQueryParam } from '../../../hooks/useAlwaysPresentQueryParam';
 
 interface CountryStateComparisonProps {
   store: Covid19DataStore
 }
 
 const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = ({ store }) => {
-  const [locationsList] = useState(store.countriesAndRegions);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
   const [locations, locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
-  const [property = 'confirmed', setProperty] = useQueryParam('property', StringParam);
-  const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
-  const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
+  const [property, setProperty] = useAlwaysPresentQueryParam(
+    'property',
+    'confirmed',
+    ValuesOnDatePropertyParam,
+  );
+  const [exceedingProperty, setExceedingProperty] = useAlwaysPresentQueryParam(
+    'exceedingProperty',
+    'confirmed',
+    ValuesOnDatePropertyParam,
+  );
+  const [exceedingValue, setExceedingValue] = useAlwaysPresentQueryParam(
+    'exceedingValue',
+    100,
+    NumberParam,
+  );
 
   const chartId = 'country-state-comparison-chart';
-  const humanizedProperty = _.startCase(Covid19DataStore.humanizePropertyName(property as DateValuesProperties));
-  const title = `COVID-19 ${humanizedProperty} Comparison`;
+  const title = `COVID-19 ${property} Comparison`;
   const pageDescription = `DRAFT`;
-
-  useEffect(() => {
-    // Set current query params in the URL, just in case they are missing.
-    setProperty(property);
-    setExceedingProperty(exceedingProperty);
-    setExceedingValue(exceedingValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const data = store.getDataByLocations(locations);
@@ -56,7 +60,7 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     return;
   }
 
-  function handlePropertyChange(propertyNew: string) {
+  function handlePropertyChange(propertyNew: ValuesOnDateProperty) {
     setProperty(propertyNew);
   }
 

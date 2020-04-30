@@ -1,7 +1,8 @@
-import { ArrayParam, useQueryParam } from 'use-query-params';
-import React, { useEffect } from 'react';
+import React from 'react';
 import LocationSelectionInput from '../components/common/LocationSelectionInput';
 import { hasSameElements } from '../utilities/arrayUtilities';
+import { NonNullElementArrayParam } from '../utilities/useQueryParamsUtilities';
+import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
 
 type UseLocationSelectionReturnValue = [
   string[], // selected countriesAndRegions
@@ -13,13 +14,7 @@ function useLocationSelection(
   defaultLocations: string[],
   multiple = false,
 ): UseLocationSelectionReturnValue {
-  useEffect(() => {
-    // Set current query param in the URL, just in case it is missing.
-    setLocations(locations);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [locations = defaultLocations, setLocations] = useQueryParam('location', ArrayParam);
+  const [locations, setLocations] = useAlwaysPresentQueryParam('location', defaultLocations, NonNullElementArrayParam);
 
   function handleLocationChange(selectedLocations: string[]) {
     if (selectedLocations.length > 0 && !hasSameElements(selectedLocations, locations)) {

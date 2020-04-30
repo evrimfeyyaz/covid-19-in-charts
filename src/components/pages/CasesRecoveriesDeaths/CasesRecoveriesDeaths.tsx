@@ -2,20 +2,22 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
 import CasesRecoveriesDeathsOptions, { ExceedingProperty } from './CasesRecoveriesDeathsOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
 import { IMAGES, SETTINGS } from '../../../constants';
 import useLocationSelection from '../../../hooks/useLocationSelection';
+import { ValuesOnDatePropertyParam } from '../../../utilities/useQueryParamsUtilities';
+import { NumberParam } from 'use-query-params';
+import { useAlwaysPresentQueryParam } from '../../../hooks/useAlwaysPresentQueryParam';
 
 interface CasesRecoveriesDeathsProps {
   store: Covid19DataStore,
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
-  const [locationsList] = useState(store.countriesAndRegions);
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
@@ -23,8 +25,16 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   const [lastDate, setLastDate] = useState<Date>();
 
   const [[location], locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
-  const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
-  const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
+  const [exceedingProperty, setExceedingProperty] = useAlwaysPresentQueryParam(
+    'exceedingProperty',
+    'confirmed',
+    ValuesOnDatePropertyParam,
+  );
+  const [exceedingValue, setExceedingValue] = useAlwaysPresentQueryParam(
+    'exceedingValue',
+    100,
+    NumberParam,
+  );
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
@@ -34,13 +44,6 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   if (firstDate != null && lastDate != null) {
     subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`;
   }
-
-  useEffect(() => {
-    // Set current query params in the URL, just in case they are missing.
-    setExceedingProperty(exceedingProperty);
-    setExceedingValue(exceedingValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const data = store.getDataByLocation(location);

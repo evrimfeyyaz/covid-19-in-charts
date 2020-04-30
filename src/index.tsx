@@ -8,7 +8,7 @@ import { QueryParamProvider } from 'use-query-params';
 
 ReactDOM.render(
   <BrowserRouter>
-    <QueryParamProvider ReactRouterRoute={Route}>
+    <QueryParamProvider ReactRouterRoute={Route} >
       <App />
     </QueryParamProvider>
   </BrowserRouter>,

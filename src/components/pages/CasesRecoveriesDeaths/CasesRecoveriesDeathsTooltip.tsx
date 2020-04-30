@@ -12,7 +12,7 @@ interface CasesRecoveriesDeathsTooltip {
   active: boolean
 }
 
-const CasesRecoveriesDeathsTooltip: FunctionComponent<CasesRecoveriesDeathsTooltip> = ({ payload, label, active }) => {
+const CasesRecoveriesDeathsTooltip: FunctionComponent<CasesRecoveriesDeathsTooltip> = ({ payload, active }) => {
   if (!active) {
     return null;
   }
