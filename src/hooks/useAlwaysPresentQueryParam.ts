@@ -16,7 +16,7 @@ export function useAlwaysPresentQueryParam<D>(
 
   useEffect(() => {
     if (queryParam == null) {
-      setQueryParam(defaultValue);
+      setQueryParam(defaultValue, 'replaceIn');
     }
   }, [queryParam, setQueryParam, defaultValue]);
 
