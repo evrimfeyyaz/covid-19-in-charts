@@ -2,13 +2,12 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
-import { NumberParam } from 'use-query-params';
 import CountryStateComparisonOptions from './CountryStateComparisonOptions';
 import CountryStateComparisonChart from './CountryStateComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
-import { useAlwaysPresentQueryParam } from '../../../hooks/useAlwaysPresentQueryParam';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
 import _ from 'lodash';
+import { useNumberSelection } from '../../../hooks/useNumberSelection';
 
 interface CountryStateComparisonProps {
   store: Covid19DataStore
@@ -20,7 +19,10 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
-  const [locations, locationInputComponent] = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
+  const [
+    locations,
+    locationInputComponent]
+    = useLocationSelection(locationsList, [SETTINGS.defaultLocation], true);
   const [
     property,
     humanizedProperty,
@@ -31,11 +33,10 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     humanizedExceedingProperty,
     exceedingPropertyInputComponent
   ] = usePropertySelection('exceedingProperty', 'confirmed', 'Start from the day', true);
-  const [exceedingValue, setExceedingValue] = useAlwaysPresentQueryParam(
-    'exceedingValue',
-    100,
-    NumberParam,
-  );
+  const [
+    exceedingValue,
+    exceedingValueInputComponent
+  ] = useNumberSelection('exceedingValue', 100, 'exceeded');
 
   const chartId = 'country-state-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
@@ -60,17 +61,12 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
     return;
   }
 
-  function handleExceedingValueChange(exceedingValueNew: number) {
-    setExceedingValue(exceedingValueNew);
-  }
-
   const optionsComponent = (
     <CountryStateComparisonOptions
       locationInputComponent={locationInputComponent}
       propertyInputComponent={propertyInputComponent}
       exceedingPropertyInputComponent={exceedingPropertyInputComponent}
-      exceedingValue={exceedingValue}
-      onExceedingValueChange={handleExceedingValueChange}
+      exceedingValueInputComponent={exceedingValueInputComponent}
     />
   );
 

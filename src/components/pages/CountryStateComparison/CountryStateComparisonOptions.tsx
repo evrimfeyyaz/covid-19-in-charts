@@ -10,8 +10,7 @@ interface CountryStateComparisonOptionsProps {
   locationInputComponent: JSX.Element,
   propertyInputComponent: JSX.Element,
   exceedingPropertyInputComponent: JSX.Element,
-  exceedingValue: number,
-  onExceedingValueChange: (exceedingValue: number) => void
+  exceedingValueInputComponent: JSX.Element,
 }
 
 const CountryStateComparisonOptions:
@@ -19,18 +18,8 @@ const CountryStateComparisonOptions:
                                                              locationInputComponent,
                                                              propertyInputComponent,
                                                              exceedingPropertyInputComponent,
-                                                             exceedingValue,
-                                                             onExceedingValueChange,
+                                                             exceedingValueInputComponent,
                                                            }) => {
-  function handleExceedingValueChange(event: ChangeEvent<HTMLInputElement>) {
-    const { value } = event.currentTarget;
-    let newExceedingValue = parseInt(value);
-
-    if (newExceedingValue !== exceedingValue) {
-      onExceedingValueChange(newExceedingValue);
-    }
-  }
-
   return (
     <>
       {locationInputComponent}
@@ -43,17 +32,11 @@ const CountryStateComparisonOptions:
           <Card className='bg-transparent border-white'>
             <Card.Body>
               <Row>
-                <Col xs={12} sm={6} lg={12}>
+                <Col xs={12}>
                   {exceedingPropertyInputComponent}
                 </Col>
-                <Col xs={12} sm={6} lg={12}>
-                  <Form.Group>
-                    <Form.Label>exceeded</Form.Label>
-                    <Form.Control
-                      defaultValue={exceedingValue}
-                      onChange={handleExceedingValueChange}
-                    />
-                  </Form.Group>
+                <Col xs={12}>
+                  {exceedingValueInputComponent}
                 </Col>
               </Row>
             </Card.Body>
