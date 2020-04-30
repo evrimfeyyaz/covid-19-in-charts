@@ -1,6 +1,6 @@
 import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
 import Form from 'react-bootstrap/Form';
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { NumberParam } from 'use-query-params';
 
 type UseNumberSelectionReturnValue = [
@@ -18,12 +18,27 @@ export function useNumberSelection(
     defaultValue,
     NumberParam,
   );
+  const [error, setError] = useState<string>();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (inputRef.current != null) {
+      inputRef.current.value = number.toString();
+      setError(undefined);
+    }
+  }, [number]);
 
   function handleNumberChange(event: ChangeEvent<HTMLInputElement>) {
-    const { value } = event.currentTarget;
-    let newNumber = parseInt(value);
+    const newNumber = parseInt(event.target.value);
 
-    if (!isNaN(newNumber) && newNumber !== number) {
+    if (isNaN(newNumber)) {
+      setError('Please enter a valid number.');
+      return;
+    } else {
+      setError(undefined);
+    }
+
+    if (newNumber !== number) {
       setNumber(newNumber);
     }
   }
@@ -34,7 +49,12 @@ export function useNumberSelection(
       <Form.Control
         defaultValue={number}
         onChange={handleNumberChange}
+        isInvalid={error != null}
+        ref={inputRef}
       />
+      <Form.Control.Feedback type="invalid">
+        {error}
+      </Form.Control.Feedback>
     </Form.Group>
   );
 
