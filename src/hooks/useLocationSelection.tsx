@@ -5,7 +5,7 @@ import { NonNullElementArrayParam } from '../utilities/useQueryParamsUtilities';
 import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
 
 type UseLocationSelectionReturnValue = [
-  string[], // selected countriesAndRegions
+  string[], // selectedLocations
   JSX.Element // locationInputComponent
 ]
 

@@ -6,30 +6,20 @@ import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
-export type ExceedingProperty = 'confirmed' | 'deaths';
-
 interface CasesRecoveriesDeathsOptionsProps {
   locationInputComponent: JSX.Element,
-  exceedingProperty: ExceedingProperty,
+  exceedingPropertyInputComponent: JSX.Element,
   exceedingValue: number,
-  onExceedingPropertyChange: (exceedingProperty: ExceedingProperty) => void,
   onExceedingValueChange: (exceedingValue: number) => void
 }
 
-const CasesRecoveriesDeathsOptions: FunctionComponent<CasesRecoveriesDeathsOptionsProps> = ({
-                                                                                              locationInputComponent,
-                                                                                              exceedingProperty, exceedingValue,
-                                                                                              onExceedingPropertyChange,
-                                                                                              onExceedingValueChange,
-                                                                                            }) => {
-  function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
-    const newExceedingProperty = event.currentTarget.value as ExceedingProperty;
-
-    if (newExceedingProperty !== exceedingProperty) {
-      onExceedingPropertyChange(newExceedingProperty);
-    }
-  }
-
+const CasesRecoveriesDeathsOptions:
+  FunctionComponent<CasesRecoveriesDeathsOptionsProps> = ({
+                                                            locationInputComponent,
+                                                            exceedingPropertyInputComponent,
+                                                            exceedingValue,
+                                                            onExceedingValueChange,
+                                                          }) => {
   function handleExceedingValueChange(event: ChangeEvent<HTMLInputElement>) {
     const { value } = event.currentTarget;
     let newExceedingValue = parseInt(value);
@@ -51,18 +41,7 @@ const CasesRecoveriesDeathsOptions: FunctionComponent<CasesRecoveriesDeathsOptio
             <Card.Body>
               <Row>
                 <Col xs={12} sm={6} lg={12}>
-                  <Form.Group>
-                    <Form.Label>Start from the day</Form.Label>
-                    <Form.Control
-                      as="select"
-                      className='custom-select'
-                      onChange={handleExceedingPropertyChange}
-                      value={exceedingProperty}
-                    >
-                      <option value='confirmed'>confirmed cases</option>
-                      <option value='deaths'>deaths</option>
-                    </Form.Control>
-                  </Form.Group>
+                  {exceedingPropertyInputComponent}
                 </Col>
                 <Col xs={12} sm={6} lg={12}>
                   <Form.Group>

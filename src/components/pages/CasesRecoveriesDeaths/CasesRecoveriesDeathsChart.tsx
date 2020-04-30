@@ -18,20 +18,17 @@ import NoData from '../../common/NoData';
 
 interface CasesRecoveriesDeathsChartProps {
   data: ValuesOnDate[],
-  exceedingProperty: string,
+  humanizedExceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
 }
 
 const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartProps> = ({
-                                                                                          data, exceedingProperty,
-                                                                                          exceedingValue, isAnimationActive,
+                                                                                          data,
+                                                                                          humanizedExceedingProperty,
+                                                                                          exceedingValue,
+                                                                                          isAnimationActive,
                                                                                         }) => {
-  let exceedingPropertyText = 'confirmed cases';
-  if (exceedingProperty === 'deaths') {
-    exceedingPropertyText = 'deaths';
-  }
-
   let body = (<NoData />);
 
   if (data.length > 0) {
@@ -41,7 +38,7 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
                        margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis>
-            <Label value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`}
+            <Label value={`Number of days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`}
                    position='bottom' offset={10} />
           </XAxis>
 

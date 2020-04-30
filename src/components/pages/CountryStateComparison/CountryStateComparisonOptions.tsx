@@ -5,45 +5,23 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { isValuesOnDateProperty, ValuesOnDateProperty } from '../../../store/Covid19DataStore';
-
-export type ExceedingProperty = 'confirmed' | 'deaths';
 
 interface CountryStateComparisonOptionsProps {
   locationInputComponent: JSX.Element,
-  property: string,
-  exceedingProperty: ExceedingProperty,
+  propertyInputComponent: JSX.Element,
+  exceedingPropertyInputComponent: JSX.Element,
   exceedingValue: number,
-  onPropertyChange: (property: ValuesOnDateProperty) => void,
-  onExceedingPropertyChange: (exceedingProperty: ExceedingProperty) => void,
   onExceedingValueChange: (exceedingValue: number) => void
 }
 
-const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOptionsProps> = ({
-                                                                                                locationInputComponent,
-                                                                                                property,
-                                                                                                exceedingProperty,
-                                                                                                exceedingValue,
-                                                                                                onPropertyChange,
-                                                                                                onExceedingPropertyChange,
-                                                                                                onExceedingValueChange,
-                                                                                              }) => {
-  function handlePropertyChange(event: ChangeEvent<HTMLInputElement>) {
-    const newProperty = event.currentTarget.value;
-
-    if (isValuesOnDateProperty(newProperty) && newProperty !== property) {
-      onPropertyChange(newProperty);
-    }
-  }
-
-  function handleExceedingPropertyChange(event: ChangeEvent<HTMLInputElement>) {
-    const newExceedingProperty = event.currentTarget.value as ExceedingProperty;
-
-    if (newExceedingProperty !== exceedingProperty) {
-      onExceedingPropertyChange(newExceedingProperty);
-    }
-  }
-
+const CountryStateComparisonOptions:
+  FunctionComponent<CountryStateComparisonOptionsProps> = ({
+                                                             locationInputComponent,
+                                                             propertyInputComponent,
+                                                             exceedingPropertyInputComponent,
+                                                             exceedingValue,
+                                                             onExceedingValueChange,
+                                                           }) => {
   function handleExceedingValueChange(event: ChangeEvent<HTMLInputElement>) {
     const { value } = event.currentTarget;
     let newExceedingValue = parseInt(value);
@@ -56,24 +34,7 @@ const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOpt
   return (
     <>
       {locationInputComponent}
-      <Form.Group>
-        <Form.Label>Compare</Form.Label>
-        <Form.Control
-          as="select"
-          className='custom-select'
-          onChange={handlePropertyChange}
-          value={property}
-        >
-          <option value='confirmed'>confirmed cases</option>
-          <option value='deaths'>deaths</option>
-          <option value='recovered'>recoveries</option>
-          <option value='mortalityRate'>mortality rate</option>
-          <option value='recoveryRate'>recovery rate</option>
-          <option value='newConfirmed'>new cases</option>
-          <option value='newDeaths'>new deaths</option>
-          <option value='newRecovered'>new recoveries</option>
-        </Form.Control>
-      </Form.Group>
+      {propertyInputComponent}
       <Accordion>
         <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
           More Options
@@ -83,18 +44,7 @@ const CountryStateComparisonOptions: FunctionComponent<CountryStateComparisonOpt
             <Card.Body>
               <Row>
                 <Col xs={12} sm={6} lg={12}>
-                  <Form.Group>
-                    <Form.Label>Start from the day</Form.Label>
-                    <Form.Control
-                      as="select"
-                      className='custom-select'
-                      onChange={handleExceedingPropertyChange}
-                      value={exceedingProperty}
-                    >
-                      <option value='confirmed'>confirmed cases</option>
-                      <option value='deaths'>deaths</option>
-                    </Form.Control>
-                  </Form.Group>
+                  {exceedingPropertyInputComponent}
                 </Col>
                 <Col xs={12} sm={6} lg={12}>
                   <Form.Group>

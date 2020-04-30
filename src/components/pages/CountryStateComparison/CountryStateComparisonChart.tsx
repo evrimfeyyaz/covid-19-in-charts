@@ -17,20 +17,18 @@ import _ from 'lodash';
 interface CountryStateComparisonChartProps {
   data: LocationData[],
   property: string,
-  exceedingProperty: string,
+  humanizedExceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
 }
 
 const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChartProps> = ({
-                                                                                            data, exceedingProperty, property,
-                                                                                            exceedingValue, isAnimationActive,
+                                                                                            data,
+                                                                                            humanizedExceedingProperty,
+                                                                                            property,
+                                                                                            exceedingValue,
+                                                                                            isAnimationActive,
                                                                                           }) => {
-  let exceedingPropertyText = 'confirmed cases';
-  if (exceedingProperty === 'deaths') {
-    exceedingPropertyText = 'deaths';
-  }
-
   let body = (<NoData />);
 
   if (data.length > 0 && data.some(locationData => locationData.values.length > 0)) {
@@ -46,7 +44,7 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey='index' type='category' allowDuplicatedCategory={false}>
             <Label
-              value={`Number of days since ${exceedingPropertyText} exceeded ${exceedingValue}`}
+              value={`Number of days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`}
               position='bottom'
               offset={10}
             />

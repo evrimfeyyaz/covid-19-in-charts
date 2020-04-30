@@ -28,16 +28,6 @@ export type ValuesOnDateProperty =
   | 'newRecovered'
   | 'recoveryRate'
 
-export function isValuesOnDateProperty(str: any): str is ValuesOnDateProperty {
-  const valuesOnDateProperties = [
-    'date', 'confirmed', 'newConfirmed', 'deaths',
-    'newDeaths', 'mortalityRate', 'recovered',
-    'newRecovered', 'recoveryRate',
-  ];
-
-  return (valuesOnDateProperties.indexOf(str) !== -1);
-}
-
 export interface LocationData extends InternalLocationData {
   values: ValuesOnDate[],
 }
@@ -61,6 +51,12 @@ interface InternalDataByLocation {
 }
 
 export default class Covid19DataStore {
+  static valuesOnDateProperties: ValuesOnDateProperty[] = [
+    'confirmed', 'deaths', 'recovered', 'date',
+    'newConfirmed', 'newDeaths', 'newRecovered',
+    'mortalityRate', 'recoveryRate',
+  ];
+
   private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
   private static CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
   private static DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
@@ -72,6 +68,10 @@ export default class Covid19DataStore {
   private static LOCAL_STORAGE_LAST_UPDATED_KEY = 'covid19DataStoreLastUpdatedAt';
   private static LOCAL_STORAGE_DATA_KEY = 'covid19DataStoreData';
   private static LOCAL_STORAGE_VERSION_KEY = 'covid19DataStoreVersion';
+
+  static isValuesOnDateProperty(str: any): str is ValuesOnDateProperty {
+    return (Covid19DataStore.valuesOnDateProperties.indexOf(str) !== -1);
+  }
 
   static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: ValuesOnDateProperty, n: number): LocationData {
     const dataClone = _.cloneDeep(locationData);
@@ -93,7 +93,7 @@ export default class Covid19DataStore {
       case 'mortalityRate':
         return 'mortality rate';
       case 'newConfirmed':
-        return 'new confirmed cases';
+        return 'new cases';
       case 'newDeaths':
         return 'new deaths';
       case 'newRecovered':
