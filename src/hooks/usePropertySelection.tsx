@@ -56,7 +56,12 @@ export function usePropertySelection(
         value={property}
       >
         {selectableProperties.map(property => (
-          <option value={property}>{Covid19DataStore.humanizePropertyName(property)}</option>
+          <option
+            value={property}
+            key={`${queryParamName}-${property}`}
+          >
+            {Covid19DataStore.humanizePropertyName(property)}
+          </option>
         ))}
       </Form.Control>
     </Form.Group>

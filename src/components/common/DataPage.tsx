@@ -39,7 +39,11 @@ const DataPage: FunctionComponent<DataPageProps> = ({
     body = (
       <Row>
         <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          {optionsComponents}
+          {optionsComponents.map((component, index) => (
+            <div key={`options-component-${index}`}>
+              {component}
+            </div>
+          ))}
           {advancedOptionsComponents && advancedOptionsComponents.length > 0 && (
             <Accordion>
               <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
@@ -48,8 +52,8 @@ const DataPage: FunctionComponent<DataPageProps> = ({
               <Accordion.Collapse eventKey="0" className='py-2'>
                 <Card className='bg-transparent border-white'>
                   <Card.Body>
-                    {advancedOptionsComponents.map(component => (
-                      <Row>
+                    {advancedOptionsComponents.map((component, index) => (
+                      <Row key={`advanced-options-component-${index}`}>
                         <Col xs={12}>
                           {component}
                         </Col>
