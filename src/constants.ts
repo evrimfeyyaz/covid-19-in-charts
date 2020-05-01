@@ -1,7 +1,7 @@
 export const ROUTE_PATHS = {
   home: '/',
   casesRecoveriesDeaths: '/cases-recoveries-deaths',
-  countryStateComparison: '/country-state-comparison',
+  locationComparison: '/country-state-comparison',
   dailyNumbers: '/daily-numbers',
   about: '/about',
 };

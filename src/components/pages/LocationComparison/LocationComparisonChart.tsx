@@ -14,7 +14,7 @@ import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 import _ from 'lodash';
 
-interface CountryStateComparisonChartProps {
+interface LocationComparisonChartProps {
   data: LocationData[],
   property: string,
   humanizedExceedingProperty: string,
@@ -22,13 +22,13 @@ interface CountryStateComparisonChartProps {
   isAnimationActive: boolean,
 }
 
-const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChartProps> = ({
-                                                                                            data,
-                                                                                            humanizedExceedingProperty,
-                                                                                            property,
-                                                                                            exceedingValue,
-                                                                                            isAnimationActive,
-                                                                                          }) => {
+const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> = ({
+                                                                                    data,
+                                                                                    humanizedExceedingProperty,
+                                                                                    property,
+                                                                                    exceedingValue,
+                                                                                    isAnimationActive,
+                                                                                  }) => {
   let body = (<NoData />);
 
   if (data.length > 0 && data.some(locationData => locationData.values.length > 0)) {
@@ -80,4 +80,4 @@ const CountryStateComparisonChart: FunctionComponent<CountryStateComparisonChart
   return body;
 };
 
-export default CountryStateComparisonChart;
+export default LocationComparisonChart;

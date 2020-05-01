@@ -2,17 +2,17 @@ import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
 import { IMAGES, SETTINGS } from '../../../constants';
-import CountryStateComparisonChart from './CountryStateComparisonChart';
+import LocationComparisonChart from './LocationComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
 import _ from 'lodash';
 import { useNumberSelection } from '../../../hooks/useNumberSelection';
 
-interface CountryStateComparisonProps {
+interface LocationComparisonProps {
   store: Covid19DataStore
 }
 
-const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = ({ store }) => {
+const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store }) => {
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -25,16 +25,16 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   const [
     property,
     humanizedProperty,
-    propertyInputComponent
+    propertyInputComponent,
   ] = usePropertySelection('property', 'confirmed', 'Compare');
   const [
     exceedingProperty,
     humanizedExceedingProperty,
-    exceedingPropertyInputComponent
+    exceedingPropertyInputComponent,
   ] = usePropertySelection('exceedingProperty', 'confirmed', 'Start from the day', true);
   const [
     exceedingValue,
-    exceedingValueInputComponent
+    exceedingValueInputComponent,
   ] = useNumberSelection('exceedingValue', 100, 'exceeded');
 
   const chartId = 'country-state-comparison-chart';
@@ -61,7 +61,7 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   }
 
   const bodyComponent = (
-    <CountryStateComparisonChart
+    <LocationComparisonChart
       data={data}
       property={property}
       humanizedExceedingProperty={humanizedExceedingProperty}
@@ -86,4 +86,4 @@ const CountryStateComparison: FunctionComponent<CountryStateComparisonProps> = (
   );
 };
 
-export default CountryStateComparison;
+export default LocationComparison;
