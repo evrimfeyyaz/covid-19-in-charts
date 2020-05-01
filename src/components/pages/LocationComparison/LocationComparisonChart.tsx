@@ -5,12 +5,12 @@ import {
   Label,
   Legend,
   Line, LineChart, ResponsiveContainer,
-  Tooltip,
+  Tooltip, TooltipFormatter, TooltipPayload,
   XAxis,
   YAxis,
 } from 'recharts';
 import { COLORS } from '../../../constants';
-import { numToGroupedString } from '../../../utilities/numUtilities';
+import { numToGroupedString, numToPercentageFactory } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 import _ from 'lodash';
 
@@ -40,6 +40,24 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
         values: locationData.values.map((valuesObj, index) => ({ ...valuesObj, index })),
       }));
 
+    const yAxisTickFormatter = [
+      'mortalityRate',
+      'recoveryRate',
+    ].includes(property) ? numToPercentageFactory(2) : numToGroupedString;
+    const tooltipFormatter: TooltipFormatter = (value, name, { dataKey }) => {
+      if (dataKey == null || typeof dataKey !== 'string' || typeof value !== 'number') {
+        return <></>;
+      }
+
+      const formatter = [
+        'mortalityRate',
+        'recoveryRate',
+      ].includes(dataKey) ? numToPercentageFactory(3) : numToGroupedString;
+      const formattedValue = formatter(value);
+
+      return (<>{formattedValue}</>);
+    };
+
     body = (
       <ResponsiveContainer height={400} className='mb-2'>
         <LineChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
@@ -58,11 +76,11 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
               angle: -90,
               dx: -55,
             }}
-            tickFormatter={numToGroupedString}
+            tickFormatter={yAxisTickFormatter}
             width={70}
           />
 
-          <Tooltip offset={30} />
+          <Tooltip offset={30} formatter={tooltipFormatter} />
           <Legend align='center' verticalAlign='top' wrapperStyle={{ top: 5 }} />
 
           {dataWithIndex.map((locationData, index) => (
