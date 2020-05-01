@@ -37,7 +37,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     exceedingValueInputComponent,
   ] = useNumberSelection('exceedingValue', 100, 'exceeded');
 
-  const chartId = 'country-state-comparison-chart';
+  const chartId = 'location-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
   const pageDescription = `DRAFT`;
 

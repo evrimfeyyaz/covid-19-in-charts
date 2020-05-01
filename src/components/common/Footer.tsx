@@ -49,7 +49,7 @@ const Footer: FunctionComponent = () => {
               </li>
               <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.locationComparison} className='link footer-link'>
-                  Location Comparison
+                  Comparison Between Locations
                 </Link>
               </li>
             </ul>
