@@ -7,6 +7,7 @@ import useLocationSelection from '../../../hooks/useLocationSelection';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
 import _ from 'lodash';
 import { useNumberSelection } from '../../../hooks/useNumberSelection';
+import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 
 interface LocationComparisonProps {
   store: Covid19DataStore
@@ -57,7 +58,10 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   }
 
   function handleDownloadClick() {
-    return;
+    setAreChartAnimationsActive(false);
+    const node = document.getElementById(chartId) as HTMLElement;
+    downloadNode(node)
+      .finally(() => setAreChartAnimationsActive(true));
   }
 
   const bodyComponent = (
