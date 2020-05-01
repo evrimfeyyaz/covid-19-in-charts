@@ -10,7 +10,7 @@ const Footer: FunctionComponent = () => {
 
 
   return (
-    <footer className='bg-dark text-light pt-4 pb-3 mt-3 small text-center'>
+    <footer className='bg-dark text-light pt-4 pb-2 mt-3 small text-center'>
       <Container>
         <Row>
           <Col>
@@ -34,20 +34,20 @@ const Footer: FunctionComponent = () => {
           </Col>
         </Row>
         <Row>
-          <Col className='pt-2'>
-            <h1 className='h6'>Charts</h1>
+          <Col className='pt-2 pb-2 pb-lg-0'>
+            <h1 className='h6'>Visualizations</h1>
             <ul className='list-unstyled'>
-              <li className='list-item'>
+              <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.casesRecoveriesDeaths} className='link footer-link'>
                   Cases, Recoveries & Deaths
                 </Link>
               </li>
-              <li className='list-item'>
+              <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.dailyNumbers} className='link footer-link'>
                   Daily Numbers
                 </Link>
               </li>
-              <li className='list-item'>
+              <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.locationComparison} className='link footer-link'>
                   Location Comparison
                 </Link>
