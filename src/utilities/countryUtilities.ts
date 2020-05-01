@@ -1,18 +1,17 @@
 export function getAliasesForLocation(location: string): string[] {
-  switch (location) {
-    case 'US':
-      return ['United States of America', 'USA', 'United States', 'America', 'States'];
-    case 'Korea, South':
-      return ['South Korea'];
-    case 'United Kingdom':
-      return ['UK', 'Great Britain', 'Britain', 'England'];
-    case 'China':
-      return ['PRC', 'People\'s Republic of China'];
-    case 'Czechia':
-      return ['Czech Republic'];
-    case 'United Arab Emirates':
-      return ['UAE'];
-    default:
-      return [];
+  if (location.includes('US')) {
+    return ['United States of America', 'USA', 'United States', 'America', 'States'];
+  } else if (location.includes('Korea, South')) {
+    return ['South Korea'];
+  } else if (location.includes('United Kingdom')) {
+    return ['UK', 'Great Britain', 'Britain', 'England'];
+  } else if (location.includes('China')) {
+    return ['PRC', 'People\'s Republic of China'];
+  } else if (location.includes('Czechia')) {
+    return ['Czech Republic'];
+  } else if (location.includes('United Arab Emirates')) {
+    return ['UAE'];
+  } else {
+    return [];
   }
 }
