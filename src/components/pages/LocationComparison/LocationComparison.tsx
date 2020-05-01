@@ -64,6 +64,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     <LocationComparisonChart
       data={data}
       property={property}
+      humanizedProperty={humanizedProperty}
       humanizedExceedingProperty={humanizedExceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}

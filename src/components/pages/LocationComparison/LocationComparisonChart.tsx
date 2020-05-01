@@ -17,6 +17,7 @@ import _ from 'lodash';
 interface LocationComparisonChartProps {
   data: LocationData[],
   property: string,
+  humanizedProperty: string,
   humanizedExceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
@@ -25,6 +26,7 @@ interface LocationComparisonChartProps {
 const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> = ({
                                                                                     data,
                                                                                     humanizedExceedingProperty,
+                                                                                    humanizedProperty,
                                                                                     property,
                                                                                     exceedingValue,
                                                                                     isAnimationActive,
@@ -51,7 +53,7 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
           </XAxis>
 
           <YAxis
-            label={{ value: property, angle: -90, position: 'left', dy: -60, dx: -15 }}
+            label={{ value: _.startCase(humanizedProperty), angle: -90, position: 'left', dy: -60, dx: -15 }}
             tickFormatter={numToGroupedString}
           />
 
