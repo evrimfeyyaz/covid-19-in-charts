@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { getAliasesForLocation } from '../../utilities/countryUtilities';
 import Form from 'react-bootstrap/Form';
@@ -7,6 +7,7 @@ interface LocationSelectionInputProps {
   locationsList: string[],
   defaultLocations: string[],
   multiple?: boolean,
+  maxNumOfSelections?: number,
   placeholder: string,
   id: string,
   onLocationChange: (locations: string[]) => void
@@ -14,9 +15,11 @@ interface LocationSelectionInputProps {
 
 const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
                                                                                   locationsList, defaultLocations,
-                                                                                  multiple, placeholder, id,
-                                                                                  onLocationChange,
+                                                                                  multiple, maxNumOfSelections = Infinity,
+                                                                                  placeholder, id, onLocationChange,
                                                                                 }) => {
+  const [isMaxSelectionsReached, setIsMaxSelectionsReached] = useState(defaultLocations.length >= maxNumOfSelections);
+
   function filterLocationsBy(option: string, props: { text: string, selected: string[] }) {
     if (props.selected.includes(option)) {
       return false;
@@ -31,6 +34,23 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
     return allNames.some(name => name.includes(text));
   }
 
+  function handleChange(locations: string[]) {
+    if (locations.length >= maxNumOfSelections) {
+      setIsMaxSelectionsReached(true);
+    } else {
+      setIsMaxSelectionsReached(false);
+    }
+
+    onLocationChange(locations);
+  }
+
+  const maxSelectionsReachedMenu = () => (
+    <div
+      className='bg-white text-danger px-3 py-2 rounded-lg small location-selection-input-max-selections-reached-menu'>
+      You can't select more than {maxNumOfSelections} locations.
+    </div>
+  );
+
   return (
     <Form.Group>
       <Form.Label>{multiple ? 'Locations' : 'Location'}</Form.Label>
@@ -44,9 +64,11 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
         selectHintOnEnter
         clearButton
         multiple={multiple}
-        onChange={onLocationChange}
+        onChange={handleChange}
         paginationText='Show more locations'
-        inputProps={{}}
+        renderMenu={
+          isMaxSelectionsReached ? maxSelectionsReachedMenu : undefined
+        }
       />
     </Form.Group>
   );

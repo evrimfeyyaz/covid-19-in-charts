@@ -9,19 +9,27 @@ type UseLocationSelectionReturnValue = [
   JSX.Element // locationInputComponent
 ]
 
+interface UseLocationSelectionOptions {
+  multiple?: boolean,
+  maxNumOfSelections?: number
+}
+
 function useLocationSelection(
   locationsList: string[],
   defaultLocations: string[],
-  multiple = false,
+  options: UseLocationSelectionOptions = {},
 ): UseLocationSelectionReturnValue {
+  const { multiple, maxNumOfSelections } = options;
   const [
     locations,
     setLocations,
   ] = useAlwaysPresentQueryParam('location', defaultLocations, NonNullElementArrayParam);
 
   function handleLocationChange(selectedLocations: string[]) {
+    const newLocations = maxNumOfSelections ? selectedLocations.slice(0, maxNumOfSelections) : selectedLocations;
+
     if (selectedLocations.length > 0 && !hasSameElements(selectedLocations, locations)) {
-      setLocations(selectedLocations);
+      setLocations(newLocations);
     }
   }
 
@@ -35,6 +43,7 @@ function useLocationSelection(
       placeholder={placeholder}
       multiple={multiple}
       onLocationChange={handleLocationChange}
+      maxNumOfSelections={maxNumOfSelections}
       key={encodeURIComponent(locations.join('-'))}
     />
   );
