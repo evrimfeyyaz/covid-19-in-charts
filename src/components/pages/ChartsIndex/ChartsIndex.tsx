@@ -28,11 +28,6 @@ const ChartsIndex: FunctionComponent = () => {
           image={IMAGES.dailyNumbersCard}
           link={ROUTE_PATHS.dailyNumbers}
         />
-
-        <ChartsIndexCard
-          title='More Visualizations to Come'
-          image={IMAGES.moreVisualizationsCard}
-        />
       </Row>
     </Container>
   );

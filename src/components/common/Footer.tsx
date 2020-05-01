@@ -43,7 +43,14 @@ const Footer: FunctionComponent = () => {
                 </Link>
               </li>
               <li className='list-item'>
-                More Charts to Come
+                <Link to={ROUTE_PATHS.dailyNumbers} className='link footer-link'>
+                  Daily Numbers
+                </Link>
+              </li>
+              <li className='list-item'>
+                <Link to={ROUTE_PATHS.locationComparison} className='link footer-link'>
+                  Location Comparison
+                </Link>
               </li>
             </ul>
           </Col>
