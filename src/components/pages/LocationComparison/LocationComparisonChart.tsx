@@ -41,8 +41,8 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
       }));
 
     body = (
-      <ResponsiveContainer width='100%' height={400} className='mb-2'>
-        <LineChart width={600} height={400} margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
+      <ResponsiveContainer height={400} className='mb-2'>
+        <LineChart margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey='index' type='category' allowDuplicatedCategory={false}>
             <Label
@@ -53,12 +53,17 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
           </XAxis>
 
           <YAxis
-            label={{ value: _.startCase(humanizedProperty), angle: -90, position: 'left', dy: -60, dx: -15 }}
+            label={{
+              value: _.startCase(humanizedProperty),
+              angle: -90,
+              dx: -55,
+            }}
             tickFormatter={numToGroupedString}
+            width={70}
           />
 
           <Tooltip offset={30} />
-          <Legend align='center' verticalAlign='top' />
+          <Legend align='center' verticalAlign='top' wrapperStyle={{ top: 5 }} />
 
           {dataWithIndex.map((locationData, index) => (
             <Line
