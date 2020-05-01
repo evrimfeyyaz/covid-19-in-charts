@@ -39,7 +39,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
 
   const chartId = 'location-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
-  const pageDescription = `DRAFT`;
+  const pageDescription = 'Comparison of various COVID-19 data points between multiple locations.';
 
   useEffect(() => {
     const data = store.getDataByLocations(locations);
