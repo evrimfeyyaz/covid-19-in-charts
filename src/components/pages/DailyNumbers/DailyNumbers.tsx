@@ -31,7 +31,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const tableId = 'daily-numbers';
   const title = `COVID-19 Daily Numbers: ${location}`;
   const subtitle = (date != null || lastDate != null) ? prettifyDate(date ?? lastDate as Date) : '';
-  const pageDescription = `See the daily COVID-19 data for ${location}.`;
+  const pageDescription = `See the daily COVID-19 numbers for ${location}.`;
 
   useEffect(() => {
     if (date != null) {
