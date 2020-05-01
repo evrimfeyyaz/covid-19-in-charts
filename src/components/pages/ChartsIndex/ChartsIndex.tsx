@@ -16,8 +16,8 @@ const ChartsIndex: FunctionComponent = () => {
         />
 
         <ChartsIndexCard
-          title='Country and State Comparison'
-          description='Compare multiple countries or states in terms of various data points.'
+          title='Location Comparison'
+          description='Compare various data points between multiple locations.'
           image={IMAGES.dailyNumbersCard}
           link={ROUTE_PATHS.locationComparison}
         />
