@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import { Link } from 'react-router-dom';
-import { EXTERNAL_LINKS, ROUTE_PATHS } from '../../constants';
+import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from '../../constants';
 import { getCurrentVersion } from '../../utilities/versionUtilities';
 
 const Footer: FunctionComponent = () => {
@@ -39,17 +39,17 @@ const Footer: FunctionComponent = () => {
             <ul className='list-unstyled'>
               <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.casesRecoveriesDeaths} className='link footer-link'>
-                  Cases, Recoveries & Deaths
+                  {ROUTE_TITLES.casesRecoveriesDeaths}
                 </Link>
               </li>
               <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.dailyNumbers} className='link footer-link'>
-                  Daily Numbers
+                  {ROUTE_TITLES.dailyNumbers}
                 </Link>
               </li>
               <li className='list-item mb-2 m-lg-1'>
                 <Link to={ROUTE_PATHS.locationComparison} className='link footer-link'>
-                  Comparison Between Locations
+                  {ROUTE_TITLES.locationComparison}
                 </Link>
               </li>
             </ul>

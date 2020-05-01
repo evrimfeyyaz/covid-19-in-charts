@@ -1,10 +1,16 @@
 export const ROUTE_PATHS = {
   home: '/',
   casesRecoveriesDeaths: '/cases-recoveries-deaths',
-  locationComparison: '/location-comparison',
   dailyNumbers: '/daily-numbers',
+  locationComparison: '/location-comparison',
   about: '/about',
 };
+
+export const ROUTE_TITLES = {
+  casesRecoveriesDeaths: 'Cases, Recoveries & Deaths',
+  dailyNumbers: 'Daily Numbers',
+  locationComparison: 'Compare Locations',
+}
 
 export const COLORS = {
   confirmed: '#f6da63',
