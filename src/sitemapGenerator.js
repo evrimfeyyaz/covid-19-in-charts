@@ -9,5 +9,6 @@ sitemap.pipe(writeStream);
 sitemap.write({ url: '/', changefreq: 'daily' });
 sitemap.write({ url: '/cases-recoveries-deaths', changefre: 'daily', priority: 0.6 });
 sitemap.write({ url: '/daily-numbers', changefre: 'daily', priority: 0.6 });
+sitemap.write({ url: '/location-comparison', changefre: 'daily', priority: 0.6 });
 sitemap.write({ url: '/about', changefre: 'weekly' });
 sitemap.end();

@@ -2,7 +2,14 @@ export const ROUTE_PATHS = {
   home: '/',
   casesRecoveriesDeaths: '/cases-recoveries-deaths',
   dailyNumbers: '/daily-numbers',
+  locationComparison: '/location-comparison',
   about: '/about',
+};
+
+export const ROUTE_TITLES = {
+  casesRecoveriesDeaths: 'Cases, Recoveries & Deaths',
+  dailyNumbers: 'Daily Numbers',
+  locationComparison: 'Compare Locations',
 };
 
 export const COLORS = {
@@ -11,6 +18,29 @@ export const COLORS = {
   deaths: '#da2d2d',
   recovered: '#18a70a',
   bgColor: '#e1e6ed',
+  // From http://there4.io/2012/05/02/google-chart-color-list/
+  graphColors: [
+    '#3366CC',
+    '#DC3912',
+    '#FF9900',
+    '#109618',
+    '#990099',
+    '#3B3EAC',
+    '#0099C6',
+    '#DD4477',
+    '#66AA00',
+    '#B82E2E',
+    '#316395',
+    '#994499',
+    '#22AA99',
+    '#AAAA11',
+    '#6633CC',
+    '#E67300',
+    '#8B0707',
+    '#329262',
+    '#5574A6',
+    '#3B3EAC',
+  ],
 };
 
 export const EXTERNAL_LINKS = {
@@ -26,15 +56,12 @@ export const SITE_INFO = {
   description: 'Various data related to COVID-19 visualized.',
 };
 
-export const SETTINGS = {
-  defaultLocation: 'US',
-};
-
 export const IMAGES = {
   og: '/images/og-image.jpg?9f089226-8723-4464-a103-4b01b96355da',
-  moreVisualizationsCard: '/images/more-visualizations-card.jpg',
-  casesRecoveriesDeathsOg: '/images/cases-recoveries-and-deaths-og.jpg',
+  casesRecoveriesDeathsOg: '/images/cases-recoveries-and-deaths.jpg',
   casesRecoveriesDeathsCard: '/images/cases-recoveries-and-deaths-card.jpg',
-  dailyNumbersOg: '/images/daily-numbers-og.jpg',
+  dailyNumbersOg: '/images/daily-numbers.jpg',
   dailyNumbersCard: '/images/daily-numbers-card.jpg',
+  locationComparisonOg: '/images/location-comparison.jpg',
+  locationComparisonCard: '/images/location-comparison-card.jpg',
 };

@@ -113,6 +113,10 @@ body {
   max-width: 20rem;
 }
 
+.location-selection-input-max-selections-reached-menu {
+  border: 1px solid #ced4da
+}
+
 .react-datepicker {
   font-family: $font-family-sans-serif !important;
 }

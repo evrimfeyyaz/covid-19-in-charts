@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import CovidDataStore from './store/CovidDataStore';
+import Covid19DataStore from './store/Covid19DataStore';
 import { IMAGES, SITE_INFO } from './constants';
 import NavBar from './components/common/NavBar';
 import Loading from './components/common/Loading';
@@ -9,12 +9,15 @@ import Footer from './components/common/Footer';
 import Router from './components/pages/Router';
 import ScreenTooSmall from './components/common/ScreenTooSmall';
 import { getAbsoluteUrl } from './utilities/urlUtilities';
+import { localStorageCleanup } from './utilities/localStorageUtilities';
 
 function App() {
-  const dataStore = useRef<CovidDataStore>(new CovidDataStore());
+  const dataStore = useRef<Covid19DataStore>(new Covid19DataStore());
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
+    localStorageCleanup();
+
     dataStore.current.loadData().then(() => {
       setLoaded(true);
     });

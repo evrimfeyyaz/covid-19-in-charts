@@ -1,18 +1,18 @@
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
-import { DateValue } from '../../../store/CovidDataStore';
+import { ValuesOnDate } from '../../../store/Covid19DataStore';
 import { prettifyMDYDate } from '../../../utilities/dateUtilities';
 import Table from 'react-bootstrap/Table';
 import { COLORS } from '../../../constants';
 import { numToGroupedString } from '../../../utilities/numUtilities';
 
 interface CasesRecoveriesDeathsTooltip {
-  payload: { payload: DateValue }[],
+  payload: { payload: ValuesOnDate }[],
   label: string,
   active: boolean
 }
 
-const CasesRecoveriesDeathsTooltip: FunctionComponent<CasesRecoveriesDeathsTooltip> = ({ payload, label, active }) => {
+const CasesRecoveriesDeathsTooltip: FunctionComponent<CasesRecoveriesDeathsTooltip> = ({ payload, active }) => {
   if (!active) {
     return null;
   }

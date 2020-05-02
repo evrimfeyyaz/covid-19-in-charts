@@ -2,7 +2,7 @@ import React, { FunctionComponent } from 'react';
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
-import { EXTERNAL_LINKS, ROUTE_PATHS } from '../../constants';
+import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from '../../constants';
 import { useLocation } from 'react-router-dom';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
@@ -28,10 +28,13 @@ const NavBar: FunctionComponent = () => {
           <Nav className="mr-auto">
             <NavDropdown title="Visualizations" id='navbar-dropdown-visualizations'>
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesRecoveriesDeaths)}>
-                Cases, Recoveries & Deaths
+                {ROUTE_TITLES.casesRecoveriesDeaths}
               </NavDropdown.Item>
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.dailyNumbers)}>
-                Daily Numbers
+                {ROUTE_TITLES.dailyNumbers}
+              </NavDropdown.Item>
+              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.locationComparison)}>
+                {ROUTE_TITLES.locationComparison}
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

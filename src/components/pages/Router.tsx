@@ -4,11 +4,12 @@ import { ROUTE_PATHS } from '../../constants';
 import CasesRecoveriesDeaths from './CasesRecoveriesDeaths/CasesRecoveriesDeaths';
 import About from './About';
 import ChartsIndex from './ChartsIndex/ChartsIndex';
-import CovidDataStore from '../../store/CovidDataStore';
+import Covid19DataStore from '../../store/Covid19DataStore';
 import DailyNumbers from './DailyNumbers/DailyNumbers';
+import LocationComparison from './LocationComparison/LocationComparison';
 
 interface RouterProps {
-  dataStore: CovidDataStore;
+  dataStore: Covid19DataStore;
 }
 
 const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
@@ -17,6 +18,9 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
       <Switch>
         <Route path={ROUTE_PATHS.casesRecoveriesDeaths}>
           <CasesRecoveriesDeaths store={dataStore} />
+        </Route>
+        <Route path={ROUTE_PATHS.locationComparison}>
+          <LocationComparison store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.dailyNumbers}>
           <DailyNumbers store={dataStore} />

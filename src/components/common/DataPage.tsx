@@ -2,40 +2,69 @@ import React, { FunctionComponent } from 'react';
 import { createPageTitle } from '../../utilities/metaUtilities';
 import Container from 'react-bootstrap/Container';
 import Helmet from 'react-helmet';
-import { useCanonicalURL } from '../../utilities/useCanonicalURL';
+import { useCanonicalURL } from '../../hooks/useCanonicalURL';
 import Loading from './Loading';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ShareAndDownload from './ShareAndDownload';
 import Card from 'react-bootstrap/Card';
 import { getAbsoluteUrl } from '../../utilities/urlUtilities';
+import Accordion from 'react-bootstrap/Accordion';
+import Button from 'react-bootstrap/Button';
 
 interface DataPageProps {
   title: string,
-  subTitle: string,
+  subTitle?: string,
   pageDescription: string,
   ogImage: string,
   lastUpdated: Date,
   hasLoaded: boolean,
   bodyComponent: JSX.Element,
-  optionsComponent: JSX.Element,
+  optionsComponents: JSX.Element[],
+  advancedOptionsComponents?: JSX.Element[],
   dataContainerId: string,
+  canonicalQueryParams?: string[],
   onDownloadClick: () => void,
 }
 
 const DataPage: FunctionComponent<DataPageProps> = ({
                                                       title, subTitle, pageDescription, hasLoaded,
-                                                      bodyComponent, optionsComponent, lastUpdated,
+                                                      bodyComponent, optionsComponents, canonicalQueryParams,
+                                                      advancedOptionsComponents, lastUpdated,
                                                       ogImage, dataContainerId, onDownloadClick,
                                                     }) => {
-  const canonicalUrl = useCanonicalURL();
+  const canonicalUrl = useCanonicalURL(canonicalQueryParams);
 
   let body = <Loading />;
   if (hasLoaded) {
     body = (
       <Row>
         <Col xs={12} lg={4} className='d-flex flex-column px-4 py-3'>
-          {optionsComponent}
+          {optionsComponents.map((component, index) => (
+            <div key={`options-component-${index}`}>
+              {component}
+            </div>
+          ))}
+          {advancedOptionsComponents && advancedOptionsComponents.length > 0 && (
+            <Accordion>
+              <Accordion.Toggle as={Button} variant="link" eventKey="0" className='w-100'>
+                More Options
+              </Accordion.Toggle>
+              <Accordion.Collapse eventKey="0" className='py-2'>
+                <Card className='bg-transparent border-white'>
+                  <Card.Body>
+                    {advancedOptionsComponents.map((component, index) => (
+                      <Row key={`advanced-options-component-${index}`}>
+                        <Col xs={12}>
+                          {component}
+                        </Col>
+                      </Row>
+                    ))}
+                  </Card.Body>
+                </Card>
+              </Accordion.Collapse>
+            </Accordion>
+          )}
           <div className='mt-auto d-none d-lg-block'>
             <ShareAndDownload title={title} onDownloadClick={onDownloadClick} smallButtons />
           </div>
@@ -43,7 +72,9 @@ const DataPage: FunctionComponent<DataPageProps> = ({
         <Col>
           <div id={dataContainerId}>
             <h1 className='h4 mb-1'>{title}</h1>
-            <p className='small text-muted ml-1'>{subTitle}</p>
+            {subTitle && (
+              <p className='small text-muted ml-1'>{subTitle}</p>
+            )}
             <Card className='shadow border-0 mt-3' style={{ borderRadius: 15 }}>
               <Card.Body className='px-4 py-4'>
                 {bodyComponent}

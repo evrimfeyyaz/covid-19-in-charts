@@ -1,30 +1,55 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import CovidDataStore, { DateValues, LocationData } from '../../../store/CovidDataStore';
+import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
-import { useQueryParam, StringParam, NumberParam } from 'use-query-params';
-import CasesRecoveriesDeathsOptions, { ExceedingProperty } from './CasesRecoveriesDeathsOptions';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
-import useSingleLocationSelection from '../../common/SingleLocationSelection/useSingleLocationSelection';
 import { IMAGES } from '../../../constants';
+import useLocationSelection from '../../../hooks/useLocationSelection';
+import { usePropertySelection } from '../../../hooks/usePropertySelection';
+import { useNumberSelection } from '../../../hooks/useNumberSelection';
 
 interface CasesRecoveriesDeathsProps {
-  store: CovidDataStore,
+  store: Covid19DataStore,
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
-  const [locations] = useState(store.locations);
+  const defaultLocation = 'US';
+  const defaultExceedingProperty = 'confirmed';
+  const defaultExceedingValue = 100;
+
+  const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [location, locationInputComponent] = useSingleLocationSelection(locations);
-  const [exceedingProperty = 'confirmed', setExceedingProperty] = useQueryParam('exceedingProperty', StringParam);
-  const [exceedingValue = 100, setExceedingValue] = useQueryParam('exceedingValue', NumberParam);
+  const [
+    [location],
+    locationInputComponent,
+  ] = useLocationSelection(locationsList, [defaultLocation], {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'casesRecoveriesDeathsLastLocation',
+  });
+  const [
+    exceedingProperty,
+    humanizedExceedingProperty,
+    exceedingPropertyInputComponent,
+  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', {
+    onlyCumulativeValues: true,
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'caseRecoveriesLastExceedingProperty',
+  });
+  const [
+    exceedingValue,
+    exceedingValueInputComponent,
+  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded', {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'caseRecoveriesLastExceedingValue',
+  });
+  const canonicalQueryParams = ['location', 'exceedingProperty', 'exceedingValue'];
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
@@ -36,16 +61,9 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   }
 
   useEffect(() => {
-    // Set current query params in the URL, just in case they are missing.
-    setExceedingProperty(exceedingProperty);
-    setExceedingValue(exceedingValue);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     const data = store.getDataByLocation(location);
     const lastUpdated = store.lastUpdated;
-    const strippedData = CovidDataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+    const strippedData = Covid19DataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
     if (strippedData.values.length > 0) {
       const firstDate = MDYStringToDate(strippedData.values[0].date);
@@ -59,14 +77,6 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     setLastUpdated(lastUpdated);
   }, [store, location, exceedingProperty, exceedingValue]);
 
-  function handleExceedingPropertyChange(exceedingPropertyNew: ExceedingProperty) {
-    setExceedingProperty(exceedingPropertyNew);
-  }
-
-  function handleExceedingValueChange(exceedingValueNew: number) {
-    setExceedingValue(exceedingValueNew);
-  }
-
   function handleDownloadClick() {
     setAreChartAnimationsActive(false);
     const node = document.getElementById(chartId) as HTMLElement;
@@ -78,20 +88,10 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     return (data != null && lastUpdated != null);
   }
 
-  const optionsComponent = (
-    <CasesRecoveriesDeathsOptions
-      locationInputComponent={locationInputComponent}
-      exceedingProperty={exceedingProperty as ExceedingProperty}
-      exceedingValue={exceedingValue}
-      onExceedingPropertyChange={handleExceedingPropertyChange}
-      onExceedingValueChange={handleExceedingValueChange}
-    />
-  );
-
   const bodyComponent = (
     <CasesRecoveriesDeathsChart
-      data={data?.values as DateValues}
-      exceedingProperty={exceedingProperty}
+      data={data?.values as ValuesOnDate[]}
+      humanizedExceedingProperty={humanizedExceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}
     />
@@ -106,8 +106,10 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}
-      optionsComponent={optionsComponent}
+      optionsComponents={[locationInputComponent]}
+      advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
+      canonicalQueryParams={canonicalQueryParams}
       onDownloadClick={handleDownloadClick}
     />
   );
