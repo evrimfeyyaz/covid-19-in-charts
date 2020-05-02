@@ -25,7 +25,7 @@ const ChartsIndex: FunctionComponent = () => {
         <ChartsIndexCard
           title={ROUTE_TITLES.locationComparison}
           description='Compare various data points between multiple locations.'
-          image={IMAGES.dailyNumbersCard}
+          image={IMAGES.locationComparisonCard}
           link={ROUTE_PATHS.locationComparison}
         />
       </Row>
