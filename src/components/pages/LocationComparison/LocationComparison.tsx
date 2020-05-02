@@ -27,7 +27,12 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const [
     locations,
     locationInputComponent]
-    = useLocationSelection(locationsList, defaultLocations, { multiple: true, maxNumOfSelections: 10 });
+    = useLocationSelection(locationsList, defaultLocations, {
+    multiple: true,
+    maxNumOfSelections: 10,
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'locationComparisonLastLocations',
+  });
   const [
     property,
     humanizedProperty,
