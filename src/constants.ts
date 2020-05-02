@@ -10,7 +10,7 @@ export const ROUTE_TITLES = {
   casesRecoveriesDeaths: 'Cases, Recoveries & Deaths',
   dailyNumbers: 'Daily Numbers',
   locationComparison: 'Compare Locations',
-}
+};
 
 export const COLORS = {
   confirmed: '#f6da63',
@@ -54,10 +54,6 @@ export const SITE_INFO = {
   baseUrl: process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : 'https://covid19incharts.com',
   baseTitle: 'COVID-19 in Charts',
   description: 'Various data related to COVID-19 visualized.',
-};
-
-export const SETTINGS = {
-  defaultLocation: 'US',
 };
 
 export const IMAGES = {

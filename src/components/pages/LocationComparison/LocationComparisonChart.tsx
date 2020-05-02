@@ -5,7 +5,7 @@ import {
   Label,
   Legend,
   Line, LineChart, ResponsiveContainer,
-  Tooltip, TooltipFormatter, TooltipPayload,
+  Tooltip, TooltipFormatter,
   XAxis,
   YAxis,
 } from 'recharts';

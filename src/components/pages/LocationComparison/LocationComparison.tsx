@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
 import DataPage from '../../common/DataPage';
-import { IMAGES, SETTINGS } from '../../../constants';
+import { IMAGES } from '../../../constants';
 import LocationComparisonChart from './LocationComparisonChart';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
@@ -14,6 +14,11 @@ interface LocationComparisonProps {
 }
 
 const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store }) => {
+  const defaultLocations = ['US', 'Spain', 'Italy', 'United Kingdom'];
+  const defaultProperty = 'confirmed';
+  const defaultExceedingProperty = 'confirmed';
+  const defaultExceedingValue = 100;
+
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData[]>([]);
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -22,21 +27,21 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const [
     locations,
     locationInputComponent]
-    = useLocationSelection(locationsList, [SETTINGS.defaultLocation], { multiple: true, maxNumOfSelections: 10 });
+    = useLocationSelection(locationsList, defaultLocations, { multiple: true, maxNumOfSelections: 10 });
   const [
     property,
     humanizedProperty,
     propertyInputComponent,
-  ] = usePropertySelection('property', 'confirmed', 'Compare');
+  ] = usePropertySelection('property', defaultProperty, 'Compare');
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent,
-  ] = usePropertySelection('exceedingProperty', 'confirmed', 'Start from the day', true);
+  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', true);
   const [
     exceedingValue,
     exceedingValueInputComponent,
-  ] = useNumberSelection('exceedingValue', 100, 'exceeded');
+  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded');
 
   const chartId = 'location-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;

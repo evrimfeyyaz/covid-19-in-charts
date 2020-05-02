@@ -5,7 +5,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
-import { IMAGES, SETTINGS } from '../../../constants';
+import { IMAGES } from '../../../constants';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 import { usePropertySelection } from '../../../hooks/usePropertySelection';
 import { useNumberSelection } from '../../../hooks/useNumberSelection';
@@ -15,6 +15,10 @@ interface CasesRecoveriesDeathsProps {
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
+  const defaultLocation = 'US';
+  const defaultExceedingProperty = 'confirmed';
+  const defaultExceedingValue = 100;
+
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -25,16 +29,16 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   const [
     [location],
     locationInputComponent
-  ] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
+  ] = useLocationSelection(locationsList, [defaultLocation]);
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent
-  ] = usePropertySelection('exceedingProperty', 'confirmed', 'Start from the day', true);
+  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', true);
   const [
     exceedingValue,
     exceedingValueInputComponent
-  ] = useNumberSelection('exceedingValue', 100, 'exceeded');
+  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded');
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;

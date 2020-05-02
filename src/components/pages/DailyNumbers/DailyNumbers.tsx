@@ -4,7 +4,7 @@ import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DailyNumbersTable from './DailyNumbersTable';
 import DataPage from '../../common/DataPage';
 import { prettifyDate } from '../../../utilities/dateUtilities';
-import { IMAGES, SETTINGS } from '../../../constants';
+import { IMAGES } from '../../../constants';
 import useLocationSelection from '../../../hooks/useLocationSelection';
 import { useDateSelection } from '../../../hooks/useDateSelection';
 
@@ -13,6 +13,8 @@ interface DailyNumbersProps {
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
+  const defaultLocation = 'US';
+
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<ValuesOnDate>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
@@ -22,7 +24,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const [
     [location],
     locationInputComponent,
-  ] = useLocationSelection(locationsList, [SETTINGS.defaultLocation]);
+  ] = useLocationSelection(locationsList, [defaultLocation]);
   const [
     date,
     dateInputComponent,
