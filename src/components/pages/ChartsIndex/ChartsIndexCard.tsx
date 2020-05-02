@@ -13,7 +13,7 @@ interface ChartsIndexCardProps {
 const ChartsIndexCard: FunctionComponent<ChartsIndexCardProps> = ({ title, description, image, link }) => {
   return (
     <Col xs={6} md={4}>
-      <Card className='my-3 m-sm-2'>
+      <Card className='my-3 mx-lg-2'>
         <Card.Img variant="top" src={image} alt={title} />
         <Card.Body>
           <Card.Title>
