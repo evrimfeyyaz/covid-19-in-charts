@@ -1,6 +1,6 @@
 {
   "name": "covid-19-in-charts",
-  "version": "0.16.1",
+  "version": "0.16.2",
   "private": true,
   "dependencies": {
     "bootstrap": "^4.4.1",
