@@ -3,7 +3,7 @@ import LocationSelectionInput from '../components/common/LocationSelectionInput'
 import { hasSameElements } from '../utilities/arrayUtilities';
 import { NonNullElementArrayParam } from '../utilities/useQueryParamsUtilities';
 import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
-import { getLocalStorageItem, setLocalStorageItem } from '../utilities/localStorageUtilities';
+import usePersistedSelection from './usePersistedSelection';
 
 type UseLocationSelectionReturnValue = [
   string[], // selectedLocations
@@ -25,15 +25,16 @@ function useLocationSelection(
   const {
     multiple,
     maxNumOfSelections,
-    lastSelectionAsDefault,
-    lastSelectionStorageKey,
   } = options;
 
-  const initialSelections = restoreLastSelections();
+  const [
+    initialSelection,
+    persistLastSelections,
+  ] = usePersistedSelection(defaultLocations, options);
   const [
     locations,
     setLocations,
-  ] = useAlwaysPresentQueryParam('location', initialSelections, NonNullElementArrayParam);
+  ] = useAlwaysPresentQueryParam('location', initialSelection, NonNullElementArrayParam);
 
   function handleLocationChange(selectedLocations: string[]) {
     const newLocations = maxNumOfSelections ? selectedLocations.slice(0, maxNumOfSelections) : selectedLocations;
@@ -42,23 +43,6 @@ function useLocationSelection(
       setLocations(newLocations);
       persistLastSelections(newLocations);
     }
-  }
-
-  function persistLastSelections(selectedLocations: string[]) {
-    if (lastSelectionAsDefault && lastSelectionStorageKey) {
-      setLocalStorageItem(lastSelectionStorageKey, selectedLocations);
-    }
-  }
-
-  function restoreLastSelections(): string[] {
-    let lastSelections: (string[] | null) = null;
-    if (lastSelectionAsDefault && lastSelectionStorageKey) {
-      lastSelections = getLocalStorageItem(lastSelectionStorageKey);
-    }
-
-    return (lastSelections != null && lastSelections?.length > 0)
-      ? lastSelections
-      : defaultLocations;
   }
 
   const placeholder = multiple ? 'Select locations...' : 'Select location...';
