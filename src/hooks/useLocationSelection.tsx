@@ -29,7 +29,7 @@ function useLocationSelection(
     lastSelectionStorageKey,
   } = options;
 
-  const initialSelections = restoreLastSelection();
+  const initialSelections = restoreLastSelections();
   const [
     locations,
     setLocations,
@@ -40,23 +40,25 @@ function useLocationSelection(
 
     if (selectedLocations.length > 0 && !hasSameElements(selectedLocations, locations)) {
       setLocations(newLocations);
-      persistLastSelection(newLocations);
+      persistLastSelections(newLocations);
     }
   }
 
-  function persistLastSelection(selectedLocations: string[]) {
+  function persistLastSelections(selectedLocations: string[]) {
     if (lastSelectionAsDefault && lastSelectionStorageKey) {
-      setLocalStorageItem(lastSelectionStorageKey, selectedLocations)
+      setLocalStorageItem(lastSelectionStorageKey, selectedLocations);
     }
   }
 
-  function restoreLastSelection(): string[] {
+  function restoreLastSelections(): string[] {
     let lastSelections: (string[] | null) = null;
     if (lastSelectionAsDefault && lastSelectionStorageKey) {
       lastSelections = getLocalStorageItem(lastSelectionStorageKey);
     }
 
-    return lastSelections ?? defaultLocations;
+    return (lastSelections != null && lastSelections?.length > 0)
+      ? lastSelections
+      : defaultLocations;
   }
 
   const placeholder = multiple ? 'Select locations...' : 'Select location...';
