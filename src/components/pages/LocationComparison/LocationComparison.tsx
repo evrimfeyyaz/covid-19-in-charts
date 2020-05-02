@@ -100,7 +100,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     <DataPage
       title={title}
       pageDescription={pageDescription}
-      ogImage={IMAGES.casesRecoveriesDeathsOg}
+      ogImage={IMAGES.locationComparisonOg}
       lastUpdated={lastUpdated as Date}
       hasLoaded={hasLoaded()}
       bodyComponent={bodyComponent}
