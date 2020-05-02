@@ -49,6 +49,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     lastSelectionAsDefault: true,
     lastSelectionStorageKey: 'caseRecoveriesLastExceedingValue',
   });
+  const canonicalQueryParams = ['location', 'exceedingProperty', 'exceedingValue'];
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
@@ -108,6 +109,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
       optionsComponents={[locationInputComponent]}
       advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
+      canonicalQueryParams={canonicalQueryParams}
       onDownloadClick={handleDownloadClick}
     />
   );

@@ -32,6 +32,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     date,
     dateInputComponent,
   ] = useDateSelection(firstDate, lastDate);
+  const canonicalQueryParams = ['location', 'date'];
 
   const tableId = 'daily-numbers';
   const title = `COVID-19 Daily Numbers: ${location}`;
@@ -76,6 +77,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
       bodyComponent={bodyComponent}
       optionsComponents={[locationInputComponent, dateInputComponent]}
       dataContainerId={tableId}
+      canonicalQueryParams={canonicalQueryParams}
       onDownloadClick={handleDownloadClick}
     />
   );

@@ -23,16 +23,17 @@ interface DataPageProps {
   optionsComponents: JSX.Element[],
   advancedOptionsComponents?: JSX.Element[],
   dataContainerId: string,
+  canonicalQueryParams?: string[],
   onDownloadClick: () => void,
 }
 
 const DataPage: FunctionComponent<DataPageProps> = ({
                                                       title, subTitle, pageDescription, hasLoaded,
-                                                      bodyComponent, optionsComponents,
+                                                      bodyComponent, optionsComponents, canonicalQueryParams,
                                                       advancedOptionsComponents, lastUpdated,
                                                       ogImage, dataContainerId, onDownloadClick,
                                                     }) => {
-  const canonicalUrl = useCanonicalURL();
+  const canonicalUrl = useCanonicalURL(canonicalQueryParams);
 
   let body = <Loading />;
   if (hasLoaded) {

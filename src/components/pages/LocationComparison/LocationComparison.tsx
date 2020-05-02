@@ -57,6 +57,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     lastSelectionAsDefault: true,
     lastSelectionStorageKey: 'locationComparisonLastExceedingValue',
   });
+  const canonicalQueryParams = ['location', 'property', 'exceedingProperty', 'exceedingValue'];
 
   const chartId = 'location-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
@@ -106,6 +107,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
       optionsComponents={[locationInputComponent, propertyInputComponent]}
       advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
+      canonicalQueryParams={canonicalQueryParams}
       onDownloadClick={handleDownloadClick}
     />
   );
