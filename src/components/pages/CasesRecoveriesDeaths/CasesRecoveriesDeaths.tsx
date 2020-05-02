@@ -1,7 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
 import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
-import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';
 import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';

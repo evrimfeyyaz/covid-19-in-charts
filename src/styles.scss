@@ -390,4 +390,12 @@ body {
   background-color: #4B97D1;
 }
 
+.rbt-input-multi.form-control {
+  cursor: text;
+  overflow: hidden;
+  position: relative;
+  height: auto;
+}
+
+@import '~react-bootstrap-typeahead/css/Typeahead';
 @import '~bootstrap/scss/bootstrap';
