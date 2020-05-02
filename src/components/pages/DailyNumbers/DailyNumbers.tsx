@@ -24,7 +24,10 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const [
     [location],
     locationInputComponent,
-  ] = useLocationSelection(locationsList, [defaultLocation]);
+  ] = useLocationSelection(locationsList, [defaultLocation], {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'dailyNumbersLastLocation',
+  });
   const [
     date,
     dateInputComponent,

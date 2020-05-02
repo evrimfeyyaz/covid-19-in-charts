@@ -29,7 +29,10 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   const [
     [location],
     locationInputComponent
-  ] = useLocationSelection(locationsList, [defaultLocation]);
+  ] = useLocationSelection(locationsList, [defaultLocation], {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'casesRecoveriesDeathsLastLocation'
+  });
   const [
     exceedingProperty,
     humanizedExceedingProperty,
