@@ -5,7 +5,7 @@ type UsePersistedSelectionResult<T> = [
   (selection: T) => void    // persistLastSelection()
 ]
 
-interface UsePersistedSelectionOptions {
+export interface UsePersistedSelectionOptions {
   lastSelectionAsDefault?: boolean,
   lastSelectionStorageKey?: string,
 }

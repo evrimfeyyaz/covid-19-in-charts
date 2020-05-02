@@ -3,6 +3,7 @@ import { ValuesOnDatePropertyParam } from '../utilities/useQueryParamsUtilities'
 import Form from 'react-bootstrap/Form';
 import React, { ChangeEvent } from 'react';
 import Covid19DataStore, { ValuesOnDateProperty } from '../store/Covid19DataStore';
+import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
 
 type UsePropertySelectionReturnValue = [
   ValuesOnDateProperty, // selectedProperty
@@ -10,17 +11,26 @@ type UsePropertySelectionReturnValue = [
   JSX.Element // propertyInputComponent
 ]
 
+interface UsePropertySelectionOptions extends UsePersistedSelectionOptions {
+  onlyCumulativeValues?: boolean
+}
+
 export function usePropertySelection(
   queryParamName: string,
   defaultProperty: ValuesOnDateProperty,
   inputLabel: string,
-  onlyCumulativeValues = false,
+  options: UsePropertySelectionOptions = {},
 ): UsePropertySelectionReturnValue {
-  const [property, setProperty] = useAlwaysPresentQueryParam(
-    queryParamName,
-    defaultProperty,
-    ValuesOnDatePropertyParam,
-  );
+  const { onlyCumulativeValues } = options;
+
+  const [
+    initialProperty,
+    persistLastProperty,
+  ] = usePersistedSelection(defaultProperty, options);
+  const [
+    property,
+    setProperty
+  ] = useAlwaysPresentQueryParam(queryParamName, initialProperty, ValuesOnDatePropertyParam,);
 
   const humanizedProperty = Covid19DataStore.humanizePropertyName(property);
   const selectableProperties = Covid19DataStore.valuesOnDateProperties
@@ -43,6 +53,7 @@ export function usePropertySelection(
       newProperty !== property
     ) {
       setProperty(newProperty);
+      persistLastProperty(newProperty);
     }
   }
 

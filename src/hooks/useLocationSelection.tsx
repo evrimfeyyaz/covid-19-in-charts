@@ -3,18 +3,16 @@ import LocationSelectionInput from '../components/common/LocationSelectionInput'
 import { hasSameElements } from '../utilities/arrayUtilities';
 import { NonNullElementArrayParam } from '../utilities/useQueryParamsUtilities';
 import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
-import usePersistedSelection from './usePersistedSelection';
+import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
 
 type UseLocationSelectionReturnValue = [
   string[], // selectedLocations
   JSX.Element // locationInputComponent
 ]
 
-interface UseLocationSelectionOptions {
+interface UseLocationSelectionOptions extends UsePersistedSelectionOptions {
   multiple?: boolean,
   maxNumOfSelections?: number,
-  lastSelectionAsDefault?: boolean,
-  lastSelectionStorageKey?: string,
 }
 
 function useLocationSelection(

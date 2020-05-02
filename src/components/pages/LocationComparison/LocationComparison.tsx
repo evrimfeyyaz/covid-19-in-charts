@@ -37,16 +37,26 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     property,
     humanizedProperty,
     propertyInputComponent,
-  ] = usePropertySelection('property', defaultProperty, 'Compare');
+  ] = usePropertySelection('property', defaultProperty, 'Compare', {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'locationComparisonLastProperty',
+  });
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent,
-  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', true);
+  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', {
+    onlyCumulativeValues: true,
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'locationComparisonLastExceedingProperty',
+  });
   const [
     exceedingValue,
     exceedingValueInputComponent,
-  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded');
+  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded', {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'locationComparisonLastExceedingValue',
+  });
 
   const chartId = 'location-comparison-chart';
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;

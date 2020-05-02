@@ -28,20 +28,27 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
 
   const [
     [location],
-    locationInputComponent
+    locationInputComponent,
   ] = useLocationSelection(locationsList, [defaultLocation], {
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'casesRecoveriesDeathsLastLocation'
+    lastSelectionStorageKey: 'casesRecoveriesDeathsLastLocation',
   });
   const [
     exceedingProperty,
     humanizedExceedingProperty,
-    exceedingPropertyInputComponent
-  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', true);
+    exceedingPropertyInputComponent,
+  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', {
+    onlyCumulativeValues: true,
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'caseRecoveriesLastExceedingProperty',
+  });
   const [
     exceedingValue,
-    exceedingValueInputComponent
-  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded');
+    exceedingValueInputComponent,
+  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded', {
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: 'caseRecoveriesLastExceedingValue',
+  });
 
   const chartId = 'cases-recoveries-deaths-chart';
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;

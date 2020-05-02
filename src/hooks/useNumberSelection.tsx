@@ -2,6 +2,7 @@ import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
 import Form from 'react-bootstrap/Form';
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { NumberParam } from 'use-query-params';
+import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
 
 type UseNumberSelectionReturnValue = [
   number, // selectedNumber
@@ -12,12 +13,17 @@ export function useNumberSelection(
   queryParamName: string,
   defaultValue: number,
   inputLabel: string,
+  options: UsePersistedSelectionOptions = {},
 ): UseNumberSelectionReturnValue {
-  const [number, setNumber] = useAlwaysPresentQueryParam(
-    queryParamName,
-    defaultValue,
-    NumberParam,
-  );
+  const [
+    initialNumber,
+    persistLastNumber,
+  ] = usePersistedSelection(defaultValue, options);
+
+  const [
+    number,
+    setNumber
+  ] = useAlwaysPresentQueryParam(queryParamName, initialNumber, NumberParam,);
   const [error, setError] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -40,6 +46,7 @@ export function useNumberSelection(
 
     if (newNumber !== number) {
       setNumber(newNumber);
+      persistLastNumber(newNumber);
     }
   }
 
