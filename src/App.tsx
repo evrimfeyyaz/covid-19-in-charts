@@ -12,8 +12,12 @@ import { getAbsoluteUrl } from './utilities/urlUtilities';
 import { localStorageCleanup } from './utilities/localStorageUtilities';
 
 function App() {
-  const dataStore = useRef<Covid19DataStore>(new Covid19DataStore());
+  const dataStore = useRef<Covid19DataStore>(new Covid19DataStore(handleLoadStatusChange));
   const [loaded, setLoaded] = useState(false);
+
+  function handleLoadStatusChange(status: boolean, message: string) {
+    console.log(message);
+  }
 
   useEffect(() => {
     localStorageCleanup();

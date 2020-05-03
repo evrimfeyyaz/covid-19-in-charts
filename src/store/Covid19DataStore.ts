@@ -41,6 +41,9 @@ interface InternalValuesOnDate {
 
 interface InternalLocationData {
   location: string,
+  countryOrRegion: string,
+  provinceOrState?: string,
+  county?: string,
   latitude: string,
   longitude: string,
   values: InternalValuesOnDate[],
@@ -61,8 +64,11 @@ export default class Covid19DataStore {
   private static CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
   private static DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
   private static RECOVERED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_recovered_global.csv`;
+  private static US_CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_US.csv`;
+  private static US_DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_US.csv`;
   private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
   private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
+  private static COUNTY_COLUMN_TITLE = 'County';
   private static LOCAL_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
   private static LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY = 'covid19DataStoreExpiresAt';
   private static LOCAL_STORAGE_LAST_UPDATED_KEY = 'covid19DataStoreLastUpdatedAt';
@@ -146,20 +152,45 @@ export default class Covid19DataStore {
   private _firstDate: Date | undefined;
   private _lastDate: Date | undefined;
 
+  constructor(onLoadingStatusChange?: (isLoading: boolean, loadingMessage: string) => void) {
+    this.onLoadingStatusChange = onLoadingStatusChange;
+  }
+
+  onLoadingStatusChange?: (isLoading: boolean, loadingMessage: string) => void;
+
   async loadData(): Promise<void> {
+    this.onLoadingStatusChange?.(true, 'loading from local storage');
     const localStorageLoadResult = this.loadDataFromLocalStorage();
 
     if (!localStorageLoadResult) {
+      this.onLoadingStatusChange?.(true, 'getting last updated');
       this._lastUpdated = await Covid19DataStore.getDateOfLastCommitIncludingRepoDirectory();
+      this.onLoadingStatusChange?.(true, 'parsing confirmed data');
       const parsedConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.CONFIRMED_URL);
+      this.onLoadingStatusChange?.(true, 'parsing deaths data');
       const parsedDeathsData = await this.getParsedDataFromURL(Covid19DataStore.DEATHS_URL);
+      this.onLoadingStatusChange?.(true, 'parsing recovered data');
       const parsedRecoveredData = await this.getParsedDataFromURL(Covid19DataStore.RECOVERED_URL);
-      this.dataByLocation = await this.formatParsedData(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
+      this.onLoadingStatusChange?.(true, 'parsing us confirmed data');
+      const parsedUSConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.US_CONFIRMED_URL);
+      this.onLoadingStatusChange?.(true, 'parsing us deaths data');
+      const parsedUSDeathsData = await this.getParsedDataFromURL(Covid19DataStore.US_DEATHS_URL);
+      this.onLoadingStatusChange?.(true, 'formatting parsed data');
+      this.dataByLocation = await this.formatParsedData(
+        parsedConfirmedData,
+        parsedDeathsData,
+        parsedRecoveredData,
+        parsedUSConfirmedData,
+        parsedUSDeathsData,
+      );
 
+      this.onLoadingStatusChange?.(true, 'saving to local storage');
       this.saveDataToLocalStorage();
     }
 
-    this._locations = Object.keys(this.dataByLocation as InternalDataByLocation).sort((location1, location2) => location1.localeCompare(location2));
+    this.onLoadingStatusChange?.(true, 'preparing locations list');
+    this._locations = Object.keys(this.dataByLocation as InternalDataByLocation)
+      .sort((location1, location2) => location1.localeCompare(location2));
 
     if (this._locations.length === 0) {
       throw Covid19DataStore.fetchedDataAnomalyError();
@@ -173,6 +204,7 @@ export default class Covid19DataStore {
     this.dataSetLength = firstLocationData.length as number;
     this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
     this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
+    this.onLoadingStatusChange?.(false, 'loaded');
   }
 
   get locations(): string[] {
@@ -319,10 +351,14 @@ export default class Covid19DataStore {
     const lastUpdatedTimeStr = this._lastUpdated?.getTime().toString();
     const dataByLocationJson = JSON.stringify(this.dataByLocation);
 
-    localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY, localDataExpirationTimeStr);
-    localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_LAST_UPDATED_KEY, lastUpdatedTimeStr);
-    localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_KEY, dataByLocationJson);
-    localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_VERSION_KEY, getCurrentVersion());
+    try {
+      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY, localDataExpirationTimeStr);
+      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_LAST_UPDATED_KEY, lastUpdatedTimeStr);
+      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_KEY, dataByLocationJson);
+      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_VERSION_KEY, getCurrentVersion());
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
@@ -345,6 +381,18 @@ export default class Covid19DataStore {
           columns: true,
           cast: (value, context) => {
             if (context.header) {
+              // US state data has different column headers,
+              // we fix them here.
+              if (value === 'Province_State') {
+                return Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE;
+              } else if (value === 'Country_Region') {
+                return Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE;
+              } else if (value === 'Long_') {
+                return 'Long';
+              } else if (value === 'Admin2') {
+                return Covid19DataStore.COUNTY_COLUMN_TITLE;
+              }
+
               return value;
             }
 
@@ -370,12 +418,24 @@ export default class Covid19DataStore {
     });
   }
 
-  private formatParsedData(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv, parsedRecoveredData: ParsedCsv): Promise<InternalDataByLocation> {
+  private formatParsedData(
+    parsedConfirmedData: ParsedCsv,
+    parsedDeathsData: ParsedCsv,
+    parsedRecoveredData: ParsedCsv,
+    parsedUSConfirmedData: ParsedCsv,
+    parsedUSDeathsData: ParsedCsv,
+  ): Promise<InternalDataByLocation> {
     return new Promise((resolve, reject) => {
       let formattedData;
 
       try {
-        formattedData = this.formatDataByLocation(parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
+        formattedData = this.formatDataByLocation(
+          parsedConfirmedData,
+          parsedDeathsData,
+          parsedRecoveredData,
+          parsedUSConfirmedData,
+          parsedUSDeathsData,
+        );
         formattedData = this.addCountryTotalsToFormattedData(formattedData);
         formattedData = this.addCanadaRecoveredDataToFormattedData(formattedData, parsedRecoveredData);
       } catch (err) {
@@ -386,13 +446,47 @@ export default class Covid19DataStore {
     });
   }
 
-  private formatDataByLocation(parsedConfirmedData: ParsedCsv, parsedDeathsData: ParsedCsv, parsedRecoveredData: ParsedCsv): InternalDataByLocation {
+  private getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
+    let location = countryOrRegion;
+    let subLocation = provinceOrState;
+
+    if (
+      subLocation != null &&
+      county != null &&
+      subLocation.trim().length > 0 &&
+      county.trim().length > 0
+    ) {
+      subLocation = `${county}, ${subLocation}`;
+    }
+
+
+    if (
+      subLocation != null &&
+      subLocation.trim().length > 0
+    ) {
+      location = `${location} (${subLocation})`;
+    }
+
+    return location;
+  }
+
+  private formatDataByLocation(
+    parsedConfirmedData: ParsedCsv,
+    parsedDeathsData: ParsedCsv,
+    parsedRecoveredData: ParsedCsv,
+    parsedUSConfirmedData: ParsedCsv,
+    parsedUSDeathsData: ParsedCsv,
+  ): InternalDataByLocation {
     let formattedData: InternalDataByLocation = {};
 
-    for (let i = 0; i < parsedConfirmedData.length; i++) {
-      const confirmedData = parsedConfirmedData[i];
+    const combinedParsedConfirmedData = [...parsedConfirmedData, ...parsedUSConfirmedData];
+    const combinedParsedDeathsData = [...parsedDeathsData, ...parsedUSDeathsData];
+
+    combinedParsedConfirmedData.forEach(row => {
+      const confirmedData = row;
       const countryOrRegion = confirmedData[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
-      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as string;
+      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as (string | undefined);
+      const county = confirmedData[Covid19DataStore.COUNTY_COLUMN_TITLE] as (string | undefined);
       const latitude = confirmedData['Lat'] as string;
       const longitude = confirmedData['Long'] as string;
 
@@ -402,24 +496,26 @@ export default class Covid19DataStore {
         countryOrRegion === 'Canada' &&
         (provinceOrState === 'Recovered' || provinceOrState === 'Diamond Princess')
       ) {
-        continue;
+        return;
       }
 
-      const deathsData = parsedDeathsData
+      const deathsData = combinedParsedDeathsData
         .find(deaths =>
           deaths[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion &&
-          deaths[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
-        );
-      const recoveredData = parsedRecoveredData
-        .find(recovered =>
-          recovered[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion
-          && recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
+          deaths[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState &&
+          deaths[Covid19DataStore.COUNTY_COLUMN_TITLE] === county,
         );
 
-      let location = countryOrRegion;
-      if (provinceOrState.trim().length > 0) {
-        location = `${location} (${provinceOrState})`;
+      let recoveredData: (ParsedCsvRow | undefined) = undefined;
+      if (county != null) {
+        recoveredData = parsedRecoveredData
+          .find(recovered =>
+            recovered[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion
+            && recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
+          );
       }
+
+      const location = this.getFullLocationName(countryOrRegion, provinceOrState, county);
 
       const values = Object.keys(confirmedData).reduce<InternalValuesOnDate[]>((result, columnName) => {
         if (Covid19DataStore.isDateColumn(columnName)) {
@@ -446,12 +542,15 @@ export default class Covid19DataStore {
         ...formattedData,
         [location]: {
           location,
+          countryOrRegion,
+          provinceOrState,
+          county,
           latitude,
           longitude,
           values,
         },
       };
-    }
+    });
 
     return formattedData;
   }
@@ -459,19 +558,22 @@ export default class Covid19DataStore {
   private addCountryTotalsToFormattedData(formattedData: InternalDataByLocation): InternalDataByLocation {
     // All latitudes and longitudes below are taken from Google.
     const australiaTotalData: LocationData = {
-      location: `Australia`,
+      location: 'Australia',
+      countryOrRegion: 'Australia',
       values: [],
       latitude: '-25.2744',
       longitude: '133.7751',
     };
     const canadaTotalData: LocationData = {
-      location: `Canada`,
+      location: 'Canada',
+      countryOrRegion: 'Canada',
       values: [],
       latitude: '56.1304',
       longitude: '-106.3468',
     };
     const chinaTotalData: LocationData = {
-      location: `China`,
+      location: 'China',
+      countryOrRegion: 'China',
       values: [],
       latitude: '35.8617',
       longitude: '104.1954',
