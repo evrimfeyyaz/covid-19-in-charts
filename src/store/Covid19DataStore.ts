@@ -2,6 +2,7 @@ import parse from 'csv-parse';
 import _ from 'lodash';
 import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
 import { getCurrentVersion } from '../utilities/versionUtilities';
+import { get, set } from 'idb-keyval';
 
 interface ParsedCsvRow {
   readonly [key: string]: string | number
@@ -69,11 +70,11 @@ export default class Covid19DataStore {
   private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
   private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
   private static COUNTY_COLUMN_TITLE = 'County';
-  private static LOCAL_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
-  private static LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY = 'covid19DataStoreExpiresAt';
-  private static LOCAL_STORAGE_LAST_UPDATED_KEY = 'covid19DataStoreLastUpdatedAt';
-  private static LOCAL_STORAGE_DATA_KEY = 'covid19DataStoreData';
-  private static LOCAL_STORAGE_VERSION_KEY = 'covid19DataStoreVersion';
+  private static STORED_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
+  private static STORED_DATA_EXPIRATION_TIME_KEY = 'Covid19DataStoreExpiresAt';
+  private static STORED_DATA_LAST_UPDATED_KEY = 'Covid19DataStoreLastUpdateAt';
+  private static STORED_DATA_KEY = 'Covid19DataStoreData';
+  private static STORED_DATA_VERSION_KEY = 'Covid19DataStoreVersion';
 
   static isValuesOnDateProperty(str: any): str is ValuesOnDateProperty {
     return (Covid19DataStore.valuesOnDateProperties.indexOf(str) !== -1);
@@ -111,6 +112,30 @@ export default class Covid19DataStore {
     }
   }
 
+  private static getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
+    let location = countryOrRegion;
+    let subLocation = provinceOrState;
+
+    if (
+      subLocation != null &&
+      county != null &&
+      subLocation.trim().length > 0 &&
+      county.trim().length > 0
+    ) {
+      subLocation = `${county}, ${subLocation}`;
+    }
+
+
+    if (
+      subLocation != null &&
+      subLocation.trim().length > 0
+    ) {
+      location = `${location} (${subLocation})`;
+    }
+
+    return location;
+  }
+
   private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
     const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
 
@@ -127,6 +152,10 @@ export default class Covid19DataStore {
 
   private static isDateColumn(columnName: string): boolean {
     return !!columnName.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/);
+  }
+
+  private static isUSStateOrCountyData(countryOrRegion: string, provinceOrState: string) {
+    return countryOrRegion === 'US' && provinceOrState !== '';
   }
 
   private static invalidLocationError(location: string) {
@@ -159,10 +188,10 @@ export default class Covid19DataStore {
   onLoadingStatusChange?: (isLoading: boolean, loadingMessage: string) => void;
 
   async loadData(): Promise<void> {
-    this.onLoadingStatusChange?.(true, 'loading from local storage');
-    const localStorageLoadResult = this.loadDataFromLocalStorage();
+    this.onLoadingStatusChange?.(true, 'loading from storage');
+    const storedData = await this.loadStoredData();
 
-    if (!localStorageLoadResult) {
+    if (!storedData) {
       this.onLoadingStatusChange?.(true, 'getting last updated');
       this._lastUpdated = await Covid19DataStore.getDateOfLastCommitIncludingRepoDirectory();
       this.onLoadingStatusChange?.(true, 'parsing confirmed data');
@@ -184,8 +213,8 @@ export default class Covid19DataStore {
         parsedUSDeathsData,
       );
 
-      this.onLoadingStatusChange?.(true, 'saving to local storage');
-      this.saveDataToLocalStorage();
+      this.onLoadingStatusChange?.(true, 'saving to storage');
+      await this.persistData();
     }
 
     this.onLoadingStatusChange?.(true, 'preparing locations list');
@@ -311,54 +340,43 @@ export default class Covid19DataStore {
     return data;
   }
 
-  private loadDataFromLocalStorage(): boolean {
-    const localDataExpirationTimeStr = localStorage.getItem(Covid19DataStore.LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY);
-    const version = localStorage.getItem(Covid19DataStore.LOCAL_STORAGE_VERSION_KEY);
-    const currentVersion = getCurrentVersion();
+  private async loadStoredData(): Promise<boolean> {
+    const storedDataExpiresAt = await get<Date | undefined>(Covid19DataStore.STORED_DATA_EXPIRATION_TIME_KEY);
+    const storedDataVersion = await get<string | undefined>(Covid19DataStore.STORED_DATA_VERSION_KEY);
+    const appVersion = getCurrentVersion();
 
-    if (localDataExpirationTimeStr == null) {
+    if (storedDataExpiresAt == null || storedDataVersion == null) {
       return false;
     }
 
-    const localDataExpirationTime = parseInt(localDataExpirationTimeStr);
-
-    if (Date.now() > localDataExpirationTime || version !== currentVersion) {
+    if (Date.now() > storedDataExpiresAt.getTime() || storedDataVersion !== appVersion) {
       return false;
     }
 
-    const lastUpdatedTimeStr = localStorage.getItem(Covid19DataStore.LOCAL_STORAGE_LAST_UPDATED_KEY);
-    const dataByLocationJson = localStorage.getItem(Covid19DataStore.LOCAL_STORAGE_DATA_KEY);
+    const storedDataLastUpdatedAt = await get<Date | undefined>(Covid19DataStore.STORED_DATA_LAST_UPDATED_KEY);
+    const storedData = await get<InternalDataByLocation | undefined>(Covid19DataStore.STORED_DATA_KEY);
 
-    if (lastUpdatedTimeStr != null && dataByLocationJson != null) {
-      const lastUpdatedTime = parseInt(lastUpdatedTimeStr);
-      const dataByLocation = JSON.parse(dataByLocationJson);
-
-      this._lastUpdated = new Date(lastUpdatedTime);
-      this.dataByLocation = dataByLocation;
-
-      return true;
+    if (storedDataLastUpdatedAt == null || storedData == null) {
+      return false;
     }
 
-    return false;
+    this._lastUpdated = storedDataLastUpdatedAt;
+    this.dataByLocation = storedData;
+
+    return true;
   }
 
-  private saveDataToLocalStorage() {
+  private async persistData() {
     if (this._lastUpdated == null || this.dataByLocation == null) {
-      throw new Error('Attempted to save corrupt data to local storage.');
+      throw new Error('Attempted to store corrupt data.');
     }
 
-    const localDataExpirationTimeStr = (Date.now() + Covid19DataStore.LOCAL_DATA_VALIDITY_MS).toString();
-    const lastUpdatedTimeStr = this._lastUpdated?.getTime().toString();
-    const dataByLocationJson = JSON.stringify(this.dataByLocation);
+    const storedDataExpiresAt = new Date(Date.now() + Covid19DataStore.STORED_DATA_VALIDITY_MS);
 
-    try {
-      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_EXPIRATION_TIME_KEY, localDataExpirationTimeStr);
-      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_LAST_UPDATED_KEY, lastUpdatedTimeStr);
-      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_DATA_KEY, dataByLocationJson);
-      localStorage.setItem(Covid19DataStore.LOCAL_STORAGE_VERSION_KEY, getCurrentVersion());
-    } catch (err) {
-      console.log(err);
-    }
+    await set(Covid19DataStore.STORED_DATA_EXPIRATION_TIME_KEY, storedDataExpiresAt);
+    await set(Covid19DataStore.STORED_DATA_LAST_UPDATED_KEY, this._lastUpdated);
+    await set(Covid19DataStore.STORED_DATA_KEY, this.dataByLocation);
+    await set(Covid19DataStore.STORED_DATA_VERSION_KEY, getCurrentVersion());
   }
 
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
@@ -446,30 +464,6 @@ export default class Covid19DataStore {
     });
   }
 
-  private getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
-    let location = countryOrRegion;
-    let subLocation = provinceOrState;
-
-    if (
-      subLocation != null &&
-      county != null &&
-      subLocation.trim().length > 0 &&
-      county.trim().length > 0
-    ) {
-      subLocation = `${county}, ${subLocation}`;
-    }
-
-
-    if (
-      subLocation != null &&
-      subLocation.trim().length > 0
-    ) {
-      location = `${location} (${subLocation})`;
-    }
-
-    return location;
-  }
-
   private formatDataByLocation(
     parsedConfirmedData: ParsedCsv,
     parsedDeathsData: ParsedCsv,
@@ -485,7 +479,7 @@ export default class Covid19DataStore {
     combinedParsedConfirmedData.forEach(row => {
       const confirmedData = row;
       const countryOrRegion = confirmedData[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
-      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as (string | undefined);
+      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as string;
       const county = confirmedData[Covid19DataStore.COUNTY_COLUMN_TITLE] as (string | undefined);
       const latitude = confirmedData['Lat'] as string;
       const longitude = confirmedData['Long'] as string;
@@ -507,15 +501,15 @@ export default class Covid19DataStore {
         );
 
       let recoveredData: (ParsedCsvRow | undefined) = undefined;
-      if (county != null) {
+      if (!Covid19DataStore.isUSStateOrCountyData(countryOrRegion, provinceOrState)) {
         recoveredData = parsedRecoveredData
           .find(recovered =>
-            recovered[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion
-            && recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
+            recovered[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion &&
+            recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
           );
       }
 
-      const location = this.getFullLocationName(countryOrRegion, provinceOrState, county);
+      const location = Covid19DataStore.getFullLocationName(countryOrRegion, provinceOrState, county);
 
       const values = Object.keys(confirmedData).reduce<InternalValuesOnDate[]>((result, columnName) => {
         if (Covid19DataStore.isDateColumn(columnName)) {
@@ -543,7 +537,7 @@ export default class Covid19DataStore {
         [location]: {
           location,
           countryOrRegion,
-          provinceOrState,
+          provinceOrState: provinceOrState.trim().length > 0 ? provinceOrState : undefined,
           county,
           latitude,
           longitude,
