@@ -1,14 +1,30 @@
 import parse from 'csv-parse';
 import _ from 'lodash';
 import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
-import { getCurrentVersion } from '../utilities/versionUtilities';
-import { get, set } from 'idb-keyval';
+import { DBSchema, IDBPDatabase, openDB } from 'idb';
+
+interface Covid19DataStoreDbSchema extends DBSchema {
+  settings: {
+    key: string,
+    value: any
+  },
+  data: {
+    key: string,
+    value: InternalLocationData,
+    indexes: {
+      byCountryOrRegion: string,
+      byProvinceOrState: string
+    }
+  }
+}
 
 interface ParsedCsvRow {
   readonly [key: string]: string | number
 }
 
-type ParsedCsv = readonly ParsedCsvRow[];
+interface ParsedCsv {
+  [location: string]: ParsedCsvRow
+}
 
 export interface ValuesOnDate extends InternalValuesOnDate {
   newConfirmed: number,
@@ -29,8 +45,10 @@ export type ValuesOnDateProperty =
   | 'newRecovered'
   | 'recoveryRate'
 
+type LocationDataValues = ValuesOnDate[]
+
 export interface LocationData extends InternalLocationData {
-  values: ValuesOnDate[],
+  values: LocationDataValues
 }
 
 interface InternalValuesOnDate {
@@ -40,6 +58,8 @@ interface InternalValuesOnDate {
   recovered: number | null,
 }
 
+type InternalLocationDataValues = InternalValuesOnDate[];
+
 interface InternalLocationData {
   location: string,
   countryOrRegion: string,
@@ -47,7 +67,7 @@ interface InternalLocationData {
   county?: string,
   latitude: string,
   longitude: string,
-  values: InternalValuesOnDate[],
+  values: InternalLocationDataValues
 }
 
 interface InternalDataByLocation {
@@ -55,126 +75,8 @@ interface InternalDataByLocation {
 }
 
 export default class Covid19DataStore {
-  static valuesOnDateProperties: ValuesOnDateProperty[] = [
-    'confirmed', 'deaths', 'recovered', 'date',
-    'newConfirmed', 'newDeaths', 'newRecovered',
-    'mortalityRate', 'recoveryRate',
-  ];
-
-  private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
-  private static CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
-  private static DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
-  private static RECOVERED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_recovered_global.csv`;
-  private static US_CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_US.csv`;
-  private static US_DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_US.csv`;
-  private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
-  private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
-  private static COUNTY_COLUMN_TITLE = 'County';
-  private static STORED_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
-  private static STORED_DATA_EXPIRATION_TIME_KEY = 'Covid19DataStoreExpiresAt';
-  private static STORED_DATA_LAST_UPDATED_KEY = 'Covid19DataStoreLastUpdateAt';
-  private static STORED_DATA_KEY = 'Covid19DataStoreData';
-  private static STORED_DATA_VERSION_KEY = 'Covid19DataStoreVersion';
-
-  static isValuesOnDateProperty(str: any): str is ValuesOnDateProperty {
-    return (Covid19DataStore.valuesOnDateProperties.indexOf(str) !== -1);
-  }
-
-  static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: ValuesOnDateProperty, n: number): LocationData {
-    const dataClone = _.cloneDeep(locationData);
-
-    return {
-      ...dataClone,
-      values: dataClone.values.filter(value => (value[property] ?? 0) > n),
-    };
-  }
-
-  static humanizePropertyName(propertyName: ValuesOnDateProperty): string {
-    switch (propertyName) {
-      case 'confirmed':
-        return 'confirmed cases';
-      case 'date':
-        return 'date';
-      case 'deaths':
-        return 'deaths';
-      case 'mortalityRate':
-        return 'mortality rate';
-      case 'newConfirmed':
-        return 'new cases';
-      case 'newDeaths':
-        return 'new deaths';
-      case 'newRecovered':
-        return 'new recoveries';
-      case 'recovered':
-        return 'recoveries';
-      case 'recoveryRate':
-        return 'rate of recoveries';
-    }
-  }
-
-  private static getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
-    let location = countryOrRegion;
-    let subLocation = provinceOrState;
-
-    if (
-      subLocation != null &&
-      county != null &&
-      subLocation.trim().length > 0 &&
-      county.trim().length > 0
-    ) {
-      subLocation = `${county}, ${subLocation}`;
-    }
-
-
-    if (
-      subLocation != null &&
-      subLocation.trim().length > 0
-    ) {
-      location = `${location} (${subLocation})`;
-    }
-
-    return location;
-  }
-
-  private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
-    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
-
-    const response = await fetch(commitDataUrl);
-
-    if (!response.ok) {
-      throw this.fetchFailedError(response.status, response.statusText);
-    }
-
-    const json = await response.json();
-
-    return new Date(json[0]['commit']['author']['date']);
-  }
-
-  private static isDateColumn(columnName: string): boolean {
-    return !!columnName.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/);
-  }
-
-  private static isUSStateOrCountyData(countryOrRegion: string, provinceOrState: string) {
-    return countryOrRegion === 'US' && provinceOrState !== '';
-  }
-
-  private static invalidLocationError(location: string) {
-    return new Error(`Invalid location: "${location}".`);
-  }
-
-  private static notLoadedError() {
-    return new Error('Store is not populated. Make sure to first call the `loadData` method.');
-  }
-
-  private static fetchedDataAnomalyError() {
-    return new Error('The data fetched from the server seems to be empty or in wrong format.');
-  }
-
-  private static fetchFailedError(status: number, statusText: string) {
-    return new Error(`There was an error fetching the data. Response status: ${status} - ${statusText}`);
-  }
-
-  private dataByLocation: InternalDataByLocation | undefined;
+  private db: IDBPDatabase<Covid19DataStoreDbSchema> | undefined;
+  private data: InternalDataByLocation | undefined;
   private dataSetLength: number = 0;
   private _locations: string[] | undefined;
   private _lastUpdated: Date | undefined;
@@ -187,53 +89,46 @@ export default class Covid19DataStore {
 
   onLoadingStatusChange?: (isLoading: boolean, loadingMessage: string) => void;
 
-  async loadData(): Promise<void> {
-    this.onLoadingStatusChange?.(true, 'loading from storage');
-    const storedData = await this.loadStoredData();
+  async setDb() {
+    this.db = await openDB<Covid19DataStoreDbSchema>(Covid19DataStore.DB_NAME, 1, {
+      upgrade(db, oldVersion, newVersion, transaction) {
+        db.createObjectStore('data', { keyPath: 'location' });
+        db.createObjectStore('settings');
 
-    if (!storedData) {
-      this.onLoadingStatusChange?.(true, 'getting last updated');
-      this._lastUpdated = await Covid19DataStore.getDateOfLastCommitIncludingRepoDirectory();
-      this.onLoadingStatusChange?.(true, 'parsing confirmed data');
+        let dataStore = transaction.objectStore('data');
+        dataStore.createIndex('byCountryOrRegion', 'countryOrRegion');
+        dataStore.createIndex('byProvinceOrState', 'provinceOrState');
+      },
+    });
+  }
+
+  async loadData() {
+    await this.setDb();
+
+    if (this.db == null) {
+      throw Covid19DataStore.dbNotOpenError();
+    }
+
+    const hasFreshPersistedData = await Covid19DataStore.hasFreshPersistedData(this.db);
+
+    if (!hasFreshPersistedData) {
       const parsedConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.CONFIRMED_URL);
-      this.onLoadingStatusChange?.(true, 'parsing deaths data');
       const parsedDeathsData = await this.getParsedDataFromURL(Covid19DataStore.DEATHS_URL);
-      this.onLoadingStatusChange?.(true, 'parsing recovered data');
       const parsedRecoveredData = await this.getParsedDataFromURL(Covid19DataStore.RECOVERED_URL);
-      this.onLoadingStatusChange?.(true, 'parsing us confirmed data');
-      const parsedUSConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.US_CONFIRMED_URL);
-      this.onLoadingStatusChange?.(true, 'parsing us deaths data');
-      const parsedUSDeathsData = await this.getParsedDataFromURL(Covid19DataStore.US_DEATHS_URL);
-      this.onLoadingStatusChange?.(true, 'formatting parsed data');
-      this.dataByLocation = await this.formatParsedData(
+      // const parsedUSConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.US_CONFIRMED_URL);
+      // const parsedUSDeathsData = await this.getParsedDataFromURL(Covid19DataStore.US_DEATHS_URL);
+
+      await this.formatAndPersistParsedData(
         parsedConfirmedData,
         parsedDeathsData,
         parsedRecoveredData,
-        parsedUSConfirmedData,
-        parsedUSDeathsData,
+        this.db,
       );
 
-      this.onLoadingStatusChange?.(true, 'saving to storage');
-      await this.persistData();
+      await Covid19DataStore.persistSettings(this.db);
     }
 
-    this.onLoadingStatusChange?.(true, 'preparing locations list');
-    this._locations = Object.keys(this.dataByLocation as InternalDataByLocation)
-      .sort((location1, location2) => location1.localeCompare(location2));
-
-    if (this._locations.length === 0) {
-      throw Covid19DataStore.fetchedDataAnomalyError();
-    }
-
-    const firstLocationData = this.dataByLocation?.[this._locations[0]].values;
-    if (firstLocationData == null || firstLocationData.length === 0) {
-      throw Covid19DataStore.fetchedDataAnomalyError();
-    }
-
-    this.dataSetLength = firstLocationData.length as number;
-    this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
-    this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
-    this.onLoadingStatusChange?.(false, 'loaded');
+    await this.loadPersistedData(this.db);
   }
 
   get locations(): string[] {
@@ -269,7 +164,7 @@ export default class Covid19DataStore {
   }
 
   getDataByLocation(location: string): LocationData {
-    if (this.dataByLocation == null) {
+    if (this.data == null) {
       throw Covid19DataStore.notLoadedError();
     }
 
@@ -277,7 +172,7 @@ export default class Covid19DataStore {
       throw Covid19DataStore.invalidLocationError(location);
     }
 
-    const internalLocationData = this.dataByLocation[location];
+    const internalLocationData = this.data[location];
     const locationDataValues = internalLocationData.values.map((valuesOnDate, index) => {
       let newConfirmed = 0;
       let newRecovered = null;
@@ -340,45 +235,6 @@ export default class Covid19DataStore {
     return data;
   }
 
-  private async loadStoredData(): Promise<boolean> {
-    const storedDataExpiresAt = await get<Date | undefined>(Covid19DataStore.STORED_DATA_EXPIRATION_TIME_KEY);
-    const storedDataVersion = await get<string | undefined>(Covid19DataStore.STORED_DATA_VERSION_KEY);
-    const appVersion = getCurrentVersion();
-
-    if (storedDataExpiresAt == null || storedDataVersion == null) {
-      return false;
-    }
-
-    if (Date.now() > storedDataExpiresAt.getTime() || storedDataVersion !== appVersion) {
-      return false;
-    }
-
-    const storedDataLastUpdatedAt = await get<Date | undefined>(Covid19DataStore.STORED_DATA_LAST_UPDATED_KEY);
-    const storedData = await get<InternalDataByLocation | undefined>(Covid19DataStore.STORED_DATA_KEY);
-
-    if (storedDataLastUpdatedAt == null || storedData == null) {
-      return false;
-    }
-
-    this._lastUpdated = storedDataLastUpdatedAt;
-    this.dataByLocation = storedData;
-
-    return true;
-  }
-
-  private async persistData() {
-    if (this._lastUpdated == null || this.dataByLocation == null) {
-      throw new Error('Attempted to store corrupt data.');
-    }
-
-    const storedDataExpiresAt = new Date(Date.now() + Covid19DataStore.STORED_DATA_VALIDITY_MS);
-
-    await set(Covid19DataStore.STORED_DATA_EXPIRATION_TIME_KEY, storedDataExpiresAt);
-    await set(Covid19DataStore.STORED_DATA_LAST_UPDATED_KEY, this._lastUpdated);
-    await set(Covid19DataStore.STORED_DATA_KEY, this.dataByLocation);
-    await set(Covid19DataStore.STORED_DATA_VERSION_KEY, getCurrentVersion());
-  }
-
   private async getParsedDataFromURL(url: string): Promise<ParsedCsv> {
     const rawResponse = await fetch(url);
 
@@ -391,98 +247,91 @@ export default class Covid19DataStore {
     return await this.parseCsv(rawData);
   }
 
-  private parseCsv(text: string): Promise<ParsedCsv> {
-    return new Promise((resolve, reject) => {
-      parse(
-        text,
-        {
-          columns: true,
-          cast: (value, context) => {
-            if (context.header) {
-              // US state data has different column headers,
-              // we fix them here.
-              if (value === 'Province_State') {
-                return Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE;
-              } else if (value === 'Country_Region') {
-                return Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE;
-              } else if (value === 'Long_') {
-                return 'Long';
-              } else if (value === 'Admin2') {
-                return Covid19DataStore.COUNTY_COLUMN_TITLE;
-              }
-
-              return value;
-            }
-
-            if (typeof context.column !== 'string') {
-              throw new Error('Context column name should be of type `string`.');
-            }
-
-            if (Covid19DataStore.isDateColumn(context.column)) {
-              return parseInt(value);
+  private async parseCsv(csv: string): Promise<ParsedCsv> {
+    return new Promise<ParsedCsv>((resolve, reject) => {
+      const parser = parse(csv, {
+        columns: true,
+        trim: true,
+        cast: (value, context) => {
+          if (context.header) {
+            // US state data has different column headers,
+            // we fix them here.
+            if (value === 'Province_State') {
+              return Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE;
+            } else if (value === 'Country_Region') {
+              return Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE;
+            } else if (value === 'Long_') {
+              return Covid19DataStore.LONGITUDE_COLUMN_TITLE;
+            } else if (value === 'Admin2') {
+              return Covid19DataStore.COUNTY_COLUMN_TITLE;
             }
 
             return value;
-          },
-        },
-        (err, output) => {
-          if (err) {
-            reject(err);
           }
 
-          resolve(output);
+          if (typeof context.column !== 'string') {
+            throw new Error('Context column name should be of type `string`.');
+          }
+
+          if (Covid19DataStore.isDateColumn(context.column)) {
+            return parseInt(value);
+          }
+
+          if (
+            context.column === Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE &&
+            value === ''
+          ) {
+            return undefined;
+          }
+
+          return value;
         },
-      );
+      });
+
+      const parsedCsv: ParsedCsv = {};
+      parser.on('readable', () => {
+        while (true) {
+          const record = parser.read();
+
+          if (record == null) {
+            break;
+          }
+
+          const countryOrRegion = record[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
+          const provinceOrState = record?.[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as (string | undefined);
+          const county = record?.[Covid19DataStore.COUNTY_COLUMN_TITLE] as (string | undefined);
+
+          const location = Covid19DataStore.getFullLocationName(countryOrRegion, provinceOrState, county);
+
+          parsedCsv[location] = record;
+        }
+      });
+
+      parser.on('error', error => {
+        reject(error);
+      });
+
+      parser.on('end', () => resolve(parsedCsv));
     });
   }
 
-  private formatParsedData(
+  private async formatAndPersistParsedData(
     parsedConfirmedData: ParsedCsv,
     parsedDeathsData: ParsedCsv,
     parsedRecoveredData: ParsedCsv,
-    parsedUSConfirmedData: ParsedCsv,
-    parsedUSDeathsData: ParsedCsv,
-  ): Promise<InternalDataByLocation> {
-    return new Promise((resolve, reject) => {
-      let formattedData;
-
-      try {
-        formattedData = this.formatDataByLocation(
-          parsedConfirmedData,
-          parsedDeathsData,
-          parsedRecoveredData,
-          parsedUSConfirmedData,
-          parsedUSDeathsData,
-        );
-        formattedData = this.addCountryTotalsToFormattedData(formattedData);
-        formattedData = this.addCanadaRecoveredDataToFormattedData(formattedData, parsedRecoveredData);
-      } catch (err) {
-        reject(err);
+    db: IDBPDatabase<Covid19DataStoreDbSchema>,
+  ) {
+    for (const location in parsedConfirmedData) {
+      if (!parsedConfirmedData.hasOwnProperty(location)) {
+        continue;
       }
 
-      resolve(formattedData);
-    });
-  }
-
-  private formatDataByLocation(
-    parsedConfirmedData: ParsedCsv,
-    parsedDeathsData: ParsedCsv,
-    parsedRecoveredData: ParsedCsv,
-    parsedUSConfirmedData: ParsedCsv,
-    parsedUSDeathsData: ParsedCsv,
-  ): InternalDataByLocation {
-    let formattedData: InternalDataByLocation = {};
-
-    const combinedParsedConfirmedData = [...parsedConfirmedData, ...parsedUSConfirmedData];
-    const combinedParsedDeathsData = [...parsedDeathsData, ...parsedUSDeathsData];
-
-    combinedParsedConfirmedData.forEach(row => {
-      const confirmedData = row;
+      const confirmedData = parsedConfirmedData[location];
       const countryOrRegion = confirmedData[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] as string;
-      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as string;
+      const provinceOrState = confirmedData[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] as (string | undefined);
       const county = confirmedData[Covid19DataStore.COUNTY_COLUMN_TITLE] as (string | undefined);
-      const latitude = confirmedData['Lat'] as string;
-      const longitude = confirmedData['Long'] as string;
+      const latitude = confirmedData[Covid19DataStore.LATITUDE_COLUMN_TITLE] as string;
+      const longitude = confirmedData[Covid19DataStore.LONGITUDE_COLUMN_TITLE] as string;
 
       // Remove Canada (Recovered) and Canada (Diamond Princess)
       // from the parsed data, they seem like mistakenly included values.
@@ -490,148 +339,332 @@ export default class Covid19DataStore {
         countryOrRegion === 'Canada' &&
         (provinceOrState === 'Recovered' || provinceOrState === 'Diamond Princess')
       ) {
-        return;
+        continue;
       }
 
-      const deathsData = combinedParsedDeathsData
-        .find(deaths =>
-          deaths[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion &&
-          deaths[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState &&
-          deaths[Covid19DataStore.COUNTY_COLUMN_TITLE] === county,
-        );
+      const deathsData = parsedDeathsData?.[location];
+      const recoveredData = parsedRecoveredData?.[location];
 
-      let recoveredData: (ParsedCsvRow | undefined) = undefined;
-      if (!Covid19DataStore.isUSStateOrCountyData(countryOrRegion, provinceOrState)) {
-        recoveredData = parsedRecoveredData
-          .find(recovered =>
-            recovered[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === countryOrRegion &&
-            recovered[Covid19DataStore.PROVINCE_OR_STATE_COLUMN_TITLE] === provinceOrState,
-          );
-      }
-
-      const location = Covid19DataStore.getFullLocationName(countryOrRegion, provinceOrState, county);
-
-      const values = Object.keys(confirmedData).reduce<InternalValuesOnDate[]>((result, columnName) => {
+      const values: InternalLocationDataValues = [];
+      Object.keys(confirmedData).forEach((columnName) => {
         if (Covid19DataStore.isDateColumn(columnName)) {
-          const dateStr = columnName;
-          const confirmed = confirmedData[dateStr] as number;
+          const confirmed = confirmedData[columnName] as number;
 
           let deaths = null;
           if (deathsData != null) {
-            deaths = deathsData[dateStr] as number;
+            deaths = deathsData[columnName] as number;
           }
 
           let recovered = null;
           if (recoveredData != null) {
-            recovered = recoveredData[dateStr] as number;
+            recovered = recoveredData[columnName] as number;
           }
 
-          result = [...result, { date: dateStr, confirmed, deaths, recovered }];
+          values.push({
+            date: columnName,
+            confirmed,
+            deaths,
+            recovered,
+          });
         }
+      });
 
-        return result;
-      }, []);
-
-      formattedData = {
-        ...formattedData,
-        [location]: {
-          location,
-          countryOrRegion,
-          provinceOrState: provinceOrState.trim().length > 0 ? provinceOrState : undefined,
-          county,
-          latitude,
-          longitude,
-          values,
-        },
+      const locationData: InternalLocationData = {
+        location,
+        countryOrRegion,
+        provinceOrState,
+        county,
+        latitude,
+        longitude,
+        values,
       };
-    });
 
-    return formattedData;
+      await db.put('data', locationData);
+    }
+
+    await this.addAustraliaTotalDataToPersistedData(db);
+    await this.addCanadaTotalDataToPersistedData(parsedRecoveredData, db);
+    await this.addChinaTotalDataToPersistedData(db);
   }
 
-  private addCountryTotalsToFormattedData(formattedData: InternalDataByLocation): InternalDataByLocation {
-    // All latitudes and longitudes below are taken from Google.
-    const australiaTotalData: LocationData = {
+  private async addAustraliaTotalDataToPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    const australiaStateData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'Australia');
+    const australiaTotalValues = this.sumMultipleLocationValues(australiaStateData);
+
+    const australiaTotalData: InternalLocationData = {
       location: 'Australia',
       countryOrRegion: 'Australia',
-      values: [],
+      values: australiaTotalValues,
       latitude: '-25.2744',
       longitude: '133.7751',
     };
-    const canadaTotalData: LocationData = {
+
+    await db.put('data', australiaTotalData);
+  }
+
+  private async addCanadaTotalDataToPersistedData(
+    parsedRecoveredData: ParsedCsv,
+    db: IDBPDatabase<Covid19DataStoreDbSchema>,
+  ) {
+    const canadaProvincesData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'Canada');
+    const canadaTotalValues = this.sumMultipleLocationValues(canadaProvincesData);
+
+    const parsedCanadaRecoveredValues = parsedRecoveredData['Canada'];
+
+    let i = 0;
+    for (const columnName in parsedCanadaRecoveredValues) {
+      if (
+        !parsedCanadaRecoveredValues.hasOwnProperty(columnName) ||
+        !Covid19DataStore.isDateColumn(columnName)
+      ) {
+        continue;
+      }
+
+      canadaTotalValues[i].recovered = parsedCanadaRecoveredValues[columnName] as number;
+      i++;
+    }
+
+    const canadaTotalData: InternalLocationData = {
       location: 'Canada',
       countryOrRegion: 'Canada',
-      values: [],
+      values: canadaTotalValues,
       latitude: '56.1304',
       longitude: '-106.3468',
     };
-    const chinaTotalData: LocationData = {
+
+    await db.put('data', canadaTotalData);
+  }
+
+  private async addChinaTotalDataToPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    const chinaProvincesData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'China');
+    const chinaTotalValues = this.sumMultipleLocationValues(chinaProvincesData);
+
+    const chinaTotalData: InternalLocationData = {
       location: 'China',
       countryOrRegion: 'China',
-      values: [],
+      values: chinaTotalValues,
       latitude: '35.8617',
       longitude: '104.1954',
     };
 
-    Object.keys(formattedData).forEach((location) => {
-      const locationData = formattedData[location];
+    await db.put('data', chinaTotalData);
+  }
 
-      let countryTotalData: InternalLocationData;
-      if (location.includes('China')) {
-        countryTotalData = chinaTotalData;
-      } else if (location.includes('Australia')) {
-        countryTotalData = australiaTotalData;
-      } else if (location.includes('Canada')) {
-        countryTotalData = canadaTotalData;
-      } else {
+  private sumMultipleLocationValues(data: InternalLocationData[]): InternalLocationDataValues {
+    let sum: InternalLocationDataValues = [];
+
+    data.forEach(({ values }, index) => {
+      if (index === 0) {
+        sum = [...values];
         return;
       }
 
-      if (countryTotalData.values.length === 0) {
-        countryTotalData.values = locationData.values;
-      } else {
-        countryTotalData.values.forEach((value, index) => {
-          countryTotalData.values[index].confirmed += locationData.values[index].confirmed;
+      values.forEach((valuesOnDate, index) => {
+        const totalValuesOnDate = sum[index];
+        const { date, confirmed, deaths, recovered } = valuesOnDate;
+        const totalConfirmed = confirmed + totalValuesOnDate.confirmed;
 
-          const totalDeaths = countryTotalData.values[index].deaths;
-          const locationDeaths = locationData.values[index].deaths;
-          if (locationDeaths != null) {
-            countryTotalData.values[index].deaths = (totalDeaths ?? 0) + locationDeaths;
-          }
+        let totalDeaths = totalValuesOnDate.deaths;
+        if (deaths != null) {
+          totalDeaths = (totalDeaths ?? 0) + deaths;
+        }
 
-          const totalRecovered = countryTotalData.values[index].recovered;
-          const locationRecovered = locationData.values[index].recovered;
-          if (locationRecovered != null) {
-            countryTotalData.values[index].recovered = (totalRecovered ?? 0) + locationRecovered;
-          }
-        });
-      }
+        let totalRecovered = totalValuesOnDate.recovered;
+        if (recovered != null) {
+          totalDeaths = (totalRecovered ?? 0) + recovered;
+        }
+
+        sum[index] = {
+          date,
+          confirmed: totalConfirmed,
+          deaths: totalDeaths,
+          recovered: totalRecovered,
+        };
+      })
     });
 
+    return sum;
+  }
+
+  private async loadPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    this._locations = [];
+    this.data = {};
+
+    let cursor = await db.transaction('data').store.openCursor();
+    while (cursor) {
+      this.data[cursor.key] = cursor.value;
+      this._locations.push(cursor.key);
+
+      cursor = await cursor.continue();
+    }
+
+    if (this._locations.length === 0) {
+      throw Covid19DataStore.persistedDataAnomalyError();
+    }
+
+    const firstLocation = this._locations[0];
+    const firstLocationData = this.data[firstLocation].values;
+    if (firstLocationData == null || firstLocationData.length === 0) {
+      throw Covid19DataStore.persistedDataAnomalyError();
+    }
+
+    this.dataSetLength = firstLocationData.length as number;
+    this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
+    this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
+
+    this._lastUpdated = await db.get('settings', Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
+    if (this._lastUpdated == null || !(this._lastUpdated instanceof Date)) {
+      throw Covid19DataStore.persistedDataAnomalyError();
+    }
+  }
+
+  static valuesOnDateProperties: ValuesOnDateProperty[] = [
+    'confirmed', 'deaths', 'recovered', 'date',
+    'newConfirmed', 'newDeaths', 'newRecovered',
+    'mortalityRate', 'recoveryRate',
+  ];
+
+  private static BASE_URL = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/';
+  private static CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_global.csv`;
+  private static DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_global.csv`;
+  private static RECOVERED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_recovered_global.csv`;
+  private static US_CONFIRMED_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_confirmed_US.csv`;
+  private static US_DEATHS_URL = `${Covid19DataStore.BASE_URL}time_series_covid19_deaths_US.csv`;
+  private static COUNTRY_OR_REGION_COLUMN_TITLE = 'Country/Region';
+  private static PROVINCE_OR_STATE_COLUMN_TITLE = 'Province/State';
+  private static COUNTY_COLUMN_TITLE = 'County';
+  private static LATITUDE_COLUMN_TITLE = 'Lat';
+  private static LONGITUDE_COLUMN_TITLE = 'Long';
+  private static DB_NAME = 'Covid19DataStoreDb';
+  private static DB_DATA_VALIDITY_MS = 60 * 60 * 1000; // 1 hour
+  private static SETTINGS_DATA_EXPIRATION_TIME_KEY = 'DataExpiresAt';
+  private static SETTINGS_DATA_LAST_UPDATED_KEY = 'DataLastUpdateAt';
+
+  static isValuesOnDateProperty(str: any): str is ValuesOnDateProperty {
+    return (Covid19DataStore.valuesOnDateProperties.indexOf(str) !== -1);
+  }
+
+  static stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: ValuesOnDateProperty, n: number): LocationData {
+    const dataClone = _.cloneDeep(locationData);
+
     return {
-      ...formattedData,
-      [australiaTotalData.location]: australiaTotalData,
-      [canadaTotalData.location]: canadaTotalData,
-      [chinaTotalData.location]: chinaTotalData,
+      ...dataClone,
+      values: dataClone.values.filter(value => (value[property] ?? 0) > n),
     };
   }
 
-  private addCanadaRecoveredDataToFormattedData(formattedData: InternalDataByLocation, parsedRecoveredData: ParsedCsv) {
-    const formattedCanadaValues = formattedData['Canada'].values;
-    const parsedCanadaRecoveredValues = parsedRecoveredData
-      .find(data => data[Covid19DataStore.COUNTRY_OR_REGION_COLUMN_TITLE] === 'Canada');
+  static humanizePropertyName(propertyName: ValuesOnDateProperty): string {
+    switch (propertyName) {
+      case 'confirmed':
+        return 'confirmed cases';
+      case 'date':
+        return 'date';
+      case 'deaths':
+        return 'deaths';
+      case 'mortalityRate':
+        return 'mortality rate';
+      case 'newConfirmed':
+        return 'new cases';
+      case 'newDeaths':
+        return 'new deaths';
+      case 'newRecovered':
+        return 'new recoveries';
+      case 'recovered':
+        return 'recoveries';
+      case 'recoveryRate':
+        return 'rate of recoveries';
+    }
+  }
 
-    for (let i = 0; i < formattedCanadaValues.length; i++) {
-      const date = formattedCanadaValues[i].date;
-      formattedCanadaValues[i].recovered = parseInt(parsedCanadaRecoveredValues?.[date] as string);
+  private static async hasFreshPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>): Promise<boolean> {
+    const dataExpiresAt = await db.get(
+      'settings',
+      Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY,
+    ) as (Date | undefined);
+    const dataLastUpdatedAt = await db.get(
+      'settings',
+      Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY,
+    ) as (Date | undefined);
+    const locationDataCount = await db.count('data');
+
+    if (dataExpiresAt == null || dataLastUpdatedAt == null || locationDataCount < 0) {
+      return false;
     }
 
-    return {
-      ...formattedData,
-      'Canada': {
-        ...formattedData['Canada'],
-        values: formattedCanadaValues,
-      },
-    };
+    return Date.now() < dataExpiresAt.getTime();
+  }
+
+  private static async persistSettings(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    const dataLastUpdated = await Covid19DataStore.getDateOfLastCommitIncludingRepoDirectory();
+    const dataExpiresAt = new Date(Date.now() + Covid19DataStore.DB_DATA_VALIDITY_MS);
+
+    await db.put('settings', dataLastUpdated, Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
+    await db.put('settings', dataExpiresAt, Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY);
+  }
+
+  private static getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
+    let location = countryOrRegion;
+    let subLocation = provinceOrState;
+
+    if (
+      subLocation != null &&
+      county != null &&
+      subLocation.trim().length > 0 &&
+      county.trim().length > 0
+    ) {
+      subLocation = `${county}, ${subLocation}`;
+    }
+
+
+    if (
+      subLocation != null &&
+      subLocation.trim().length > 0
+    ) {
+      location = `${location} (${subLocation})`;
+    }
+
+    return location;
+  }
+
+  private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
+    const commitDataUrl = 'https://api.github.com/repos/CSSEGISandData/COVID-19/commits?path=csse_covid_19_data%2Fcsse_covid_19_time_series&page=1&per_page=1';
+
+    const response = await fetch(commitDataUrl);
+
+    if (!response.ok) {
+      throw this.fetchFailedError(response.status, response.statusText);
+    }
+
+    const json = await response.json();
+
+    return new Date(json[0]['commit']['author']['date']);
+  }
+
+  private static isDateColumn(columnName: string): boolean {
+    return !!columnName.match(/^\d{1,2}\/\d{1,2}\/\d{2}$/);
+  }
+
+  private static isUSStateOrCountyData(countryOrRegion: string, provinceOrState?: string) {
+    return countryOrRegion === 'US' && provinceOrState != null;
+  }
+
+  private static invalidLocationError(location: string) {
+    return new Error(`Invalid location: "${location}".`);
+  }
+
+  private static notLoadedError() {
+    return new Error('Store is not populated. Make sure to first call the `loadData` method.');
+  }
+
+  private static persistedDataAnomalyError() {
+    return new Error('The persisted data seems to be empty or in wrong format.');
+  }
+
+  private static fetchFailedError(status: number, statusText: string) {
+    return new Error(`There was an error fetching the data. Response status: ${status} - ${statusText}`);
+  }
+
+  private static dbNotOpenError() {
+    return new Error('IndexedDB connection is not open.');
   }
 }

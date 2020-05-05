@@ -8,7 +8,7 @@
     "date-fns": "^2.12.0",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.2",
-    "idb-keyval": "^3.2.0",
+    "idb": "^5.0.2",
     "lodash": "^4.17.15",
     "node-sass": "^4.13.1",
     "query-string": "^6.12.1",
