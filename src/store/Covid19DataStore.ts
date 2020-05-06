@@ -402,12 +402,14 @@ export default class Covid19DataStore {
     const australiaStateData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'Australia');
     const australiaTotalValues = this.sumMultipleLocationValues(australiaStateData);
 
+    // Latitudes and longitudes are from:
+    // https://www.latlong.net/
     const australiaTotalData: InternalLocationData = {
       location: 'Australia',
       countryOrRegion: 'Australia',
       values: australiaTotalValues,
-      latitude: '-25.2744',
-      longitude: '133.7751',
+      latitude: '-25.274399',
+      longitude: '133.775131',
     };
 
     await db.put('data', australiaTotalData);
@@ -435,12 +437,14 @@ export default class Covid19DataStore {
       i++;
     }
 
+    // Latitudes and longitudes are from:
+    // https://www.latlong.net/
     const canadaTotalData: InternalLocationData = {
       location: 'Canada',
       countryOrRegion: 'Canada',
       values: canadaTotalValues,
-      latitude: '56.1304',
-      longitude: '-106.3468',
+      latitude: '56.130367',
+      longitude: '-106.346771',
     };
 
     await db.put('data', canadaTotalData);
@@ -450,12 +454,14 @@ export default class Covid19DataStore {
     const chinaProvincesData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'China');
     const chinaTotalValues = this.sumMultipleLocationValues(chinaProvincesData);
 
+    // Latitudes and longitudes are from:
+    // https://www.latlong.net/
     const chinaTotalData: InternalLocationData = {
       location: 'China',
       countryOrRegion: 'China',
       values: chinaTotalValues,
-      latitude: '35.8617',
-      longitude: '104.1954',
+      latitude: '35.861660',
+      longitude: '104.195396',
     };
 
     await db.put('data', chinaTotalData);
