@@ -13,7 +13,7 @@ const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
         <span className="sr-only">Loading...</span>
       </Spinner>
 
-      <p className='d-flex align-items-center' style={{ height: 60 }}>{message ?? ' '}</p>
+      <p className='d-flex align-items-center px-5 text-center' style={{ height: 60 }}>{message ?? ' '}</p>
     </div>
   );
 };

@@ -71,13 +71,8 @@ interface InternalLocationData {
   values: InternalLocationDataValues
 }
 
-interface InternalDataByLocation {
-  [location: string]: InternalLocationData
-}
-
 export default class Covid19DataStore {
   private db: IDBPDatabase<Covid19DataStoreDbSchema> | undefined;
-  private data: InternalDataByLocation | undefined;
   private dataSetLength: number = 0;
   private _locations: string[] | undefined;
   private _lastUpdated: Date | undefined;
@@ -111,7 +106,7 @@ export default class Covid19DataStore {
       throw Covid19DataStore.dbNotOpenError();
     }
 
-    this.onLoadingStatusChange?.(true, 'Checking if the COVID-19 data already exists.')
+    this.onLoadingStatusChange?.(true, 'Checking if the COVID-19 data already exists.');
     const hasFreshPersistedData = await Covid19DataStore.hasFreshPersistedData(this.db);
 
     if (!hasFreshPersistedData) {
@@ -130,8 +125,9 @@ export default class Covid19DataStore {
       await Covid19DataStore.persistSettings(this.db);
     }
 
-    this.onLoadingStatusChange?.(true, 'Loading the data.');
-    await this.loadPersistedData(this.db);
+    this.onLoadingStatusChange?.(true, 'Creating the locations list.');
+    await this.setLastUpdatedAt(this.db);
+    await this.setLocations(this.db);
     this.onLoadingStatusChange?.(false);
   }
 
@@ -168,21 +164,21 @@ export default class Covid19DataStore {
   }
 
   async getDataByLocation(location: string): Promise<LocationData> {
-    if (this.data == null) {
-      throw Covid19DataStore.notLoadedError();
+    if (this.db == null) {
+      throw Covid19DataStore.dbNotOpenError();
     }
 
-    if (this.locations.indexOf(location) === -1) {
-      throw Covid19DataStore.invalidLocationError(location);
-    }
-
-    let internalLocationData = this.data[location];
+    let internalLocationData = await this.db.get('data', location);
 
     // Check if the user is requesting US state data while it
     // is not yet loaded.
     if (location.includes('US') && internalLocationData == null) {
-      await this.loadUSStateAndCountyData()
-      internalLocationData = this.data[location];
+      await this.loadUSStateAndCountyData();
+      internalLocationData = await this.db.get('data', location);
+    }
+
+    if (internalLocationData == null) {
+      throw Covid19DataStore.invalidLocationError(location);
     }
 
     const locationDataValues = internalLocationData.values.map((valuesOnDate, index) => {
@@ -194,17 +190,17 @@ export default class Covid19DataStore {
 
       if (index > 0) {
         const { confirmed, recovered, deaths } = valuesOnDate;
-        const yesterdaysData = internalLocationData.values[index - 1];
+        let yesterdaysData = internalLocationData?.values[index - 1];
 
-        if (recovered != null && yesterdaysData.recovered != null) {
+        if (recovered != null && yesterdaysData?.recovered != null) {
           newRecovered = recovered - yesterdaysData.recovered;
         }
 
-        if (deaths != null && yesterdaysData.deaths != null) {
+        if (deaths != null && yesterdaysData?.deaths != null) {
           newDeaths = deaths - yesterdaysData.deaths;
         }
 
-        if (confirmed != null && yesterdaysData.confirmed != null) {
+        if (confirmed != null && yesterdaysData?.confirmed != null) {
           newConfirmed = confirmed - yesterdaysData.confirmed;
         }
 
@@ -499,17 +495,15 @@ export default class Covid19DataStore {
     return sum;
   }
 
-  private async loadPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    this._locations = [];
-    this.data = {};
-
-    let cursor = await db.transaction('data').store.openCursor();
-    while (cursor) {
-      this.data[cursor.key] = cursor.value;
-      this._locations.push(cursor.key);
-
-      cursor = await cursor.continue();
+  private async setLastUpdatedAt(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    this._lastUpdated = await db.get('settings', Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
+    if (this._lastUpdated == null) {
+      throw Covid19DataStore.persistedDataAnomalyError();
     }
+  }
+
+  private async setLocations(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+    this._locations = await db.getAllKeys('data');
 
     if (this._locations.length === 0) {
       throw Covid19DataStore.persistedDataAnomalyError();
@@ -518,7 +512,7 @@ export default class Covid19DataStore {
     this.addUSStateAndCountyNamesToLocations();
 
     const firstLocation = this._locations[0];
-    const firstLocationData = this.data[firstLocation].values;
+    const firstLocationData = (await db.get('data', firstLocation))?.values;
     if (firstLocationData == null || firstLocationData.length === 0) {
       throw Covid19DataStore.persistedDataAnomalyError();
     }
@@ -526,11 +520,6 @@ export default class Covid19DataStore {
     this.dataSetLength = firstLocationData.length as number;
     this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
     this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
-
-    this._lastUpdated = await db.get('settings', Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
-    if (this._lastUpdated == null) {
-      throw Covid19DataStore.persistedDataAnomalyError();
-    }
   }
 
   private addUSStateAndCountyNamesToLocations() {
@@ -539,7 +528,10 @@ export default class Covid19DataStore {
     }
 
     const usIndex = this._locations.indexOf('US');
-    this._locations.splice(usIndex + 1, 0, ...US_LOCATIONS);
+    // Check if US state data already exists in the DB.
+    if (!this._locations[usIndex + 1].includes('US')) {
+      this._locations.splice(usIndex + 1, 0, ...US_LOCATIONS);
+    }
   }
 
   private async loadUSStateAndCountyData() {
@@ -547,7 +539,7 @@ export default class Covid19DataStore {
       throw Covid19DataStore.dbNotOpenError();
     }
 
-    this.onLoadingStatusChange?.(true, 'Loading US state and county data. This might take a while the first time.');
+    this.onLoadingStatusChange?.(true, 'Loading the US state and county data. This might take a while the first time.');
     const parsedUSConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.US_CONFIRMED_URL);
     const parsedUSDeathsData = await this.getParsedDataFromURL(Covid19DataStore.US_DEATHS_URL);
     await this.formatAndPersistParsedData(this.db, parsedUSConfirmedData, parsedUSDeathsData);
