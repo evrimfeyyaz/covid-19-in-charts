@@ -15,7 +15,7 @@ import NoData from '../../common/NoData';
 import _ from 'lodash';
 
 interface LocationComparisonChartProps {
-  data: LocationData[],
+  data?: LocationData[],
   property: string,
   humanizedProperty: string,
   humanizedExceedingProperty: string,
@@ -33,7 +33,11 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
                                                                                   }) => {
   let body = (<NoData />);
 
-  if (data.length > 0 && data.some(locationData => locationData.values.length > 0)) {
+  if (
+    data != null &&
+    data.length > 0 &&
+    data.some(locationData => locationData.values.length > 0)
+  ) {
     const dataWithIndex = _.cloneDeep(data)
       .map(locationData => ({
         ...locationData,

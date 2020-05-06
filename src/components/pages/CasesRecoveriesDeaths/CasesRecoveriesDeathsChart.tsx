@@ -17,7 +17,7 @@ import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 
 interface CasesRecoveriesDeathsChartProps {
-  data: ValuesOnDate[],
+  data?: ValuesOnDate[],
   humanizedExceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
@@ -31,7 +31,7 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
                                                                                         }) => {
   let body = (<NoData />);
 
-  if (data.length > 0) {
+  if (data != null && data.length > 0) {
     body = (
       <ResponsiveContainer height={400} className='mb-2'>
         <ComposedChart data={data} margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
@@ -44,7 +44,7 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
           <YAxis
             yAxisId="left"
             label={{
-              value: 'Confirmed Cases',
+              value: 'Confirmed Cases, Recoveries & Deaths',
               angle: -90,
               dx: -55,
             }}
@@ -56,11 +56,11 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
             orientation="right"
             domain={[0, dataMax => dataMax * 2]}
             label={{
-              value: 'New Cases, Recoveries & Deaths',
+              value: 'New Cases',
               angle: 90,
-              dx: 55
+              dx: 45
             }}
-            width={70}
+            width={60}
             tickFormatter={numToGroupedString}
           />
           <Tooltip content={CasesRecoveriesDeathsTooltip} offset={30} />
@@ -71,12 +71,12 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
             isAnimationActive={isAnimationActive}
           />
           <Line
-            type='monotone' dataKey='deaths' yAxisId='right' opacity={.8}
+            type='monotone' dataKey='deaths' yAxisId='left' opacity={.8}
             stroke={COLORS.deaths} strokeWidth={3} name='Deaths'
             dot={false} isAnimationActive={isAnimationActive}
           />
           <Line
-            type='monotone' yAxisId='right' dataKey="recovered" opacity={.8}
+            type='monotone' yAxisId='left' dataKey="recovered" opacity={.8}
             stroke={COLORS.recovered} strokeWidth={3} name='Recovered Cases'
             dot={false} isAnimationActive={isAnimationActive}
           />

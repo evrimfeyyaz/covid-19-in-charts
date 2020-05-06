@@ -40,14 +40,23 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const pageDescription = `See the daily COVID-19 numbers for ${location}.`;
 
   useEffect(() => {
-    if (date != null) {
-      const data = store.getDataByLocationAndDate(location, date);
+    if (date == null) {
+      return;
+    }
+
+    clearData();
+    store.getDataByLocationAndDate(location, date).then(data => {
       const lastUpdated = store.lastUpdated;
 
       setData(data);
       setLastUpdated(lastUpdated);
-    }
+    });
   }, [store, location, date]);
+
+  function clearData() {
+    setData(undefined);
+    setLastUpdated(undefined);
+  }
 
   function handleDownloadClick() {
     const node = document.getElementById(tableId) as HTMLElement;

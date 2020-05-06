@@ -7,6 +7,13 @@ export function localStorageCleanup() {
     localStorage.removeItem('localDataExpirationTimeStr');
     localStorage.removeItem('version');
   }
+
+  if (isCurrentVersionHigherThan('0.16.2')) {
+    localStorage.removeItem('covid19DataStoreExpiresAt');
+    localStorage.removeItem('covid19DataStoreLastUpdatedAt');
+    localStorage.removeItem('covid19DataStoreData');
+    localStorage.removeItem('covid19DataStoreVersion');
+  }
 }
 
 export function setLocalStorageItem<T>(key: string, value: T) {
