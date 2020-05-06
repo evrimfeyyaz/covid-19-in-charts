@@ -173,7 +173,7 @@ export default class Covid19DataStore {
     // Check if the user is requesting US state data while it
     // is not yet loaded.
     if (location.includes('US') && internalLocationData == null) {
-      this.onLoadingStatusChange?.(true, 'Loading the US state and county data. This might take a while the first time.');
+      this.onLoadingStatusChange?.(true, 'Loading the US state and county data. This might take a short while.');
       await this.loadUSCountyData(this.db);
       this.onLoadingStatusChange?.(false);
       internalLocationData = await this.db.get('data', location);
