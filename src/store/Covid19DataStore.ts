@@ -1,7 +1,7 @@
 import parse from 'csv-parse';
 import _ from 'lodash';
 import { dateToMDYString, MDYStringToDate } from '../utilities/dateUtilities';
-import { DBSchema, IDBPDatabase, openDB } from 'idb';
+import { DBSchema, IDBPDatabase, IDBPTransaction, openDB } from 'idb';
 import { US_LOCATIONS, US_STATES } from './usLocations';
 
 interface Covid19DataStoreDbSchema extends DBSchema {
@@ -116,18 +116,20 @@ export default class Covid19DataStore {
       const parsedRecoveredData = await this.getParsedDataFromURL(Covid19DataStore.RECOVERED_URL);
 
       this.onLoadingStatusChange?.(true, 'Formatting and saving the fetched data.');
-      await Covid19DataStore.clearData(this.db);
-      await this.formatAndPersistParsedData(this.db, parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
-      await this.addAustraliaTotalDataToPersistedData(this.db);
-      await this.addCanadaTotalDataToPersistedData(parsedRecoveredData, this.db);
-      await this.addChinaTotalDataToPersistedData(this.db);
+      const tx = this.db.transaction(['data', 'settings'], 'readwrite');
+      await Covid19DataStore.clearData(tx);
+      await this.formatAndPersistParsedData(tx, parsedConfirmedData, parsedDeathsData, parsedRecoveredData);
+      await this.addAustraliaTotalDataToPersistedData(tx);
+      await this.addCanadaTotalDataToPersistedData(parsedRecoveredData, tx);
+      await this.addChinaTotalDataToPersistedData(tx);
 
       await Covid19DataStore.persistSettings(this.db);
     }
 
     this.onLoadingStatusChange?.(true, 'Creating the locations list.');
-    await this.setLastUpdatedAt(this.db);
-    await this.setLocations(this.db);
+    const tx = this.db.transaction(['data', 'settings']);
+    await this.setLastUpdatedAt(tx);
+    await this.setLocations(tx);
     this.onLoadingStatusChange?.(false);
   }
 
@@ -173,7 +175,7 @@ export default class Covid19DataStore {
     // Check if the user is requesting US state data while it
     // is not yet loaded.
     if (location.includes('US') && internalLocationData == null) {
-      this.onLoadingStatusChange?.(true, 'Loading the US state and county data. This might take a short while.');
+      this.onLoadingStatusChange?.(true, 'Loading the US state and county data. This might take a little while.');
       await this.loadUSCountyData(this.db);
       this.onLoadingStatusChange?.(false);
       internalLocationData = await this.db.get('data', location);
@@ -183,6 +185,7 @@ export default class Covid19DataStore {
       throw Covid19DataStore.invalidLocationError(location);
     }
 
+    // TODO: Refactor this as a separate method.
     const locationDataValues = internalLocationData.values.map((valuesOnDate, index) => {
       let newConfirmed = 0;
       let newRecovered = null;
@@ -331,7 +334,7 @@ export default class Covid19DataStore {
   }
 
   private async formatAndPersistParsedData(
-    db: IDBPDatabase<Covid19DataStoreDbSchema>,
+    tx: IDBPTransaction<Covid19DataStoreDbSchema>,
     parsedConfirmedData: ParsedCsv,
     parsedDeathsData: ParsedCsv,
     parsedRecoveredData?: ParsedCsv,
@@ -394,12 +397,13 @@ export default class Covid19DataStore {
         values,
       };
 
-      await db.put('data', locationData);
+      await tx.objectStore('data').put(locationData);
     }
   }
 
-  private async addAustraliaTotalDataToPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    const australiaStateData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'Australia');
+  private async addAustraliaTotalDataToPersistedData(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    const dataStore = tx.objectStore('data');
+    const australiaStateData = await dataStore.index('byCountryOrRegion').getAll('Australia');
     const australiaTotalValues = this.sumMultipleLocationValues(australiaStateData);
 
     // Latitudes and longitudes are from:
@@ -412,14 +416,15 @@ export default class Covid19DataStore {
       longitude: '133.775131',
     };
 
-    await db.put('data', australiaTotalData);
+    await dataStore.put(australiaTotalData);
   }
 
   private async addCanadaTotalDataToPersistedData(
     parsedRecoveredData: ParsedCsv,
-    db: IDBPDatabase<Covid19DataStoreDbSchema>,
+    tx: IDBPTransaction<Covid19DataStoreDbSchema>,
   ) {
-    const canadaProvincesData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'Canada');
+    const dataStore = tx.objectStore('data');
+    const canadaProvincesData = await dataStore.index('byCountryOrRegion').getAll('Canada');
     const canadaTotalValues = this.sumMultipleLocationValues(canadaProvincesData);
 
     const parsedCanadaRecoveredValues = parsedRecoveredData['Canada'];
@@ -447,11 +452,12 @@ export default class Covid19DataStore {
       longitude: '-106.346771',
     };
 
-    await db.put('data', canadaTotalData);
+    await dataStore.put(canadaTotalData);
   }
 
-  private async addChinaTotalDataToPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    const chinaProvincesData = await db.getAllFromIndex('data', 'byCountryOrRegion', 'China');
+  private async addChinaTotalDataToPersistedData(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    const dataStore = tx.objectStore('data');
+    const chinaProvincesData = await dataStore.index('byCountryOrRegion').getAll('China');
     const chinaTotalValues = this.sumMultipleLocationValues(chinaProvincesData);
 
     // Latitudes and longitudes are from:
@@ -464,7 +470,7 @@ export default class Covid19DataStore {
       longitude: '104.195396',
     };
 
-    await db.put('data', chinaTotalData);
+    await dataStore.put(chinaTotalData);
   }
 
   private sumMultipleLocationValues(data: InternalLocationData[]): InternalLocationDataValues {
@@ -503,15 +509,18 @@ export default class Covid19DataStore {
     return sum;
   }
 
-  private async setLastUpdatedAt(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    this._lastUpdated = await db.get('settings', Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
+  private async setLastUpdatedAt(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    const settingsStore = tx.objectStore('settings');
+
+    this._lastUpdated = await settingsStore.get(Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
     if (this._lastUpdated == null) {
       throw Covid19DataStore.persistedDataAnomalyError();
     }
   }
 
-  private async setLocations(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    this._locations = await db.getAllKeys('data');
+  private async setLocations(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    const dataStore = tx.objectStore('data');
+    this._locations = await dataStore.getAllKeys();
 
     if (this._locations.length === 0) {
       throw Covid19DataStore.persistedDataAnomalyError();
@@ -520,14 +529,15 @@ export default class Covid19DataStore {
     this.addUSStatesAndCountiesToLocations();
 
     const firstLocation = this._locations[0];
-    const firstLocationData = (await db.get('data', firstLocation))?.values;
-    if (firstLocationData == null || firstLocationData.length === 0) {
+    const firstLocationData = await dataStore.get(firstLocation);
+    const firstLocationValues = firstLocationData?.values;
+    if (firstLocationValues == null || firstLocationValues.length === 0) {
       throw Covid19DataStore.persistedDataAnomalyError();
     }
 
-    this.dataSetLength = firstLocationData.length as number;
-    this._firstDate = MDYStringToDate(firstLocationData[0].date as string);
-    this._lastDate = MDYStringToDate(firstLocationData[this.dataSetLength - 1].date as string);
+    this.dataSetLength = firstLocationValues.length as number;
+    this._firstDate = MDYStringToDate(firstLocationValues[0].date as string);
+    this._lastDate = MDYStringToDate(firstLocationValues[this.dataSetLength - 1].date as string);
   }
 
   private addUSStatesAndCountiesToLocations() {
@@ -545,14 +555,17 @@ export default class Covid19DataStore {
   private async loadUSCountyData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
     const parsedUSConfirmedData = await this.getParsedDataFromURL(Covid19DataStore.US_CONFIRMED_URL);
     const parsedUSDeathsData = await this.getParsedDataFromURL(Covid19DataStore.US_DEATHS_URL);
-    await this.formatAndPersistParsedData(db, parsedUSConfirmedData, parsedUSDeathsData);
-    await this.addUSStateTotalsDataToPersistedData(db);
+    const tx = db.transaction(['data'], 'readwrite');
+    await this.formatAndPersistParsedData(tx, parsedUSConfirmedData, parsedUSDeathsData);
+    await this.addUSStateTotalsDataToPersistedData(tx);
   }
 
-  private async addUSStateTotalsDataToPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
+  private async addUSStateTotalsDataToPersistedData(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    const dataStore = tx.objectStore('data');
+
     for (const state of US_STATES) {
       const { name, latitude, longitude } = state;
-      const countiesData = await db.getAllFromIndex('data', 'byProvinceOrState', name);
+      const countiesData = await dataStore.index('byProvinceOrState').getAll(name);
       const stateTotalValues = this.sumMultipleLocationValues(countiesData);
 
       const location = Covid19DataStore.getFullLocationName('US', name);
@@ -564,7 +577,7 @@ export default class Covid19DataStore {
         longitude,
       };
 
-      await db.put('data', stateTotalData);
+      await dataStore.put(stateTotalData);
     }
   }
 
@@ -627,15 +640,14 @@ export default class Covid19DataStore {
   }
 
   private static async hasFreshPersistedData(db: IDBPDatabase<Covid19DataStoreDbSchema>): Promise<boolean> {
-    const dataExpiresAt = await db.get(
-      'settings',
-      Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY,
-    ) as (Date | undefined);
-    const dataLastUpdatedAt = await db.get(
-      'settings',
-      Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY,
-    ) as (Date | undefined);
-    const locationDataCount = await db.count('data');
+    const tx = db.transaction(['settings', 'data']);
+    const settingsStore = tx.objectStore('settings');
+    const dataStore = tx.objectStore('data');
+    const dataExpiresAt = await settingsStore
+      .get(Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY) as (Date | undefined);
+    const dataLastUpdatedAt = await settingsStore
+      .get(Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY) as (Date | undefined);
+    const locationDataCount = await dataStore.count('data');
 
     if (dataExpiresAt == null || dataLastUpdatedAt == null || locationDataCount < 0) {
       return false;
@@ -648,8 +660,9 @@ export default class Covid19DataStore {
     const dataLastUpdated = await Covid19DataStore.getDateOfLastCommitIncludingRepoDirectory();
     const dataExpiresAt = new Date(Date.now() + Covid19DataStore.DB_DATA_VALIDITY_MS);
 
-    await db.put('settings', dataLastUpdated, Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
-    await db.put('settings', dataExpiresAt, Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY);
+    const settingsStore = db.transaction('settings', 'readwrite').objectStore('settings');
+    await settingsStore.put(dataLastUpdated, Covid19DataStore.SETTINGS_DATA_LAST_UPDATED_KEY);
+    await settingsStore.put(dataExpiresAt, Covid19DataStore.SETTINGS_DATA_EXPIRATION_TIME_KEY);
   }
 
   private static getFullLocationName(countryOrRegion: string, provinceOrState?: string, county?: string) {
@@ -675,9 +688,9 @@ export default class Covid19DataStore {
     return location;
   }
 
-  private static async clearData(db: IDBPDatabase<Covid19DataStoreDbSchema>) {
-    await db.clear('data');
-    await db.clear('settings');
+  private static async clearData(tx: IDBPTransaction<Covid19DataStoreDbSchema>) {
+    await tx.objectStore('data').clear();
+    await tx.objectStore('settings').clear();
   }
 
   private static async getDateOfLastCommitIncludingRepoDirectory(): Promise<Date> {
