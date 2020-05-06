@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import Covid19DataStore, { ValuesOnDate, LocationData } from '../../../store/Covid19DataStore';
+import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
 import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DataPage from '../../common/DataPage';

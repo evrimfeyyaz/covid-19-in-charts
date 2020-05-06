@@ -3,7 +3,6 @@ import React from 'react';
 import { DateParam, useQueryParam } from 'use-query-params';
 import { isSameDay } from 'date-fns';
 import DatePicker from '../components/common/DatePicker';
-import 'react-datepicker/dist/react-datepicker.css';
 
 type UseDateSelectionReturnValue = [
   Date | undefined, // selectedDate
