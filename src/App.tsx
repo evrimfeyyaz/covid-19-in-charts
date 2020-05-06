@@ -14,16 +14,18 @@ import { localStorageCleanup } from './utilities/localStorageUtilities';
 function App() {
   const dataStore = useRef<Covid19DataStore>(new Covid19DataStore(handleLoadStatusChange));
   const [loaded, setLoaded] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState<string>();
 
-  function handleLoadStatusChange(status: boolean, message: string) {
-    console.log(message);
+  function handleLoadStatusChange(isLoading: boolean, message?: string) {
+    setLoaded(!isLoading);
+    setLoadingMessage(message);
   }
 
   useEffect(() => {
     localStorageCleanup();
 
-    dataStore.current.loadData().then(() => {
-      setLoaded(true);
+    dataStore.current.loadData().catch(err => {
+      console.log(err);
     });
   }, []);
 
@@ -40,7 +42,7 @@ function App() {
         <meta name="twitter:image:alt" content="COVID-19 in Charts" />
       </Helmet>
 
-      {!loaded && <Loading />}
+      {!loaded && <Loading message={loadingMessage} />}
       {loaded && (
         <>
           <NavBar />

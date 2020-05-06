@@ -60,21 +60,31 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   }
 
   useEffect(() => {
-    const data = store.getDataByLocation(location);
-    const lastUpdated = store.lastUpdated;
-    const strippedData = Covid19DataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+    clearData();
 
-    if (strippedData.values.length > 0) {
-      const firstDate = MDYStringToDate(strippedData.values[0].date);
-      const lastDate = MDYStringToDate(strippedData.values[strippedData.values.length - 1].date);
+    store.getDataByLocation(location).then(data => {
+      const lastUpdated = store.lastUpdated;
+      const strippedData = Covid19DataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
-      setFirstDate(firstDate);
-      setLastDate(lastDate);
-    }
+      if (strippedData.values.length > 0) {
+        const firstDate = MDYStringToDate(strippedData.values[0].date);
+        const lastDate = MDYStringToDate(strippedData.values[strippedData.values.length - 1].date);
 
-    setData(strippedData);
-    setLastUpdated(lastUpdated);
+        setFirstDate(firstDate);
+        setLastDate(lastDate);
+      }
+
+      setData(strippedData);
+      setLastUpdated(lastUpdated);
+    });
   }, [store, location, exceedingProperty, exceedingValue]);
+
+  function clearData() {
+    setData(undefined);
+    setLastUpdated(undefined);
+    setFirstDate(undefined);
+    setLastDate(undefined);
+  }
 
   function handleDownloadClick() {
     setAreChartAnimationsActive(false);
@@ -89,7 +99,7 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
 
   const bodyComponent = (
     <CasesRecoveriesDeathsChart
-      data={data?.values as ValuesOnDate[]}
+      data={data?.values}
       humanizedExceedingProperty={humanizedExceedingProperty}
       exceedingValue={exceedingValue}
       isAnimationActive={areChartAnimationsActive}

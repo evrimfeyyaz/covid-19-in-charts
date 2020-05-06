@@ -17,7 +17,7 @@ import { numToGroupedString } from '../../../utilities/numUtilities';
 import NoData from '../../common/NoData';
 
 interface CasesRecoveriesDeathsChartProps {
-  data: ValuesOnDate[],
+  data?: ValuesOnDate[],
   humanizedExceedingProperty: string,
   exceedingValue: number,
   isAnimationActive: boolean,
@@ -31,7 +31,7 @@ const CasesRecoveriesDeathsChart: FunctionComponent<CasesRecoveriesDeathsChartPr
                                                                                         }) => {
   let body = (<NoData />);
 
-  if (data.length > 0) {
+  if (data != null && data.length > 0) {
     body = (
       <ResponsiveContainer height={400} className='mb-2'>
         <ComposedChart data={data} margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>

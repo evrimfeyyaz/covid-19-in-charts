@@ -20,7 +20,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const defaultExceedingValue = 100;
 
   const [locationsList] = useState(store.locations);
-  const [data, setData] = useState<LocationData[]>([]);
+  const [data, setData] = useState<LocationData[]>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
@@ -64,15 +64,22 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const pageDescription = 'Comparison of various COVID-19 data points between multiple locations.';
 
   useEffect(() => {
-    const data = store.getDataByLocations(locations);
-    const lastUpdated = store.lastUpdated;
-    const strippedData = data.map(locationData =>
-      Covid19DataStore.stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
-    );
+    clearData();
+    store.getDataByLocations(locations).then(data => {
+      const lastUpdated = store.lastUpdated;
+      const strippedData = data.map(locationData =>
+        Covid19DataStore.stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
+      );
 
-    setData(strippedData);
-    setLastUpdated(lastUpdated);
+      setData(strippedData);
+      setLastUpdated(lastUpdated);
+    });
   }, [store, locations, exceedingProperty, exceedingValue]);
+
+  function clearData() {
+    setData(undefined);
+    setLastUpdated(undefined);
+  }
 
   function hasLoaded() {
     return (data != null && lastUpdated != null);
