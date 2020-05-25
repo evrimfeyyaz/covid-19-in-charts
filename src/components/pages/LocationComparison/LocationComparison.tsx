@@ -1,22 +1,23 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
-import DataPage from '../../common/DataPage';
-import { IMAGES } from '../../../constants';
-import LocationComparisonChart from './LocationComparisonChart';
-import useLocationSelection from '../../../hooks/useLocationSelection';
-import { usePropertySelection } from '../../../hooks/usePropertySelection';
-import _ from 'lodash';
-import { useNumberSelection } from '../../../hooks/useNumberSelection';
-import { downloadNode } from '../../../utilities/nodeToImageUtilities';
+import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
+import DataPage from "../../common/DataPage";
+import { IMAGES } from "../../../constants";
+import LocationComparisonChart from "./LocationComparisonChart";
+import useLocationSelection from "../../../hooks/useLocationSelection";
+import { usePropertySelection } from "../../../hooks/usePropertySelection";
+import _ from "lodash";
+import { useNumberSelection } from "../../../hooks/useNumberSelection";
+import { downloadNode } from "../../../utilities/nodeToImageUtilities";
 
 interface LocationComparisonProps {
-  store: Covid19DataStore
+  store: COVID19API
 }
 
 const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store }) => {
-  const defaultLocations = ['US', 'Spain', 'Italy', 'United Kingdom'];
-  const defaultProperty = 'confirmed';
-  const defaultExceedingProperty = 'confirmed';
+  const defaultLocations = ["US", "Spain", "Italy", "United Kingdom"];
+  const defaultProperty = "confirmed";
+  const defaultExceedingProperty = "confirmed";
   const defaultExceedingValue = 100;
 
   const [locationsList] = useState(store.locations);
@@ -31,44 +32,44 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     multiple: true,
     maxNumOfSelections: 10,
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'locationComparisonLastLocations',
+    lastSelectionStorageKey: "locationComparisonLastLocations",
   });
   const [
     property,
     humanizedProperty,
     propertyInputComponent,
-  ] = usePropertySelection('property', defaultProperty, 'Compare', {
+  ] = usePropertySelection("property", defaultProperty, "Compare", {
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'locationComparisonLastProperty',
+    lastSelectionStorageKey: "locationComparisonLastProperty",
   });
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent,
-  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', {
+  ] = usePropertySelection("exceedingProperty", defaultExceedingProperty, "Start from the day", {
     onlyCumulativeValues: true,
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'locationComparisonLastExceedingProperty',
+    lastSelectionStorageKey: "locationComparisonLastExceedingProperty",
   });
   const [
     exceedingValue,
     exceedingValueInputComponent,
-  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded', {
+  ] = useNumberSelection("exceedingValue", defaultExceedingValue, "exceeded", {
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'locationComparisonLastExceedingValue',
+    lastSelectionStorageKey: "locationComparisonLastExceedingValue",
   });
-  const canonicalQueryParams = ['location', 'property', 'exceedingProperty', 'exceedingValue'];
+  const canonicalQueryParams = ["location", "property", "exceedingProperty", "exceedingValue"];
 
-  const chartId = 'location-comparison-chart';
+  const chartId = "location-comparison-chart";
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
-  const pageDescription = 'Comparison of various COVID-19 data points between multiple locations.';
+  const pageDescription = "Comparison of various COVID-19 data points between multiple locations.";
 
   useEffect(() => {
     clearData();
     store.getDataByLocations(locations).then(data => {
-      const lastUpdated = store.lastUpdated;
+      const lastUpdated = store.sourceLastUpdatedAt;
       const strippedData = data.map(locationData =>
-        Covid19DataStore.stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
+        stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
       );
 
       setData(strippedData);

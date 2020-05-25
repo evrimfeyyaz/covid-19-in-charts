@@ -1,12 +1,16 @@
-import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
-import { ValuesOnDatePropertyParam } from '../utilities/useQueryParamsUtilities';
-import Form from 'react-bootstrap/Form';
-import React, { ChangeEvent } from 'react';
-import Covid19DataStore, { ValuesOnDateProperty } from '../store/Covid19DataStore';
-import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
+import {
+  humanizePropertyName,
+  isValuesOnDateProperty,
+  valuesOnDateProperties
+} from "../utilities/covid19APIUtilities";
+import { useAlwaysPresentQueryParam } from "./useAlwaysPresentQueryParam";
+import { ValuesOnDatePropertyParam } from "../utilities/useQueryParamsUtilities";
+import Form from "react-bootstrap/Form";
+import React, { ChangeEvent } from "react";
+import usePersistedSelection, { UsePersistedSelectionOptions } from "./usePersistedSelection";
 
 type UsePropertySelectionReturnValue = [
-  ValuesOnDateProperty, // selectedProperty
+  string, // selectedProperty
   string, // humanizedProperty
   JSX.Element // propertyInputComponent
 ]
@@ -17,7 +21,7 @@ interface UsePropertySelectionOptions extends UsePersistedSelectionOptions {
 
 export function usePropertySelection(
   queryParamName: string,
-  defaultProperty: ValuesOnDateProperty,
+  defaultProperty: string,
   inputLabel: string,
   options: UsePropertySelectionOptions = {},
 ): UsePropertySelectionReturnValue {
@@ -32,14 +36,14 @@ export function usePropertySelection(
     setProperty
   ] = useAlwaysPresentQueryParam(queryParamName, initialProperty, ValuesOnDatePropertyParam,);
 
-  const humanizedProperty = Covid19DataStore.humanizePropertyName(property);
-  const selectableProperties = Covid19DataStore.valuesOnDateProperties
+  const humanizedProperty = humanizePropertyName(property);
+  const selectableProperties = valuesOnDateProperties
     .filter(property => {
       return (
-        property !== 'date' &&
+        property !== "date" &&
         (
           !onlyCumulativeValues ||
-          (property === 'confirmed' || property === 'deaths' || property === 'recovered')
+          (property === "confirmed" || property === "deaths" || property === "recovered")
         )
       );
     });
@@ -48,7 +52,7 @@ export function usePropertySelection(
     const newProperty = event.currentTarget.value;
 
     if (
-      Covid19DataStore.isValuesOnDateProperty(newProperty) &&
+      isValuesOnDateProperty(newProperty) &&
       selectableProperties.indexOf(newProperty) !== -1 &&
       newProperty !== property
     ) {
@@ -71,7 +75,7 @@ export function usePropertySelection(
             value={property}
             key={`${queryParamName}-${property}`}
           >
-            {Covid19DataStore.humanizePropertyName(property)}
+            {humanizePropertyName(property)}
           </option>
         ))}
       </Form.Control>

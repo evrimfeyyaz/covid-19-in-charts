@@ -1,5 +1,5 @@
+import { LocationData } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from 'react';
-import { LocationData } from '../../../store/Covid19DataStore';
 import {
   CartesianGrid,
   Label,

@@ -1,6 +1,6 @@
+import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from 'react';
 import Card from 'react-bootstrap/Card';
-import { ValuesOnDate } from '../../../store/Covid19DataStore';
 import { prettifyMDYDate } from '../../../utilities/dateUtilities';
 import Table from 'react-bootstrap/Table';
 import { COLORS } from '../../../constants';

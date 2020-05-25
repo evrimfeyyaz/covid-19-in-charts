@@ -1,18 +1,21 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Covid19DataStore from './store/Covid19DataStore';
-import { IMAGES, SITE_INFO } from './constants';
-import NavBar from './components/common/NavBar';
-import Loading from './components/common/Loading';
-import { Helmet } from 'react-helmet';
-import { createPageTitle } from './utilities/metaUtilities';
-import Footer from './components/common/Footer';
-import Router from './components/pages/Router';
-import ScreenTooSmall from './components/common/ScreenTooSmall';
-import { getAbsoluteUrl } from './utilities/urlUtilities';
-import { localStorageCleanup } from './utilities/localStorageUtilities';
+import { COVID19API } from "@evrimfeyyaz/covid-19-api";
+import React, { useEffect, useRef, useState } from "react";
+import { IMAGES, SITE_INFO } from "./constants";
+import NavBar from "./components/common/NavBar";
+import Loading from "./components/common/Loading";
+import { Helmet } from "react-helmet";
+import { createPageTitle } from "./utilities/metaUtilities";
+import Footer from "./components/common/Footer";
+import Router from "./components/pages/Router";
+import ScreenTooSmall from "./components/common/ScreenTooSmall";
+import { getAbsoluteUrl } from "./utilities/urlUtilities";
+import { localStorageCleanup } from "./utilities/localStorageUtilities";
 
 function App() {
-  const dataStore = useRef<Covid19DataStore>(new Covid19DataStore(handleLoadStatusChange));
+  const dataStore = useRef<COVID19API>(new COVID19API({
+    onLoadingStatusChange: handleLoadStatusChange,
+    store: "indexeddb"
+  }));
   const [loaded, setLoaded] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string>();
 
@@ -24,7 +27,7 @@ function App() {
   useEffect(() => {
     localStorageCleanup();
 
-    dataStore.current.loadData().catch(err => {
+    dataStore.current.init().catch(err => {
       console.log(err);
     });
   }, []);

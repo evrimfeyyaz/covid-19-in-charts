@@ -1,21 +1,22 @@
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import Covid19DataStore, { LocationData } from '../../../store/Covid19DataStore';
-import CasesRecoveriesDeathsChart from './CasesRecoveriesDeathsChart';
-import { downloadNode } from '../../../utilities/nodeToImageUtilities';
-import DataPage from '../../common/DataPage';
-import { MDYStringToDate, prettifyDate } from '../../../utilities/dateUtilities';
-import { IMAGES } from '../../../constants';
-import useLocationSelection from '../../../hooks/useLocationSelection';
-import { usePropertySelection } from '../../../hooks/usePropertySelection';
-import { useNumberSelection } from '../../../hooks/useNumberSelection';
+import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
+import CasesRecoveriesDeathsChart from "./CasesRecoveriesDeathsChart";
+import { downloadNode } from "../../../utilities/nodeToImageUtilities";
+import DataPage from "../../common/DataPage";
+import { MDYStringToDate, prettifyDate } from "../../../utilities/dateUtilities";
+import { IMAGES } from "../../../constants";
+import useLocationSelection from "../../../hooks/useLocationSelection";
+import { usePropertySelection } from "../../../hooks/usePropertySelection";
+import { useNumberSelection } from "../../../hooks/useNumberSelection";
 
 interface CasesRecoveriesDeathsProps {
-  store: Covid19DataStore,
+  store: COVID19API,
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
-  const defaultLocation = 'US';
-  const defaultExceedingProperty = 'confirmed';
+  const defaultLocation = "US";
+  const defaultExceedingProperty = "confirmed";
   const defaultExceedingValue = 100;
 
   const [locationsList] = useState(store.locations);
@@ -30,31 +31,31 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     locationInputComponent,
   ] = useLocationSelection(locationsList, [defaultLocation], {
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'casesRecoveriesDeathsLastLocation',
+    lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
   });
   const [
     exceedingProperty,
     humanizedExceedingProperty,
     exceedingPropertyInputComponent,
-  ] = usePropertySelection('exceedingProperty', defaultExceedingProperty, 'Start from the day', {
+  ] = usePropertySelection("exceedingProperty", defaultExceedingProperty, "Start from the day", {
     onlyCumulativeValues: true,
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'caseRecoveriesLastExceedingProperty',
+    lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
   });
   const [
     exceedingValue,
     exceedingValueInputComponent,
-  ] = useNumberSelection('exceedingValue', defaultExceedingValue, 'exceeded', {
+  ] = useNumberSelection("exceedingValue", defaultExceedingValue, "exceeded", {
     lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'caseRecoveriesLastExceedingValue',
+    lastSelectionStorageKey: "caseRecoveriesLastExceedingValue",
   });
-  const canonicalQueryParams = ['location', 'exceedingProperty', 'exceedingValue'];
+  const canonicalQueryParams = ["location", "exceedingProperty", "exceedingValue"];
 
-  const chartId = 'cases-recoveries-deaths-chart';
+  const chartId = "cases-recoveries-deaths-chart";
   const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
   const pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
 
-  let subtitle = '';
+  let subtitle = "";
   if (firstDate != null && lastDate != null) {
     subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`;
   }
@@ -63,8 +64,8 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     clearData();
 
     store.getDataByLocation(location).then(data => {
-      const lastUpdated = store.lastUpdated;
-      const strippedData = Covid19DataStore.stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
+      const lastUpdated = store.sourceLastUpdatedAt;
+      const strippedData = stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
       if (strippedData.values.length > 0) {
         const firstDate = MDYStringToDate(strippedData.values[0].date);

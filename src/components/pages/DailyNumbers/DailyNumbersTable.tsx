@@ -1,5 +1,5 @@
+import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from 'react';
-import { ValuesOnDate } from '../../../store/Covid19DataStore';
 import { COLORS } from '../../../constants';
 import DailyNumbersTableItem from './DailyNumbersTableItem';
 import Row from 'react-bootstrap/Row';

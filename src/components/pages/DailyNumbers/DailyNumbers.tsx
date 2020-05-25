@@ -1,5 +1,5 @@
+import { COVID19API, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import Covid19DataStore, { ValuesOnDate } from '../../../store/Covid19DataStore';
 import { downloadNode } from '../../../utilities/nodeToImageUtilities';
 import DailyNumbersTable from './DailyNumbersTable';
 import DataPage from '../../common/DataPage';
@@ -9,7 +9,7 @@ import useLocationSelection from '../../../hooks/useLocationSelection';
 import { useDateSelection } from '../../../hooks/useDateSelection';
 
 interface DailyNumbersProps {
-  store: Covid19DataStore,
+  store: COVID19API,
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
@@ -46,7 +46,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
 
     clearData();
     store.getDataByLocationAndDate(location, date).then(data => {
-      const lastUpdated = store.lastUpdated;
+      const lastUpdated = store.sourceLastUpdatedAt;
 
       setData(data);
       setLastUpdated(lastUpdated);

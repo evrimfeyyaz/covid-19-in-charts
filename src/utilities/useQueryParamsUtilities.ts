@@ -1,15 +1,21 @@
-import { QueryParamConfig, encodeString, decodeString, encodeArray, decodeArray } from 'use-query-params';
-import Covid19DataStore, { ValuesOnDateProperty } from '../store/Covid19DataStore';
-import { filterOnlyNonNull } from './arrayUtilities';
+import {
+  QueryParamConfig,
+  encodeString,
+  decodeString,
+  encodeArray,
+  decodeArray
+} from "use-query-params";
+import { filterOnlyNonNull } from "./arrayUtilities";
+import { isValuesOnDateProperty } from "./covid19APIUtilities";
 
-export const ValuesOnDatePropertyParam: QueryParamConfig<ValuesOnDateProperty | null | undefined> = {
+export const ValuesOnDatePropertyParam: QueryParamConfig<string | null | undefined> = {
   encode: (value) => {
     return encodeString(value);
   },
   decode: (value) => {
     const decodedStr = decodeString(value);
 
-    if (Covid19DataStore.isValuesOnDateProperty(decodedStr)) {
+    if (decodedStr != null && isValuesOnDateProperty(decodedStr)) {
       return decodedStr;
     }
 
