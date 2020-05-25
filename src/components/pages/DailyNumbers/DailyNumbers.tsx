@@ -1,19 +1,19 @@
 import { COVID19API, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent, useEffect, useState } from 'react';
-import { downloadNode } from '../../../utilities/nodeToImageUtilities';
-import DailyNumbersTable from './DailyNumbersTable';
-import DataPage from '../../common/DataPage';
-import { prettifyDate } from '../../../utilities/dateUtilities';
-import { IMAGES } from '../../../constants';
-import useLocationSelection from '../../../hooks/useLocationSelection';
-import { useDateSelection } from '../../../hooks/useDateSelection';
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { IMAGES } from "../../../constants";
+import { useDateSelection } from "../../../hooks/useDateSelection";
+import useLocationSelection from "../../../hooks/useLocationSelection";
+import { prettifyDate } from "../../../utilities/dateUtilities";
+import { downloadNode } from "../../../utilities/nodeToImageUtilities";
+import DataPage from "../../common/DataPage";
+import DailyNumbersTable from "./DailyNumbersTable";
 
 interface DailyNumbersProps {
-  store: COVID19API,
+  store: COVID19API;
 }
 
 const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
-  const defaultLocation = 'US';
+  const defaultLocation = "US";
 
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<ValuesOnDate>();
@@ -21,23 +21,37 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
   const [firstDate] = useState(store.firstDate);
   const [lastDate] = useState(store.lastDate);
 
-  const [
-    [location],
-    locationInputComponent,
-  ] = useLocationSelection(locationsList, [defaultLocation], {
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: 'dailyNumbersLastLocation',
-  });
-  const [
-    date,
-    dateInputComponent,
-  ] = useDateSelection(firstDate, lastDate);
-  const canonicalQueryParams = ['location', 'date'];
+  const [[location], locationInputComponent] = useLocationSelection(
+    locationsList,
+    [defaultLocation],
+    {
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "dailyNumbersLastLocation",
+    }
+  );
+  const [date, dateInputComponent] = useDateSelection(firstDate, lastDate);
+  const canonicalQueryParams = ["location", "date"];
 
-  const tableId = 'daily-numbers';
+  const tableId = "daily-numbers";
   const title = `COVID-19 Daily Numbers: ${location}`;
-  const subtitle = (date != null || lastDate != null) ? prettifyDate(date ?? lastDate as Date) : '';
+  const subtitle = date != null || lastDate != null ? prettifyDate(date ?? (lastDate as Date)) : "";
   const pageDescription = `See the daily COVID-19 numbers for ${location}.`;
+
+  function clearData(): void {
+    setData(undefined);
+    setLastUpdated(undefined);
+  }
+
+  function handleDownloadClick(): void {
+    const node = document.getElementById(tableId) as HTMLElement;
+    downloadNode(node).catch(console.error);
+  }
+
+  function hasLoaded(): boolean {
+    return (
+      data != null && lastUpdated != null && firstDate != null && lastDate != null && date != null
+    );
+  }
 
   useEffect(() => {
     if (date == null) {
@@ -45,7 +59,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     }
 
     clearData();
-    store.getDataByLocationAndDate(location, date).then(data => {
+    store.getDataByLocationAndDate(location, date).then((data) => {
       const lastUpdated = store.sourceLastUpdatedAt;
 
       setData(data);
@@ -53,27 +67,7 @@ const DailyNumbers: FunctionComponent<DailyNumbersProps> = ({ store }) => {
     });
   }, [store, location, date]);
 
-  function clearData() {
-    setData(undefined);
-    setLastUpdated(undefined);
-  }
-
-  function handleDownloadClick() {
-    const node = document.getElementById(tableId) as HTMLElement;
-    downloadNode(node);
-  }
-
-  function hasLoaded() {
-    return (
-      data != null &&
-      lastUpdated != null &&
-      firstDate != null &&
-      lastDate != null &&
-      date != null
-    );
-  }
-
-  const bodyComponent = (<DailyNumbersTable data={data} />);
+  const bodyComponent = <DailyNumbersTable data={data} />;
 
   return (
     <DataPage

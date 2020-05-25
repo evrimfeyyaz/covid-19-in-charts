@@ -1,11 +1,18 @@
 import { LocationData } from "@evrimfeyyaz/covid-19-api";
 
 export const valuesOnDateProperties = [
-  "confirmed", "newConfirmed", "deaths", "newDeaths", "mortalityRate", "recovered", "newRecovered", "recoveryRate"
+  "confirmed",
+  "newConfirmed",
+  "deaths",
+  "newDeaths",
+  "mortalityRate",
+  "recovered",
+  "newRecovered",
+  "recoveryRate",
 ];
 
 export function isValuesOnDateProperty(str: string): boolean {
-  return (valuesOnDateProperties.includes(str));
+  return valuesOnDateProperties.includes(str);
 }
 
 export function humanizePropertyName(propertyName: string): string {
@@ -33,13 +40,17 @@ export function humanizePropertyName(propertyName: string): string {
   }
 }
 
-export function stripDataBeforePropertyExceedsN(locationData: Readonly<LocationData>, property: string, n: number): LocationData {
+export function stripDataBeforePropertyExceedsN(
+  locationData: Readonly<LocationData>,
+  property: string,
+  n: number
+): LocationData {
   if (!isValuesOnDateProperty(property)) {
     return locationData;
   }
 
   return {
     ...locationData,
-    values: locationData.values.filter(value => ((value as never)[property] ?? 0) > n),
+    values: locationData.values.filter((value) => ((value as never)[property] ?? 0) > n),
   };
 }

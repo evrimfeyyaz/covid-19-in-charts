@@ -1,29 +1,27 @@
-import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
-import Form from 'react-bootstrap/Form';
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { NumberParam } from 'use-query-params';
-import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import Form from "react-bootstrap/Form";
+import { NumberParam } from "use-query-params";
+import { useAlwaysPresentQueryParam } from "./useAlwaysPresentQueryParam";
+import usePersistedSelection, { UsePersistedSelectionOptions } from "./usePersistedSelection";
 
 type UseNumberSelectionReturnValue = [
   number, // selectedNumber
   JSX.Element // numberInputComponent
-]
+];
 
 export function useNumberSelection(
   queryParamName: string,
   defaultValue: number,
   inputLabel: string,
-  options: UsePersistedSelectionOptions = {},
+  options: UsePersistedSelectionOptions = {}
 ): UseNumberSelectionReturnValue {
-  const [
-    initialNumber,
-    persistLastNumber,
-  ] = usePersistedSelection(defaultValue, options);
+  const [initialNumber, persistLastNumber] = usePersistedSelection(defaultValue, options);
 
-  const [
-    number,
-    setNumber
-  ] = useAlwaysPresentQueryParam(queryParamName, initialNumber, NumberParam,);
+  const [number, setNumber] = useAlwaysPresentQueryParam(
+    queryParamName,
+    initialNumber,
+    NumberParam
+  );
   const [error, setError] = useState<string>();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -34,11 +32,11 @@ export function useNumberSelection(
     }
   }, [number]);
 
-  function handleNumberChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleNumberChange(event: ChangeEvent<HTMLInputElement>): void {
     const newNumber = parseInt(event.target.value);
 
     if (isNaN(newNumber)) {
-      setError('Please enter a valid number.');
+      setError("Please enter a valid number.");
       return;
     } else {
       setError(undefined);
@@ -59,9 +57,7 @@ export function useNumberSelection(
         isInvalid={error != null}
         ref={inputRef}
       />
-      <Form.Control.Feedback type="invalid">
-        {error}
-      </Form.Control.Feedback>
+      <Form.Control.Feedback type="invalid">{error}</Form.Control.Feedback>
     </Form.Group>
   );
 

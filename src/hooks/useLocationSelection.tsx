@@ -1,41 +1,41 @@
-import React from 'react';
-import LocationSelectionInput from '../components/common/LocationSelectionInput';
-import { hasSameElements } from '../utilities/arrayUtilities';
-import { NonNullElementArrayParam } from '../utilities/useQueryParamsUtilities';
-import { useAlwaysPresentQueryParam } from './useAlwaysPresentQueryParam';
-import usePersistedSelection, { UsePersistedSelectionOptions } from './usePersistedSelection';
+import React from "react";
+import LocationSelectionInput from "../components/common/LocationSelectionInput";
+import { hasSameElements } from "../utilities/arrayUtilities";
+import { NonNullElementArrayParam } from "../utilities/useQueryParamsUtilities";
+import { useAlwaysPresentQueryParam } from "./useAlwaysPresentQueryParam";
+import usePersistedSelection, { UsePersistedSelectionOptions } from "./usePersistedSelection";
 
 type UseLocationSelectionReturnValue = [
   string[], // selectedLocations
   JSX.Element // locationInputComponent
-]
+];
 
 interface UseLocationSelectionOptions extends UsePersistedSelectionOptions {
-  multiple?: boolean,
-  maxNumOfSelections?: number,
+  multiple?: boolean;
+  maxNumOfSelections?: number;
 }
 
 function useLocationSelection(
   locationsList: string[],
   defaultLocations: string[],
-  options: UseLocationSelectionOptions = {},
+  options: UseLocationSelectionOptions = {}
 ): UseLocationSelectionReturnValue {
-  const {
-    multiple,
-    maxNumOfSelections,
-  } = options;
+  const { multiple, maxNumOfSelections } = options;
 
-  const [
+  const [initialSelection, persistLastSelections] = usePersistedSelection(
+    defaultLocations,
+    options
+  );
+  const [locations, setLocations] = useAlwaysPresentQueryParam(
+    "location",
     initialSelection,
-    persistLastSelections,
-  ] = usePersistedSelection(defaultLocations, options);
-  const [
-    locations,
-    setLocations,
-  ] = useAlwaysPresentQueryParam('location', initialSelection, NonNullElementArrayParam);
+    NonNullElementArrayParam
+  );
 
-  function handleLocationChange(selectedLocations: string[]) {
-    const newLocations = maxNumOfSelections ? selectedLocations.slice(0, maxNumOfSelections) : selectedLocations;
+  function handleLocationChange(selectedLocations: string[]): void {
+    const newLocations = maxNumOfSelections
+      ? selectedLocations.slice(0, maxNumOfSelections)
+      : selectedLocations;
 
     if (selectedLocations.length > 0 && !hasSameElements(selectedLocations, locations)) {
       setLocations(newLocations);
@@ -43,25 +43,22 @@ function useLocationSelection(
     }
   }
 
-  const placeholder = multiple ? 'Select locations...' : 'Select location...';
+  const placeholder = multiple ? "Select locations..." : "Select location...";
 
   const locationInputComponent = (
     <LocationSelectionInput
       locationsList={locationsList}
       defaultLocations={locations}
-      id='location-selection-input'
+      id="location-selection-input"
       placeholder={placeholder}
       multiple={multiple}
       onLocationChange={handleLocationChange}
       maxNumOfSelections={maxNumOfSelections}
-      key={encodeURIComponent(locations.join('-'))}
+      key={encodeURIComponent(locations.join("-"))}
     />
   );
 
-  return [
-    locations,
-    locationInputComponent,
-  ];
+  return [locations, locationInputComponent];
 }
 
 export default useLocationSelection;

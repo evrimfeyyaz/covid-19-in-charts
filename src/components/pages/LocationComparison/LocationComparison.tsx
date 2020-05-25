@@ -1,17 +1,17 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
-import DataPage from "../../common/DataPage";
-import { IMAGES } from "../../../constants";
-import LocationComparisonChart from "./LocationComparisonChart";
-import useLocationSelection from "../../../hooks/useLocationSelection";
-import { usePropertySelection } from "../../../hooks/usePropertySelection";
 import _ from "lodash";
+import React, { FunctionComponent, useEffect, useState } from "react";
+import { IMAGES } from "../../../constants";
+import useLocationSelection from "../../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../../hooks/useNumberSelection";
+import { usePropertySelection } from "../../../hooks/usePropertySelection";
+import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
 import { downloadNode } from "../../../utilities/nodeToImageUtilities";
+import DataPage from "../../common/DataPage";
+import LocationComparisonChart from "./LocationComparisonChart";
 
 interface LocationComparisonProps {
-  store: COVID19API
+  store: COVID19API;
 }
 
 const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store }) => {
@@ -25,23 +25,25 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
-  const [
-    locations,
-    locationInputComponent]
-    = useLocationSelection(locationsList, defaultLocations, {
-    multiple: true,
-    maxNumOfSelections: 10,
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "locationComparisonLastLocations",
-  });
-  const [
-    property,
-    humanizedProperty,
-    propertyInputComponent,
-  ] = usePropertySelection("property", defaultProperty, "Compare", {
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "locationComparisonLastProperty",
-  });
+  const [locations, locationInputComponent] = useLocationSelection(
+    locationsList,
+    defaultLocations,
+    {
+      multiple: true,
+      maxNumOfSelections: 10,
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "locationComparisonLastLocations",
+    }
+  );
+  const [property, humanizedProperty, propertyInputComponent] = usePropertySelection(
+    "property",
+    defaultProperty,
+    "Compare",
+    {
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "locationComparisonLastProperty",
+    }
+  );
   const [
     exceedingProperty,
     humanizedExceedingProperty,
@@ -51,47 +53,50 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
     lastSelectionAsDefault: true,
     lastSelectionStorageKey: "locationComparisonLastExceedingProperty",
   });
-  const [
-    exceedingValue,
-    exceedingValueInputComponent,
-  ] = useNumberSelection("exceedingValue", defaultExceedingValue, "exceeded", {
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "locationComparisonLastExceedingValue",
-  });
+  const [exceedingValue, exceedingValueInputComponent] = useNumberSelection(
+    "exceedingValue",
+    defaultExceedingValue,
+    "exceeded",
+    {
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "locationComparisonLastExceedingValue",
+    }
+  );
   const canonicalQueryParams = ["location", "property", "exceedingProperty", "exceedingValue"];
 
   const chartId = "location-comparison-chart";
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
   const pageDescription = "Comparison of various COVID-19 data points between multiple locations.";
 
+  function clearData(): void {
+    setData(undefined);
+    setLastUpdated(undefined);
+  }
+
+  function hasLoaded(): boolean {
+    return data != null && lastUpdated != null;
+  }
+
+  function handleDownloadClick(): void {
+    setAreChartAnimationsActive(false);
+    const node = document.getElementById(chartId) as HTMLElement;
+    downloadNode(node)
+      .catch(console.error)
+      .finally(() => setAreChartAnimationsActive(true));
+  }
+
   useEffect(() => {
     clearData();
-    store.getDataByLocations(locations).then(data => {
+    store.getDataByLocations(locations).then((data) => {
       const lastUpdated = store.sourceLastUpdatedAt;
-      const strippedData = data.map(locationData =>
-        stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue),
+      const strippedData = data.map((locationData) =>
+        stripDataBeforePropertyExceedsN(locationData, exceedingProperty, exceedingValue)
       );
 
       setData(strippedData);
       setLastUpdated(lastUpdated);
     });
   }, [store, locations, exceedingProperty, exceedingValue]);
-
-  function clearData() {
-    setData(undefined);
-    setLastUpdated(undefined);
-  }
-
-  function hasLoaded() {
-    return (data != null && lastUpdated != null);
-  }
-
-  function handleDownloadClick() {
-    setAreChartAnimationsActive(false);
-    const node = document.getElementById(chartId) as HTMLElement;
-    downloadNode(node)
-      .finally(() => setAreChartAnimationsActive(true));
-  }
 
   const bodyComponent = (
     <LocationComparisonChart

@@ -1,9 +1,9 @@
-import { useLocation } from 'react-router-dom';
-import { getAbsoluteUrl } from '../utilities/urlUtilities';
-import queryString from 'query-string';
-import _ from 'lodash';
+import _ from "lodash";
+import queryString from "query-string";
+import { useLocation } from "react-router-dom";
+import { getAbsoluteUrl } from "../utilities/urlUtilities";
 
-export function useCanonicalURL(paramsToKeep?: string[]) {
+export function useCanonicalURL(paramsToKeep?: string[]): string {
   const { pathname, search } = useLocation();
 
   let canonicalParams = queryString.parse(search);

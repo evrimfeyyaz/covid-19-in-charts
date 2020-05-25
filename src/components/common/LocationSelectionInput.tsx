@@ -1,40 +1,46 @@
-import React, { FunctionComponent, useState } from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
-import { getAliasesForLocation } from '../../utilities/countryUtilities';
-import Form from 'react-bootstrap/Form';
+import React, { FunctionComponent, useState } from "react";
+import { Typeahead } from "react-bootstrap-typeahead";
+import Form from "react-bootstrap/Form";
+import { getAliasesForLocation } from "../../utilities/countryUtilities";
 
 interface LocationSelectionInputProps {
-  locationsList: string[],
-  defaultLocations: string[],
-  multiple?: boolean,
-  maxNumOfSelections?: number,
-  placeholder: string,
-  id: string,
-  onLocationChange: (locations: string[]) => void
+  locationsList: string[];
+  defaultLocations: string[];
+  multiple?: boolean;
+  maxNumOfSelections?: number;
+  placeholder: string;
+  id: string;
+  onLocationChange: (locations: string[]) => void;
 }
 
 const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
-                                                                                  locationsList, defaultLocations,
-                                                                                  multiple, maxNumOfSelections = Infinity,
-                                                                                  placeholder, id, onLocationChange,
-                                                                                }) => {
-  const [isMaxSelectionsReached, setIsMaxSelectionsReached] = useState(defaultLocations.length >= maxNumOfSelections);
+  locationsList,
+  defaultLocations,
+  multiple,
+  maxNumOfSelections = Infinity,
+  placeholder,
+  id,
+  onLocationChange,
+}) => {
+  const [isMaxSelectionsReached, setIsMaxSelectionsReached] = useState(
+    defaultLocations.length >= maxNumOfSelections
+  );
 
-  function filterLocationsBy(option: string, props: { text: string, selected: string[] }) {
+  function filterLocationsBy(option: string, props: { text: string; selected: string[] }): boolean {
     if (props.selected.includes(option)) {
       return false;
     }
 
     const location = option.toLowerCase().trim();
     const text = props.text.toLowerCase().trim();
-    const aliases = getAliasesForLocation(option).map(alias => alias.toLowerCase().trim());
+    const aliases = getAliasesForLocation(option).map((alias) => alias.toLowerCase().trim());
 
     const allNames = [location, ...aliases];
 
-    return allNames.some(name => name.includes(text));
+    return allNames.some((name) => name.includes(text));
   }
 
-  function handleChange(locations: string[]) {
+  function handleChange(locations: string[]): void {
     if (locations.length >= maxNumOfSelections) {
       setIsMaxSelectionsReached(true);
     } else {
@@ -44,16 +50,15 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
     onLocationChange(locations);
   }
 
-  const maxSelectionsReachedMenu = () => (
-    <div
-      className='bg-white text-danger px-3 py-2 rounded-lg small location-selection-input-max-selections-reached-menu'>
+  const maxSelectionsReachedMenu = (): JSX.Element => (
+    <div className="bg-white text-danger px-3 py-2 rounded-lg small location-selection-input-max-selections-reached-menu">
       You can't select more than {maxNumOfSelections} locations.
     </div>
   );
 
   return (
     <Form.Group>
-      <Form.Label>{multiple ? 'Locations' : 'Location'}</Form.Label>
+      <Form.Label>{multiple ? "Locations" : "Location"}</Form.Label>
       <Typeahead
         id={id}
         options={locationsList}
@@ -65,10 +70,8 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
         clearButton
         multiple={multiple}
         onChange={handleChange}
-        paginationText='Show more locations'
-        renderMenu={
-          isMaxSelectionsReached ? maxSelectionsReachedMenu : undefined
-        }
+        paginationText="Show more locations"
+        renderMenu={isMaxSelectionsReached ? maxSelectionsReachedMenu : undefined}
       />
     </Form.Group>
   );

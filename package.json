@@ -30,7 +30,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "sitemap": "babel-node src/sitemapGenerator.js"
+    "sitemap": "babel-node src/sitemapGenerator.js",
+    "lint": "eslint . --ext .js,.ts,.tsx"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -68,6 +69,14 @@
     "@types/react-router-dom": "^5.1.3",
     "@types/recharts": "^1.8.9",
     "@types/uuid": "^7.0.3",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
+    "@typescript-eslint/parser": "^2.34.0",
+    "eslint": "^7.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.2",
+    "prettier": "^2.0.5",
     "sitemap": "^6.1.1"
   }
 }

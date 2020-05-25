@@ -1,17 +1,17 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
-import CasesRecoveriesDeathsChart from "./CasesRecoveriesDeathsChart";
-import { downloadNode } from "../../../utilities/nodeToImageUtilities";
-import DataPage from "../../common/DataPage";
-import { MDYStringToDate, prettifyDate } from "../../../utilities/dateUtilities";
 import { IMAGES } from "../../../constants";
 import useLocationSelection from "../../../hooks/useLocationSelection";
-import { usePropertySelection } from "../../../hooks/usePropertySelection";
 import { useNumberSelection } from "../../../hooks/useNumberSelection";
+import { usePropertySelection } from "../../../hooks/usePropertySelection";
+import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
+import { MDYStringToDate, prettifyDate } from "../../../utilities/dateUtilities";
+import { downloadNode } from "../../../utilities/nodeToImageUtilities";
+import DataPage from "../../common/DataPage";
+import CasesRecoveriesDeathsChart from "./CasesRecoveriesDeathsChart";
 
 interface CasesRecoveriesDeathsProps {
-  store: COVID19API,
+  store: COVID19API;
 }
 
 const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ store }) => {
@@ -26,13 +26,14 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [
-    [location],
-    locationInputComponent,
-  ] = useLocationSelection(locationsList, [defaultLocation], {
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
-  });
+  const [[location], locationInputComponent] = useLocationSelection(
+    locationsList,
+    [defaultLocation],
+    {
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
+    }
+  );
   const [
     exceedingProperty,
     humanizedExceedingProperty,
@@ -42,13 +43,15 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     lastSelectionAsDefault: true,
     lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
   });
-  const [
-    exceedingValue,
-    exceedingValueInputComponent,
-  ] = useNumberSelection("exceedingValue", defaultExceedingValue, "exceeded", {
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "caseRecoveriesLastExceedingValue",
-  });
+  const [exceedingValue, exceedingValueInputComponent] = useNumberSelection(
+    "exceedingValue",
+    defaultExceedingValue,
+    "exceeded",
+    {
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "caseRecoveriesLastExceedingValue",
+    }
+  );
   const canonicalQueryParams = ["location", "exceedingProperty", "exceedingValue"];
 
   const chartId = "cases-recoveries-deaths-chart";
@@ -60,10 +63,29 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
     subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`;
   }
 
+  function clearData(): void {
+    setData(undefined);
+    setLastUpdated(undefined);
+    setFirstDate(undefined);
+    setLastDate(undefined);
+  }
+
+  function handleDownloadClick(): void {
+    setAreChartAnimationsActive(false);
+    const node = document.getElementById(chartId) as HTMLElement;
+    downloadNode(node)
+      .catch(console.error)
+      .finally(() => setAreChartAnimationsActive(true));
+  }
+
+  function hasLoaded(): boolean {
+    return data != null && lastUpdated != null;
+  }
+
   useEffect(() => {
     clearData();
 
-    store.getDataByLocation(location).then(data => {
+    store.getDataByLocation(location).then((data) => {
       const lastUpdated = store.sourceLastUpdatedAt;
       const strippedData = stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
@@ -79,24 +101,6 @@ const CasesRecoveriesDeaths: FunctionComponent<CasesRecoveriesDeathsProps> = ({ 
       setLastUpdated(lastUpdated);
     });
   }, [store, location, exceedingProperty, exceedingValue]);
-
-  function clearData() {
-    setData(undefined);
-    setLastUpdated(undefined);
-    setFirstDate(undefined);
-    setLastDate(undefined);
-  }
-
-  function handleDownloadClick() {
-    setAreChartAnimationsActive(false);
-    const node = document.getElementById(chartId) as HTMLElement;
-    downloadNode(node)
-      .finally(() => setAreChartAnimationsActive(true));
-  }
-
-  function hasLoaded() {
-    return (data != null && lastUpdated != null);
-  }
 
   const bodyComponent = (
     <CasesRecoveriesDeathsChart

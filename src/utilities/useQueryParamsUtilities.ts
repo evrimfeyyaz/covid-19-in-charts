@@ -1,9 +1,9 @@
 import {
-  QueryParamConfig,
-  encodeString,
+  decodeArray,
   decodeString,
   encodeArray,
-  decodeArray
+  encodeString,
+  QueryParamConfig,
 } from "use-query-params";
 import { filterOnlyNonNull } from "./arrayUtilities";
 import { isValuesOnDateProperty } from "./covid19APIUtilities";

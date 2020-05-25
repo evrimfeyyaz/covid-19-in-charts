@@ -1,54 +1,51 @@
+import React, { ChangeEvent } from "react";
+import Form from "react-bootstrap/Form";
 import {
   humanizePropertyName,
   isValuesOnDateProperty,
-  valuesOnDateProperties
+  valuesOnDateProperties,
 } from "../utilities/covid19APIUtilities";
-import { useAlwaysPresentQueryParam } from "./useAlwaysPresentQueryParam";
 import { ValuesOnDatePropertyParam } from "../utilities/useQueryParamsUtilities";
-import Form from "react-bootstrap/Form";
-import React, { ChangeEvent } from "react";
+import { useAlwaysPresentQueryParam } from "./useAlwaysPresentQueryParam";
 import usePersistedSelection, { UsePersistedSelectionOptions } from "./usePersistedSelection";
 
 type UsePropertySelectionReturnValue = [
   string, // selectedProperty
   string, // humanizedProperty
   JSX.Element // propertyInputComponent
-]
+];
 
 interface UsePropertySelectionOptions extends UsePersistedSelectionOptions {
-  onlyCumulativeValues?: boolean
+  onlyCumulativeValues?: boolean;
 }
 
 export function usePropertySelection(
   queryParamName: string,
   defaultProperty: string,
   inputLabel: string,
-  options: UsePropertySelectionOptions = {},
+  options: UsePropertySelectionOptions = {}
 ): UsePropertySelectionReturnValue {
   const { onlyCumulativeValues } = options;
 
-  const [
+  const [initialProperty, persistLastProperty] = usePersistedSelection(defaultProperty, options);
+  const [property, setProperty] = useAlwaysPresentQueryParam(
+    queryParamName,
     initialProperty,
-    persistLastProperty,
-  ] = usePersistedSelection(defaultProperty, options);
-  const [
-    property,
-    setProperty
-  ] = useAlwaysPresentQueryParam(queryParamName, initialProperty, ValuesOnDatePropertyParam,);
+    ValuesOnDatePropertyParam
+  );
 
   const humanizedProperty = humanizePropertyName(property);
-  const selectableProperties = valuesOnDateProperties
-    .filter(property => {
-      return (
-        property !== "date" &&
-        (
-          !onlyCumulativeValues ||
-          (property === "confirmed" || property === "deaths" || property === "recovered")
-        )
-      );
-    });
+  const selectableProperties = valuesOnDateProperties.filter((property) => {
+    return (
+      property !== "date" &&
+      (!onlyCumulativeValues ||
+        property === "confirmed" ||
+        property === "deaths" ||
+        property === "recovered")
+    );
+  });
 
-  function handlePropertyChange(event: ChangeEvent<HTMLInputElement>) {
+  function handlePropertyChange(event: ChangeEvent<HTMLInputElement>): void {
     const newProperty = event.currentTarget.value;
 
     if (
@@ -66,15 +63,12 @@ export function usePropertySelection(
       <Form.Label>{inputLabel}</Form.Label>
       <Form.Control
         as="select"
-        className='custom-select'
+        className="custom-select"
         onChange={handlePropertyChange}
         value={property}
       >
-        {selectableProperties.map(property => (
-          <option
-            value={property}
-            key={`${queryParamName}-${property}`}
-          >
+        {selectableProperties.map((property) => (
+          <option value={property} key={`${queryParamName}-${property}`}>
             {humanizePropertyName(property)}
           </option>
         ))}

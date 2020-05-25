@@ -1,17 +1,17 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent } from 'react';
-import { COLORS } from '../../../constants';
-import DailyNumbersTableItem from './DailyNumbersTableItem';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import NoData from '../../common/NoData';
+import React, { FunctionComponent } from "react";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
+import { COLORS } from "../../../constants";
+import NoData from "../../common/NoData";
+import DailyNumbersTableItem from "./DailyNumbersTableItem";
 
 interface DailyNumbersTableProps {
-  data?: ValuesOnDate,
+  data?: ValuesOnDate;
 }
 
 const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data }) => {
-  let body = (<NoData />);
+  let body = <NoData />;
 
   if (data != null) {
     const {
@@ -26,39 +26,39 @@ const DailyNumbersTable: FunctionComponent<DailyNumbersTableProps> = ({ data }) 
     } = data;
 
     body = (
-      <Row className='mx-sm-2 my-sm-2'>
+      <Row className="mx-sm-2 my-sm-2">
         <Col xs={6}>
           <DailyNumbersTableItem
             headerBgColor={COLORS.confirmed}
-            title='Confirmed Cases'
+            title="Confirmed Cases"
             value={confirmed}
           />
         </Col>
         <Col xs={6}>
           <DailyNumbersTableItem
             headerBgColor={COLORS.newConfirmed}
-            title='New Cases'
+            title="New Cases"
             value={newConfirmed}
           />
         </Col>
         <Col xs={6}>
           <DailyNumbersTableItem
             headerBgColor={COLORS.recovered}
-            title='Recovered'
+            title="Recovered"
             value={recovered}
             rateValue={recoveryRate}
             newValue={newRecovered}
-            headerClassName='text-light'
+            headerClassName="text-light"
           />
         </Col>
         <Col xs={6}>
           <DailyNumbersTableItem
             headerBgColor={COLORS.deaths}
-            title='Deaths'
+            title="Deaths"
             value={deaths}
             rateValue={mortalityRate}
             newValue={newDeaths}
-            headerClassName='text-light'
+            headerClassName="text-light"
           />
         </Col>
       </Row>

@@ -1,19 +1,19 @@
-import React, { FunctionComponent } from 'react';
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from '../../constants';
-import { useLocation } from 'react-router-dom';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import React, { FunctionComponent } from "react";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { useLocation } from "react-router-dom";
+import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from "../../constants";
 
 const NavBar: FunctionComponent = () => {
   const { pathname } = useLocation();
 
-  function createNavLinkProps(href: string) {
-    let className = '';
+  function createNavLinkProps(href: string): { href: string; className: string } {
+    let className = "";
 
     if (href === pathname) {
-      className = 'active';
+      className = "active";
     }
 
     return { href, className };
@@ -26,7 +26,7 @@ const NavBar: FunctionComponent = () => {
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="mr-auto">
-            <NavDropdown title="Visualizations" id='navbar-dropdown-visualizations'>
+            <NavDropdown title="Visualizations" id="navbar-dropdown-visualizations">
               <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesRecoveriesDeaths)}>
                 {ROUTE_TITLES.casesRecoveriesDeaths}
               </NavDropdown.Item>
@@ -38,11 +38,8 @@ const NavBar: FunctionComponent = () => {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Nav className='ml-auto'>
-            <Nav.Link
-              href={EXTERNAL_LINKS.gitHubRepo}
-              target='_blank' rel='noopener noreferrer'
-            >
+          <Nav className="ml-auto">
+            <Nav.Link href={EXTERNAL_LINKS.gitHubRepo} target="_blank" rel="noopener noreferrer">
               GitHub
             </Nav.Link>
             <Nav.Link {...createNavLinkProps(ROUTE_PATHS.about)}>About</Nav.Link>

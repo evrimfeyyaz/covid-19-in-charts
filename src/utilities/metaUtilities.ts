@@ -1,6 +1,6 @@
-import { SITE_INFO } from '../constants';
+import { SITE_INFO } from "../constants";
 
-export function createPageTitle(title?: string) {
+export function createPageTitle(title?: string): string {
   const { baseTitle } = SITE_INFO;
 
   if (title == null) {
