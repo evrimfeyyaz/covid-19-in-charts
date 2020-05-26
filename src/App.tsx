@@ -30,10 +30,8 @@ function App(): JSX.Element {
   useEffect(() => {
     localStorageCleanup();
 
-    dataStore.current.init().catch((err) => {
-      console.log(err);
-    });
-  }, []);
+    dataStore.current.init().catch(console.error);
+  }, [dataStore]);
 
   return (
     <>
