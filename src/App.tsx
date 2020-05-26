@@ -7,6 +7,7 @@ import NavBar from "./components/common/NavBar";
 import ScreenTooSmall from "./components/common/ScreenTooSmall";
 import Router from "./components/pages/Router";
 import { IMAGES, SITE_INFO } from "./constants";
+import { removeOldIndexedDB } from "./utilities/indexedDBUtilities";
 import { localStorageCleanup } from "./utilities/localStorageUtilities";
 import { createPageTitle } from "./utilities/metaUtilities";
 import { getAbsoluteUrl } from "./utilities/urlUtilities";
@@ -29,7 +30,10 @@ function App(): JSX.Element {
 
   useEffect(() => {
     localStorageCleanup();
+    removeOldIndexedDB().catch(console.error);
+  }, []);
 
+  useEffect(() => {
     dataStore.current.init().catch(console.error);
   }, [dataStore]);
 
