@@ -2,9 +2,8 @@ import React, { FunctionComponent } from "react";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import { useLocation } from "react-router-dom";
-import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from "../../constants";
+import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
 const NavBar: FunctionComponent = () => {
   const { pathname } = useLocation();
@@ -20,23 +19,13 @@ const NavBar: FunctionComponent = () => {
   }
 
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar bg="dark" variant="dark" expand="lg">
       <Container>
         <Navbar.Brand href={ROUTE_PATHS.home}>COVID-19 in Charts</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
           <Nav className="mr-auto">
-            <NavDropdown title="Visualizations" id="navbar-dropdown-visualizations">
-              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.casesRecoveriesDeaths)}>
-                {ROUTE_TITLES.casesRecoveriesDeaths}
-              </NavDropdown.Item>
-              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.dailyNumbers)}>
-                {ROUTE_TITLES.dailyNumbers}
-              </NavDropdown.Item>
-              <NavDropdown.Item {...createNavLinkProps(ROUTE_PATHS.locationComparison)}>
-                {ROUTE_TITLES.locationComparison}
-              </NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Link href={ROUTE_PATHS.singleLocation}>Single Location</Nav.Link>
           </Nav>
           <Nav className="ml-auto">
             <Nav.Link href={EXTERNAL_LINKS.gitHubRepo} target="_blank" rel="noopener noreferrer">
