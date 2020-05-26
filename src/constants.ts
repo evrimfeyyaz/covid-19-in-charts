@@ -2,6 +2,7 @@ export const ROUTE_PATHS = {
   home: "/",
   casesRecoveriesDeaths: "/cases-recoveries-deaths",
   dailyNumbers: "/daily-numbers",
+  singleLocation: "/single-location",
   locationComparison: "/location-comparison",
   about: "/about",
 };

@@ -4,9 +4,8 @@ import { Route, Switch } from "react-router-dom";
 import { ROUTE_PATHS } from "../../constants";
 import About from "./About";
 import CasesRecoveriesDeaths from "./CasesRecoveriesDeaths/CasesRecoveriesDeaths";
-import ChartsIndex from "./ChartsIndex/ChartsIndex";
-import DailyNumbers from "./DailyNumbers/DailyNumbers";
 import LocationComparison from "./LocationComparison/LocationComparison";
+import SingleLocation from "./SingleLocation";
 
 interface RouterProps {
   dataStore: COVID19API;
@@ -22,14 +21,14 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
         <Route path={ROUTE_PATHS.locationComparison}>
           <LocationComparison store={dataStore} />
         </Route>
-        <Route path={ROUTE_PATHS.dailyNumbers}>
-          <DailyNumbers store={dataStore} />
+        <Route path={ROUTE_PATHS.singleLocation}>
+          <SingleLocation store={dataStore} />
         </Route>
         <Route path={ROUTE_PATHS.about}>
           <About />
         </Route>
         <Route path={ROUTE_PATHS.home}>
-          <ChartsIndex />
+          <SingleLocation store={dataStore} />
         </Route>
       </Switch>
     </div>
