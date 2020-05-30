@@ -19,7 +19,7 @@ import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
 import BarChart from "../charts/BarChart";
 import LatestNumbers from "../charts/LatestNumbers/LatestNumbers";
-import LineChart from "../charts/LineChart";
+import SingleLineChart from "../charts/SingleLineChart";
 import Loading from "../common/Loading";
 import NoData from "../common/NoData";
 import ShareButtons from "../common/ShareButtons";
@@ -48,16 +48,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
       lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
     }
   );
-  const [exceedingProperty, , exceedingPropertyInputComponent] = usePropertySelection(
-    "exceedingProperty",
-    defaultExceedingProperty,
-    "Start from the day",
-    {
-      onlyCumulativeValues: true,
-      lastSelectionAsDefault: true,
-      lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
-    }
-  );
+  const [
+    exceedingProperty,
+    humanizedExceedingProperty,
+    exceedingPropertyInputComponent,
+  ] = usePropertySelection("exceedingProperty", defaultExceedingProperty, "Start from the day", {
+    onlyCumulativeValues: true,
+    lastSelectionAsDefault: true,
+    lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
+  });
   const [exceedingValue, exceedingValueInputComponent] = useNumberSelection(
     "exceedingValue",
     defaultExceedingValue,
@@ -114,7 +113,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   if (data != null) {
     body = <NoData />;
 
-    if (lastUpdated != null && latestValues != null) {
+    if (lastUpdated != null && latestValues != null && firstDate != null) {
       body = (
         <Row>
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
@@ -139,29 +138,34 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
           </Col>
           <Col>
             <h1>COVID-19: {location}</h1>
-            {subtitle && <p className="small text-muted ml-1 mb-4">{subtitle}</p>}
+            {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
 
             <section className="mb-5">
-              <h2 className="mb-3">
+              <h2 className="mb-4">
                 Latest Numbers{" "}
                 <small className="text-muted">{prettifyMDYDate(latestValues.date)}</small>
               </h2>
               <LatestNumbers data={latestValues} />
             </section>
 
-            <h2 className="mb-3">Confirmed Cases</h2>
-            <LineChart
-              data={data.values}
-              lines={[
-                {
-                  dataKey: "confirmed",
-                  name: "Confirmed Cases",
-                  color: COLORS.confirmed,
-                },
-              ]}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
+            <section className="mb-5">
+              <header className="mb-4">
+                <h2>Confirmed Cases</h2>
+                <p>
+                  The number of confirmed cases on each day starting from the day{" "}
+                  {humanizedExceedingProperty} exceeded {exceedingValue} ({prettifyDate(firstDate)}
+                  ).
+                </p>
+              </header>
+              <SingleLineChart
+                data={data.values}
+                dataKey="confirmed"
+                name="Confirmed Cases"
+                color={COLORS.confirmed}
+                xAxisTitle={`Days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`}
+                yAxisTitle="Confirmed cases"
+              />
+            </section>
 
             <h2 className="mb-3">New Cases</h2>
             <BarChart
@@ -179,15 +183,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             />
 
             <h2 className="mb-3">Deaths</h2>
-            <LineChart
+            <SingleLineChart
               data={data.values}
-              lines={[
-                {
-                  dataKey: "deaths",
-                  name: "Deaths",
-                  color: COLORS.deaths,
-                },
-              ]}
+              dataKey="deaths"
+              name="Deaths"
+              color={COLORS.deaths}
               xAxisTitle="Test"
               yAxisTitle="Test"
             />
@@ -208,15 +208,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             />
 
             <h2 className="mb-3">Recoveries</h2>
-            <LineChart
+            <SingleLineChart
               data={data.values}
-              lines={[
-                {
-                  dataKey: "recovered",
-                  name: "Recoveries",
-                  color: COLORS.recovered,
-                },
-              ]}
+              dataKey="recovered"
+              name="Recoveries"
+              color={COLORS.recovered}
               xAxisTitle="Test"
               yAxisTitle="Test"
             />
@@ -237,29 +233,21 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             />
 
             <h2 className="mb-3">Mortality Rate</h2>
-            <LineChart
+            <SingleLineChart
               data={data.values}
-              lines={[
-                {
-                  dataKey: "mortalityRate",
-                  name: "Mortality Rate",
-                  color: COLORS.deaths,
-                },
-              ]}
+              dataKey="mortalityRate"
+              name="Mortality Rate"
+              color={COLORS.deaths}
               xAxisTitle="Test"
               yAxisTitle="Test"
             />
 
             <h2 className="mb-3">Recovery Rate</h2>
-            <LineChart
+            <SingleLineChart
               data={data.values}
-              lines={[
-                {
-                  dataKey: "recoveryRate",
-                  name: "Recovery Rate",
-                  color: COLORS.recovered,
-                },
-              ]}
+              dataKey="recoveryRate"
+              name="Recovery Rate"
+              color={COLORS.recovered}
               xAxisTitle="Test"
               yAxisTitle="Test"
             />
