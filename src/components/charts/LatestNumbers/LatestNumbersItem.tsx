@@ -31,7 +31,12 @@ const LatestNumbersItem: FunctionComponent<LatestNumbersItemProps> = ({
   return (
     <Card className="text-center">
       <Card.Header className={headerClassNames} style={{ backgroundColor: headerBgColor }}>
-        {title} {rateValueStr && <small> ({rateValueStr}%)</small>}
+        {title}{" "}
+        {rateValueStr && (
+          <small>
+            <div className="d-xs-block d-md-none" />({rateValueStr}%)
+          </small>
+        )}
       </Card.Header>
       <Card.Body className="p-3">
         <Card.Text>
