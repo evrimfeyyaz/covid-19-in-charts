@@ -236,25 +236,6 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               movingAverageDataKey="newRecovered"
             />
 
-            <h2 className="mb-3">New Deaths & Recoveries Compared</h2>
-            <BarChart
-              data={data.values}
-              bars={[
-                {
-                  dataKey: "newDeaths",
-                  name: "New Deaths",
-                  color: COLORS.deaths,
-                },
-                {
-                  dataKey: "newRecovered",
-                  name: "New Recoveries",
-                  color: COLORS.recovered,
-                },
-              ]}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
-
             <h2 className="mb-3">Mortality Rate</h2>
             <LineChart
               data={data.values}
