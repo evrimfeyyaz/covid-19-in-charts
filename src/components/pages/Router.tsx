@@ -4,7 +4,7 @@ import { Route, Switch } from "react-router-dom";
 import { ROUTE_PATHS } from "../../constants";
 import About from "./About";
 import LocationComparison from "./LocationComparison/LocationComparison";
-import SingleLocation from "./SingleLocation";
+import SingleLocation from "./SingleLocation/SingleLocation";
 
 interface RouterProps {
   dataStore: COVID19API;

@@ -8,25 +8,25 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Helmet from "react-helmet";
-import { COLORS } from "../../constants";
-import { useCanonicalURL } from "../../hooks/useCanonicalURL";
-import useLocationSelection from "../../hooks/useLocationSelection";
-import { useNumberSelection } from "../../hooks/useNumberSelection";
-import { usePropertySelection } from "../../hooks/usePropertySelection";
+import { COLORS } from "../../../constants";
+import { useCanonicalURL } from "../../../hooks/useCanonicalURL";
+import useLocationSelection from "../../../hooks/useLocationSelection";
+import { useNumberSelection } from "../../../hooks/useNumberSelection";
+import { usePropertySelection } from "../../../hooks/usePropertySelection";
 import {
   addEMAToValues,
   humanizePropertyName,
   stripDataBeforePropertyExceedsN,
-} from "../../utilities/covid19APIUtilities";
-import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../utilities/dateUtilities";
-import { createPageTitle } from "../../utilities/metaUtilities";
-import { getAbsoluteUrl } from "../../utilities/urlUtilities";
-import LatestNumbers from "../charts/LatestNumbers/LatestNumbers";
-import SingleBarChart from "../charts/SingleBarChart";
-import SingleLineChart from "../charts/SingleLineChart";
-import Loading from "../common/Loading";
-import NoData from "../common/NoData";
-import ShareButtons from "../common/ShareButtons";
+} from "../../../utilities/covid19APIUtilities";
+import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { createPageTitle } from "../../../utilities/metaUtilities";
+import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
+import LatestNumbers from "../../charts/LatestNumbers/LatestNumbers";
+import SingleBarChart from "../../charts/SingleBarChart";
+import Loading from "../../common/Loading";
+import NoData from "../../common/NoData";
+import ShareButtons from "../../common/ShareButtons";
+import SingleLocationConfirmedCases from "./SingleLocationConfirmedCases";
 
 interface SingleLocationProps {
   store: COVID19API;
@@ -188,24 +188,12 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               <LatestNumbers data={latestValues} />
             </section>
 
-            <section className="mb-5">
-              <header className="mb-4">
-                <h2>Confirmed Cases</h2>
-                <p>
-                  The number of confirmed cases on each day, starting from the day{" "}
-                  {humanizedExceedingProperty} exceeded {exceedingValue} ({prettifyDate(firstDate)}
-                  ).
-                </p>
-              </header>
-              <SingleLineChart
-                data={data.values}
-                dataKey="confirmed"
-                name="Confirmed Cases"
-                color={COLORS.confirmed}
-                xAxisTitle={`Days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`}
-                yAxisTitle="Confirmed cases"
-              />
-            </section>
+            <SingleLocationConfirmedCases
+              exceedingProperty={exceedingProperty}
+              exceedingValue={exceedingValue}
+              firstDate={firstDate}
+              values={data.values}
+            />
 
             <section className="mb-5">
               <header className="mb-4">
@@ -242,15 +230,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               />
             </section>
 
-            <h2 className="mb-3">Deaths</h2>
-            <SingleLineChart
-              data={data.values}
-              dataKey="deaths"
-              name="Deaths"
-              color={COLORS.deaths}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
+            {/*<h2 className="mb-3">Deaths</h2>*/}
+            {/*<SingleLineChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="deaths"*/}
+            {/*  name="Deaths"*/}
+            {/*  color={COLORS.deaths}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
             {/*<h2 className="mb-3">New Deaths</h2>*/}
             {/*<SingleBarChart*/}
@@ -262,15 +250,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             {/*  yAxisTitle="Test"*/}
             {/*/>*/}
 
-            <h2 className="mb-3">Recoveries</h2>
-            <SingleLineChart
-              data={data.values}
-              dataKey="recovered"
-              name="Recoveries"
-              color={COLORS.recovered}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
+            {/*<h2 className="mb-3">Recoveries</h2>*/}
+            {/*<SingleLineChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="recovered"*/}
+            {/*  name="Recoveries"*/}
+            {/*  color={COLORS.recovered}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
             {/*<h2 className="mb-3">New Recoveries</h2>*/}
             {/*<SingleBarChart*/}
@@ -282,25 +270,25 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             {/*  yAxisTitle="Test"*/}
             {/*/>*/}
 
-            <h2 className="mb-3">Mortality Rate</h2>
-            <SingleLineChart
-              data={data.values}
-              dataKey="mortalityRate"
-              name="Mortality Rate"
-              color={COLORS.deaths}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
+            {/*<h2 className="mb-3">Mortality Rate</h2>*/}
+            {/*<SingleLineChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="mortalityRate"*/}
+            {/*  name="Mortality Rate"*/}
+            {/*  color={COLORS.deaths}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
-            <h2 className="mb-3">Recovery Rate</h2>
-            <SingleLineChart
-              data={data.values}
-              dataKey="recoveryRate"
-              name="Recovery Rate"
-              color={COLORS.recovered}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-            />
+            {/*<h2 className="mb-3">Recovery Rate</h2>*/}
+            {/*<SingleLineChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="recoveryRate"*/}
+            {/*  name="Recovery Rate"*/}
+            {/*  color={COLORS.recovered}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
             <p className="my-0 font-weight-light font-italic text-muted">
               <small>
