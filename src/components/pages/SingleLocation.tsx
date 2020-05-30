@@ -8,6 +8,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Helmet from "react-helmet";
+import { COLORS } from "../../constants";
 import { useCanonicalURL } from "../../hooks/useCanonicalURL";
 import useLocationSelection from "../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../hooks/useNumberSelection";
@@ -16,7 +17,9 @@ import { stripDataBeforePropertyExceedsN } from "../../utilities/covid19APIUtili
 import { MDYStringToDate, prettifyDate } from "../../utilities/dateUtilities";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
+import BarChart from "../charts/BarChart";
 import LatestNumbers from "../charts/LatestNumbers/LatestNumbers";
+import LineChart from "../charts/LineChart";
 import Loading from "../common/Loading";
 import ShareButtons from "../common/ShareButtons";
 
@@ -134,7 +137,144 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
           <h1>COVID-19: {location}</h1>
           {subtitle && <p className="small text-muted ml-1">{subtitle}</p>}
 
+          <h2 className="mb-3">
+            Latest Numbers <small className="text-muted">{latestValues?.date}</small>
+          </h2>
           <LatestNumbers data={latestValues} />
+
+          <h2 className="mb-3">Confirmed Cases</h2>
+          <LineChart
+            data={data.values}
+            lines={[
+              {
+                dataKey: "confirmed",
+                name: "Confirmed Cases",
+                color: COLORS.confirmed,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
+
+          <h2 className="mb-3">New Cases</h2>
+          <BarChart
+            data={data.values}
+            bars={[
+              {
+                dataKey: "newConfirmed",
+                name: "New Cases",
+                color: COLORS.newConfirmed,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+            movingAverageDataKey="newConfirmed"
+          />
+
+          <h2 className="mb-3">Deaths</h2>
+          <LineChart
+            data={data.values}
+            lines={[
+              {
+                dataKey: "deaths",
+                name: "Deaths",
+                color: COLORS.deaths,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
+
+          <h2 className="mb-3">New Deaths</h2>
+          <BarChart
+            data={data.values}
+            bars={[
+              {
+                dataKey: "newDeaths",
+                name: "New Deaths",
+                color: COLORS.deaths,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+            movingAverageDataKey="newDeaths"
+          />
+
+          <h2 className="mb-3">Recoveries</h2>
+          <LineChart
+            data={data.values}
+            lines={[
+              {
+                dataKey: "recovered",
+                name: "Recoveries",
+                color: COLORS.recovered,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
+
+          <h2 className="mb-3">New Recoveries</h2>
+          <BarChart
+            data={data.values}
+            bars={[
+              {
+                dataKey: "newRecovered",
+                name: "New Recoveries",
+                color: COLORS.recovered,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+            movingAverageDataKey="newRecovered"
+          />
+
+          <h2 className="mb-3">New Deaths & Recoveries Compared</h2>
+          <BarChart
+            data={data.values}
+            bars={[
+              {
+                dataKey: "newDeaths",
+                name: "New Deaths",
+                color: COLORS.deaths,
+              },
+              {
+                dataKey: "newRecovered",
+                name: "New Recoveries",
+                color: COLORS.recovered,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
+
+          <h2 className="mb-3">Mortality Rate</h2>
+          <LineChart
+            data={data.values}
+            lines={[
+              {
+                dataKey: "mortalityRate",
+                name: "Mortality Rate",
+                color: COLORS.deaths,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
+
+          <h2 className="mb-3">Recovery Rate</h2>
+          <LineChart
+            data={data.values}
+            lines={[
+              {
+                dataKey: "recoveryRate",
+                name: "Recovery Rate",
+                color: COLORS.recovered,
+              },
+            ]}
+            xAxisTitle="Test"
+            yAxisTitle="Test"
+          />
 
           <p className="my-0 font-weight-light font-italic text-muted">
             <small>

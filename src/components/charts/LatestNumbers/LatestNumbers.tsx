@@ -23,46 +23,39 @@ const LatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
       newDeaths,
       mortalityRate,
       recoveryRate,
-      date,
     } = data;
 
     body = (
-      <>
-        <h2 className="mb-3">
-          Latest Numbers <small className="text-muted">{date}</small>
-        </h2>
-
-        <Row>
-          <Col xs={4}>
-            <LatestNumbersItem
-              headerBgColor={COLORS.confirmed}
-              title="Confirmed Cases"
-              value={confirmed}
-              newValue={newConfirmed}
-            />
-          </Col>
-          <Col xs={4}>
-            <LatestNumbersItem
-              headerBgColor={COLORS.deaths}
-              title="Deaths"
-              value={deaths}
-              newValue={newDeaths}
-              rateValue={mortalityRate}
-              headerLight
-            />
-          </Col>
-          <Col xs={4}>
-            <LatestNumbersItem
-              headerBgColor={COLORS.recovered}
-              title="Recoveries"
-              value={recovered}
-              newValue={newRecovered}
-              rateValue={recoveryRate}
-              headerLight
-            />
-          </Col>
-        </Row>
-      </>
+      <Row>
+        <Col xs={4}>
+          <LatestNumbersItem
+            headerBgColor={COLORS.confirmed}
+            title="Confirmed Cases"
+            value={confirmed}
+            newValue={newConfirmed}
+          />
+        </Col>
+        <Col xs={4}>
+          <LatestNumbersItem
+            headerBgColor={COLORS.deaths}
+            title="Deaths"
+            value={deaths}
+            newValue={newDeaths}
+            rateValue={mortalityRate}
+            headerLight
+          />
+        </Col>
+        <Col xs={4}>
+          <LatestNumbersItem
+            headerBgColor={COLORS.recovered}
+            title="Recoveries"
+            value={recovered}
+            newValue={newRecovered}
+            rateValue={recoveryRate}
+            headerLight
+          />
+        </Col>
+      </Row>
     );
   }
 
