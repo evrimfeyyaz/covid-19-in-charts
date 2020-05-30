@@ -1,6 +1,6 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api/lib/types";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -13,12 +13,16 @@ import { useCanonicalURL } from "../../hooks/useCanonicalURL";
 import useLocationSelection from "../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../hooks/useNumberSelection";
 import { usePropertySelection } from "../../hooks/usePropertySelection";
-import { stripDataBeforePropertyExceedsN } from "../../utilities/covid19APIUtilities";
+import {
+  addEMAToValues,
+  humanizePropertyName,
+  stripDataBeforePropertyExceedsN,
+} from "../../utilities/covid19APIUtilities";
 import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../utilities/dateUtilities";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
-import BarChart from "../charts/BarChart";
 import LatestNumbers from "../charts/LatestNumbers/LatestNumbers";
+import SingleBarChart from "../charts/SingleBarChart";
 import SingleLineChart from "../charts/SingleLineChart";
 import Loading from "../common/Loading";
 import NoData from "../common/NoData";
@@ -39,6 +43,14 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
+
+  const newConfirmedData = useMemo(() => {
+    if (data == null) {
+      return undefined;
+    }
+
+    return addEMAToValues(data.values, "newConfirmed", 12);
+  }, [data]);
 
   const [[location], locationInputComponent] = useLocationSelection(
     locationsList,
@@ -113,7 +125,35 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   if (data != null) {
     body = <NoData />;
 
-    if (lastUpdated != null && latestValues != null && firstDate != null) {
+    if (
+      lastUpdated != null &&
+      latestValues != null &&
+      firstDate != null &&
+      lastDate != null &&
+      newConfirmedData != null
+    ) {
+      const lastNewConfirmedEMA = newConfirmedData[newConfirmedData.length - 1].movingAverage;
+      const lastNewConfirmed = newConfirmedData[newConfirmedData.length - 1].newConfirmed;
+
+      let lastNewConfirmedEMADiffMessage: JSX.Element | null = null;
+      if (lastNewConfirmedEMA != null) {
+        const lastNewConfirmedEMADiff = lastNewConfirmedEMA - lastNewConfirmed;
+
+        const messageColor = lastNewConfirmedEMADiff > 0 ? "green" : "red";
+        const aboveOrBelow = lastNewConfirmedEMADiff > 0 ? "below" : "above";
+
+        lastNewConfirmedEMADiffMessage = (
+          <span>
+            {prettifyDate(lastDate)} was{" "}
+            <span style={{ color: messageColor }}>
+              {lastNewConfirmedEMADiff.toFixed(2)} {humanizePropertyName("newConfirmed")}{" "}
+              {aboveOrBelow}
+            </span>{" "}
+            the moving average.
+          </span>
+        );
+      }
+
       body = (
         <Row>
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
@@ -152,7 +192,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               <header className="mb-4">
                 <h2>Confirmed Cases</h2>
                 <p>
-                  The number of confirmed cases on each day starting from the day{" "}
+                  The number of confirmed cases on each day, starting from the day{" "}
                   {humanizedExceedingProperty} exceeded {exceedingValue} ({prettifyDate(firstDate)}
                   ).
                 </p>
@@ -167,20 +207,40 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               />
             </section>
 
-            <h2 className="mb-3">New Cases</h2>
-            <BarChart
-              data={data.values}
-              bars={[
-                {
-                  dataKey: "newConfirmed",
-                  name: "New Cases",
-                  color: COLORS.newConfirmed,
-                },
-              ]}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-              movingAverageDataKey="newConfirmed"
-            />
+            <section className="mb-5">
+              <header className="mb-4">
+                <h2>New Cases</h2>
+                <p>
+                  The number of new confirmed cases on each day, starting from the day{" "}
+                  {humanizedExceedingProperty} exceeded {exceedingValue} ({prettifyDate(firstDate)}
+                  ).
+                </p>
+                {lastNewConfirmedEMADiffMessage && (
+                  <p>
+                    The{" "}
+                    <span
+                      style={{
+                        borderBottom: "1px dotted #164fff",
+                        cursor: "help",
+                        color: "#164fff",
+                      }}
+                    >
+                      12-day exponential moving average
+                    </span>{" "}
+                    is shown in blue. {lastNewConfirmedEMADiffMessage}
+                  </p>
+                )}
+              </header>
+              <SingleBarChart
+                data={newConfirmedData}
+                dataKey="newConfirmed"
+                name="New Cases"
+                color={COLORS.newConfirmed}
+                xAxisTitle="Test"
+                yAxisTitle="Test"
+                movingAverageColor="#164fff"
+              />
+            </section>
 
             <h2 className="mb-3">Deaths</h2>
             <SingleLineChart
@@ -192,20 +252,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               yAxisTitle="Test"
             />
 
-            <h2 className="mb-3">New Deaths</h2>
-            <BarChart
-              data={data.values}
-              bars={[
-                {
-                  dataKey: "newDeaths",
-                  name: "New Deaths",
-                  color: COLORS.deaths,
-                },
-              ]}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-              movingAverageDataKey="newDeaths"
-            />
+            {/*<h2 className="mb-3">New Deaths</h2>*/}
+            {/*<SingleBarChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="newDeaths"*/}
+            {/*  name="New Deaths"*/}
+            {/*  color={COLORS.deaths}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
             <h2 className="mb-3">Recoveries</h2>
             <SingleLineChart
@@ -217,20 +272,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               yAxisTitle="Test"
             />
 
-            <h2 className="mb-3">New Recoveries</h2>
-            <BarChart
-              data={data.values}
-              bars={[
-                {
-                  dataKey: "newRecovered",
-                  name: "New Recoveries",
-                  color: COLORS.recovered,
-                },
-              ]}
-              xAxisTitle="Test"
-              yAxisTitle="Test"
-              movingAverageDataKey="newRecovered"
-            />
+            {/*<h2 className="mb-3">New Recoveries</h2>*/}
+            {/*<SingleBarChart*/}
+            {/*  data={data.values}*/}
+            {/*  dataKey="newRecovered"*/}
+            {/*  name="New Recoveries"*/}
+            {/*  color={COLORS.recovered}*/}
+            {/*  xAxisTitle="Test"*/}
+            {/*  yAxisTitle="Test"*/}
+            {/*/>*/}
 
             <h2 className="mb-3">Mortality Rate</h2>
             <SingleLineChart

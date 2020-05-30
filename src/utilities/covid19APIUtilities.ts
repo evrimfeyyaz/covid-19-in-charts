@@ -1,4 +1,5 @@
-import { LocationData } from "@evrimfeyyaz/covid-19-api";
+import { LocationData, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
+import ema from "exponential-moving-average";
 
 export const valuesOnDateProperties = [
   "confirmed",
@@ -53,4 +54,22 @@ export function stripDataBeforePropertyExceedsN(
     ...locationData,
     values: locationData.values.filter((value) => ((value as never)[property] ?? 0) > n),
   };
+}
+
+export function addEMAToValues(
+  values: ValuesOnDate[],
+  property: keyof Omit<ValuesOnDate, "date">,
+  range: number
+): (ValuesOnDate & { movingAverage: number | null })[] {
+  const allValuesOfProperty = values.map((valuesOnDate) => valuesOnDate[property] as number);
+
+  const movingAveragePoints = [
+    ...(Array.from({ length: range }).fill(null) as null[]),
+    ...ema(allValuesOfProperty, range),
+  ];
+
+  return values.map((valuesOnDate, index) => ({
+    ...valuesOnDate,
+    movingAverage: movingAveragePoints[index],
+  }));
 }
