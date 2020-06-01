@@ -14,7 +14,7 @@ import NoData from "../common/NoData";
 
 interface SingleLineChartProps {
   /**
-   * The data to chart
+   * The data to chart.
    */
   data: ValuesOnDate[];
   /**
@@ -44,7 +44,7 @@ interface SingleLineChartProps {
 }
 
 /**
- * A chart that contains a single line.
+ * A line chart that charts one data point for a single location.
  */
 const SingleLineChart: FunctionComponent<SingleLineChartProps> = ({
   data,

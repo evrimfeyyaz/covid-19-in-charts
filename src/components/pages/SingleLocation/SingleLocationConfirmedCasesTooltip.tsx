@@ -16,7 +16,9 @@ const SingleLocationConfirmedCasesTooltip: FunctionComponent<TooltipProps> = ({
 
   return (
     <div className="shadow rounded-lg bg-white border px-4 py-3">
-      <p className="h5">{numToGroupedString(confirmed)}</p>
+      <p className="h5">
+        {numToGroupedString(confirmed)} <span className="text-muted">cases</span>
+      </p>
       <p className="mb-0 text-muted">{prettifyMDYDate(date)}</p>
     </div>
   );

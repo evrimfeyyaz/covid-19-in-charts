@@ -2,10 +2,10 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../constants";
 import { humanizePropertyName } from "../../../utilities/covid19APIUtilities";
-import { prettifyDate } from "../../../utilities/dateUtilities";
+import { prettifyMDYDate } from "../../../utilities/dateUtilities";
 import SingleLineChart from "../../charts/SingleLineChart";
 import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
-import SingleLocationLineChartSection from "./SingleLocationLineChartSection";
+import SingleLocationSection from "./SingleLocationSection";
 
 interface SingleLocationConfirmedCasesProps {
   /**
@@ -23,14 +23,6 @@ interface SingleLocationConfirmedCasesProps {
    */
   exceedingValue: number;
   /**
-   * The first date of the dataset.
-   *
-   * For example, if the user picked "start from the first day that exceeds 100 confirmed cases"
-   * option on the {@link SingleLocation} page, and the first day that has more than 100 cases is
-   * March 1, 2020, this is set to that date.
-   */
-  firstDate: Date;
-  /**
    * The data for the chart to display.
    */
   values: ValuesOnDate[];
@@ -42,13 +34,17 @@ interface SingleLocationConfirmedCasesProps {
 const SingleLocationConfirmedCases: FunctionComponent<SingleLocationConfirmedCasesProps> = ({
   exceedingProperty,
   exceedingValue,
-  firstDate,
   values,
 }) => {
+  const humanizedExceedingProperty = humanizePropertyName(exceedingProperty);
+  const firstDate = values[0].date;
+
   const title = "Confirmed Cases";
   const description = `The number of confirmed cases on each day, starting from the day 
-  ${humanizePropertyName(exceedingProperty)} exceeded ${exceedingValue} 
-  (${prettifyDate(firstDate)}).`;
+  ${humanizedExceedingProperty} exceeded ${exceedingValue} 
+  (${prettifyMDYDate(firstDate)}).`;
+
+  const xAxisTitle = `Days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`;
 
   const chart = (
     <SingleLineChart
@@ -56,13 +52,13 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationConfirmedCas
       dataKey="confirmed"
       name="Confirmed Cases"
       color={COLORS.confirmed}
-      xAxisTitle={`Days since ${exceedingProperty} exceeded ${exceedingValue}`}
-      yAxisTitle="Confirmed cases"
+      xAxisTitle={xAxisTitle}
+      yAxisTitle="Confirmed Cases"
       tooltipComponent={SingleLocationConfirmedCasesTooltip}
     />
   );
 
-  return <SingleLocationLineChartSection title={title} description={description} chart={chart} />;
+  return <SingleLocationSection title={title} description={description} chart={chart} />;
 };
 
 export default SingleLocationConfirmedCases;

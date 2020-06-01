@@ -14,15 +14,43 @@ import { numToGroupedString } from "../../utilities/numUtilities";
 import NoData from "../common/NoData";
 
 interface SingleBarChartProps {
-  data?: (ValuesOnDate & { movingAverage: number | null })[];
-  xAxisTitle: string;
-  yAxisTitle: string;
-  dataKey: keyof ValuesOnDate;
+  /**
+   * The data to chart.
+   */
+  data: (ValuesOnDate & { movingAverage: number | null })[];
+  /**
+   * The key in the `data` object to use for charting.
+   */
+  dataKey: string;
+  /**
+   * The color of the line.
+   */
   color: string;
+  /**
+   * The human-readable name of the data that is charted.
+   */
   name: string;
+  /**
+   * The title of the x axis.
+   */
+  xAxisTitle: string;
+  /**
+   * The title of the y axis.
+   */
+  yAxisTitle: string;
+  /**
+   * A tooltip component that can be used in a Recharts chart.
+   */
+  tooltipComponent: React.ReactElement | React.FunctionComponent;
+  /**
+   * The color of the moving average line in the chart.
+   */
   movingAverageColor?: string;
 }
 
+/**
+ * A bar chart that charts one data point and its exponential moving average for a single location.
+ */
 const SingleBarChart: FunctionComponent<SingleBarChartProps> = ({
   data,
   xAxisTitle,
@@ -30,6 +58,7 @@ const SingleBarChart: FunctionComponent<SingleBarChartProps> = ({
   dataKey,
   color,
   name,
+  tooltipComponent,
   movingAverageColor,
 }) => {
   let body = <NoData />;
@@ -49,7 +78,7 @@ const SingleBarChart: FunctionComponent<SingleBarChartProps> = ({
             width={70}
             tickFormatter={numToGroupedString}
           />
-          <Tooltip />
+          <Tooltip content={tooltipComponent} />
           <Bar dataKey={dataKey} opacity={0.9} fill={color} name={name} />
           <Line dataKey="movingAverage" dot={<></>} activeDot={<></>} stroke={movingAverageColor} />
         </ComposedChart>

@@ -56,11 +56,11 @@ export function stripDataBeforePropertyExceedsN(
   };
 }
 
-export function addEMAToValues(
+export function getValuesWithEMA(
   values: ValuesOnDate[],
   property: keyof Omit<ValuesOnDate, "date">,
   range: number
-): (ValuesOnDate & { movingAverage: number | null })[] {
+): ValuesOnDateWithMovingAverage[] {
   const allValuesOfProperty = values.map((valuesOnDate) => valuesOnDate[property] as number);
 
   const movingAveragePoints = [
@@ -72,4 +72,8 @@ export function addEMAToValues(
     ...valuesOnDate,
     movingAverage: movingAveragePoints[index],
   }));
+}
+
+export interface ValuesOnDateWithMovingAverage extends ValuesOnDate {
+  movingAverage: number | null;
 }

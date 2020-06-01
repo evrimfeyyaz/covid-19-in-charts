@@ -1,6 +1,6 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api/lib/types";
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
@@ -8,25 +8,20 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Helmet from "react-helmet";
-import { COLORS } from "../../../constants";
 import { useCanonicalURL } from "../../../hooks/useCanonicalURL";
 import useLocationSelection from "../../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../../hooks/useNumberSelection";
 import { usePropertySelection } from "../../../hooks/usePropertySelection";
-import {
-  addEMAToValues,
-  humanizePropertyName,
-  stripDataBeforePropertyExceedsN,
-} from "../../../utilities/covid19APIUtilities";
+import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
 import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
 import LatestNumbers from "../../charts/LatestNumbers/LatestNumbers";
-import SingleBarChart from "../../charts/SingleBarChart";
 import Loading from "../../common/Loading";
 import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./SingleLocationConfirmedCases";
+import SingleLocationNewCases from "./SingleLocationNewCases";
 
 interface SingleLocationProps {
   store: COVID19API;
@@ -44,14 +39,6 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const newConfirmedData = useMemo(() => {
-    if (data == null) {
-      return undefined;
-    }
-
-    return addEMAToValues(data.values, "newConfirmed", 12);
-  }, [data]);
-
   const [[location], locationInputComponent] = useLocationSelection(
     locationsList,
     [defaultLocation],
@@ -60,15 +47,16 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
       lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
     }
   );
-  const [
-    exceedingProperty,
-    humanizedExceedingProperty,
-    exceedingPropertyInputComponent,
-  ] = usePropertySelection("exceedingProperty", defaultExceedingProperty, "Start from the day", {
-    onlyCumulativeValues: true,
-    lastSelectionAsDefault: true,
-    lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
-  });
+  const [exceedingProperty, , exceedingPropertyInputComponent] = usePropertySelection(
+    "exceedingProperty",
+    defaultExceedingProperty,
+    "Start from the day",
+    {
+      onlyCumulativeValues: true,
+      lastSelectionAsDefault: true,
+      lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
+    }
+  );
   const [exceedingValue, exceedingValueInputComponent] = useNumberSelection(
     "exceedingValue",
     defaultExceedingValue,
@@ -125,35 +113,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   if (data != null) {
     body = <NoData />;
 
-    if (
-      lastUpdated != null &&
-      latestValues != null &&
-      firstDate != null &&
-      lastDate != null &&
-      newConfirmedData != null
-    ) {
-      const lastNewConfirmedEMA = newConfirmedData[newConfirmedData.length - 1].movingAverage;
-      const lastNewConfirmed = newConfirmedData[newConfirmedData.length - 1].newConfirmed;
-
-      let lastNewConfirmedEMADiffMessage: JSX.Element | null = null;
-      if (lastNewConfirmedEMA != null) {
-        const lastNewConfirmedEMADiff = lastNewConfirmedEMA - lastNewConfirmed;
-
-        const messageColor = lastNewConfirmedEMADiff > 0 ? "green" : "red";
-        const aboveOrBelow = lastNewConfirmedEMADiff > 0 ? "below" : "above";
-
-        lastNewConfirmedEMADiffMessage = (
-          <span>
-            {prettifyDate(lastDate)} was{" "}
-            <span style={{ color: messageColor }}>
-              {lastNewConfirmedEMADiff.toFixed(2)} {humanizePropertyName("newConfirmed")}{" "}
-              {aboveOrBelow}
-            </span>{" "}
-            the moving average.
-          </span>
-        );
-      }
-
+    if (lastUpdated != null && latestValues != null && firstDate != null && lastDate != null) {
       body = (
         <Row>
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
@@ -191,44 +151,15 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             <SingleLocationConfirmedCases
               exceedingProperty={exceedingProperty}
               exceedingValue={exceedingValue}
-              firstDate={firstDate}
               values={data.values}
             />
 
-            <section className="mb-5">
-              <header className="mb-4">
-                <h2>New Cases</h2>
-                <p>
-                  The number of new confirmed cases on each day, starting from the day{" "}
-                  {humanizedExceedingProperty} exceeded {exceedingValue} ({prettifyDate(firstDate)}
-                  ).
-                </p>
-                {lastNewConfirmedEMADiffMessage && (
-                  <p>
-                    The{" "}
-                    <span
-                      style={{
-                        borderBottom: "1px dotted #164fff",
-                        cursor: "help",
-                        color: "#164fff",
-                      }}
-                    >
-                      12-day exponential moving average
-                    </span>{" "}
-                    is shown in blue. {lastNewConfirmedEMADiffMessage}
-                  </p>
-                )}
-              </header>
-              <SingleBarChart
-                data={newConfirmedData}
-                dataKey="newConfirmed"
-                name="New Cases"
-                color={COLORS.newConfirmed}
-                xAxisTitle="Test"
-                yAxisTitle="Test"
-                movingAverageColor="#164fff"
-              />
-            </section>
+            <SingleLocationNewCases
+              exceedingProperty={exceedingProperty}
+              exceedingValue={exceedingValue}
+              values={data.values}
+              emaRange={12}
+            />
 
             {/*<h2 className="mb-3">Deaths</h2>*/}
             {/*<SingleLineChart*/}
