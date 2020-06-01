@@ -1,12 +1,15 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
-import { prettifyMDYDate } from "../../../utilities/dateUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
+import SingleLocationTooltipBase from "./SingleLocationTooltipBase";
 
+/**
+ * A Recharts tooltip component to show the details of a data point on the confirmed cases chart.
+ */
 const SingleLocationConfirmedCasesTooltip: FunctionComponent<TooltipProps> = ({
-  payload,
   active,
+  payload,
 }) => {
   if (!active || payload == null) {
     return null;
@@ -15,12 +18,7 @@ const SingleLocationConfirmedCasesTooltip: FunctionComponent<TooltipProps> = ({
   const { date, confirmed } = payload[0].payload as ValuesOnDate;
 
   return (
-    <div className="shadow rounded-lg bg-white border px-4 py-3">
-      <p className="h5">
-        {numToGroupedString(confirmed)} <span className="text-muted">cases</span>
-      </p>
-      <p className="mb-0 text-muted">{prettifyMDYDate(date)}</p>
-    </div>
+    <SingleLocationTooltipBase value={numToGroupedString(confirmed)} unit="cases" date={date} />
   );
 };
 
