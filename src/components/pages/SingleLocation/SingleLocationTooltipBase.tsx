@@ -7,9 +7,10 @@ interface SingleLocationTooltipProps {
    */
   value: string;
   /**
-   * The unit for the main values, e.g. "cases".
+   * The unit for the chart data. For example, the unit for the new cases chart is "cases," and the
+   * unit for the new deaths chart is "deaths."
    */
-  unit: string;
+  chartUnit: string;
   /**
    * Secondary info to show, e.g. "100 cases below EMA".
    */
@@ -33,7 +34,7 @@ interface SingleLocationTooltipProps {
  */
 const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> = ({
   value,
-  unit,
+  chartUnit,
   secondaryInfo,
   secondaryInfoClassName,
   date,
@@ -41,7 +42,7 @@ const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> =
   return (
     <div className="shadow rounded-lg bg-white border px-4 py-3">
       <p className="h5">
-        {value} <span className="text-muted">{unit}</span>
+        {value} <span className="text-muted">{chartUnit}</span>
       </p>
       {secondaryInfo && <p className={`mb-2 ${secondaryInfoClassName}`}>{secondaryInfo}</p>}
       <p className="mb-0 text-muted">{prettifyMDYDate(date)}</p>

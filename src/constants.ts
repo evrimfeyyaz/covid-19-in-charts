@@ -19,6 +19,7 @@ export const COLORS = {
   deaths: "#da2d2d",
   recovered: "#18a70a",
   bgColor: "#e1e6ed",
+  movingAverage: "#2d2dda",
   // From http://there4.io/2012/05/02/google-chart-color-list/
   graphColors: [
     "#3366CC",

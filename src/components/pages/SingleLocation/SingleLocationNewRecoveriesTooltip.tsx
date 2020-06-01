@@ -6,35 +6,36 @@ import SingleLocationTooltipBase from "./SingleLocationTooltipBase";
 import { getEMADiffMessage } from "./utils";
 
 /**
- * A Recharts tooltip component to show the details of a data point on the new cases chart.
+ * A Recharts tooltip component to show the details of a data point on the new recoveries chart.
  */
-const SingleLocationNewCasesTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
+const SingleLocationNewRecoveriesTooltip: FunctionComponent<TooltipProps> = ({
+  active,
+  payload,
+}) => {
   if (!active || payload == null) {
     return null;
   }
 
-  const { date, newConfirmed, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
-  const chartUnit = "cases";
+  const { date, newRecovered, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
+  const chartUnit = "recoveries";
+
+  if (newRecovered == null) {
+    return null;
+  }
 
   let movingAverageDiffMessage: string | undefined = undefined;
-  let movingAverageDiffClass = "";
   if (movingAverage != null) {
-    [movingAverageDiffMessage, movingAverageDiffClass] = getEMADiffMessage(
-      newConfirmed,
-      movingAverage,
-      chartUnit
-    );
+    [movingAverageDiffMessage] = getEMADiffMessage(newRecovered, movingAverage, chartUnit);
   }
 
   return (
     <SingleLocationTooltipBase
-      value={numToGroupedString(newConfirmed)}
+      value={numToGroupedString(newRecovered)}
       chartUnit={chartUnit}
       secondaryInfo={movingAverageDiffMessage}
-      secondaryInfoClassName={movingAverageDiffClass}
       date={date}
     />
   );
 };
 
-export default SingleLocationNewCasesTooltip;
+export default SingleLocationNewRecoveriesTooltip;

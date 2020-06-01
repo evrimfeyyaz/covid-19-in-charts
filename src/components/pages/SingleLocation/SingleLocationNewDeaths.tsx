@@ -1,26 +1,26 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../constants";
 import SingleBarChart from "../../charts/SingleBarChart";
-import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
+import SingleLocationNewDeathsTooltip from "./SingleLocationNewDeathsTooltip";
 import SingleLocationSection from "./SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "./SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "./useEMAInSection";
 
 /**
- * Renders a page section that shows the new cases chart for a single location.
+ * Renders a page section that shows the new deaths chart for a single location.
  */
-const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
   startingFrom,
   xAxisTitle,
   values,
   emaRange,
 }) => {
-  const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newConfirmed", "cases", emaRange);
+  const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newDeaths", "deaths", emaRange);
 
-  const title = "New Cases";
+  const title = "New Deaths";
   const description = (
     <>
-      <p>The number of new confirmed cases on each day, starting from {startingFrom}.</p>
+      <p>The number of new deaths on each day, starting from {startingFrom}.</p>
       {emaMessage}
     </>
   );
@@ -28,16 +28,16 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
   const chart = (
     <SingleBarChart
       data={valuesWithEMA}
-      dataKey="newConfirmed"
+      dataKey="newDeaths"
       name={title}
-      color={COLORS.newConfirmed}
+      color={COLORS.deaths}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationNewCasesTooltip}
+      tooltipComponent={SingleLocationNewDeathsTooltip}
     />
   );
 
   return <SingleLocationSection title={title} description={description} chart={chart} />;
 };
 
-export default SingleLocationNewCases;
+export default SingleLocationNewDeaths;

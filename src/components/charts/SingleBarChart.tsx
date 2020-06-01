@@ -10,6 +10,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { COLORS } from "../../constants";
+import { ValuesOnDateWithMovingAverage } from "../../utilities/covid19APIUtilities";
 import { numToGroupedString } from "../../utilities/numUtilities";
 import NoData from "../common/NoData";
 
@@ -17,11 +19,11 @@ interface SingleBarChartProps {
   /**
    * The data to chart.
    */
-  data: (ValuesOnDate & { movingAverage: number | null })[];
+  data: ValuesOnDateWithMovingAverage[];
   /**
    * The key in the `data` object to use for charting.
    */
-  dataKey: string;
+  dataKey: keyof ValuesOnDate;
   /**
    * The color of the line.
    */
@@ -42,10 +44,6 @@ interface SingleBarChartProps {
    * A tooltip component that can be used in a Recharts chart.
    */
   tooltipComponent: React.ReactElement | React.FunctionComponent;
-  /**
-   * The color of the moving average line in the chart.
-   */
-  movingAverageColor?: string;
 }
 
 /**
@@ -59,7 +57,6 @@ const SingleBarChart: FunctionComponent<SingleBarChartProps> = ({
   color,
   name,
   tooltipComponent,
-  movingAverageColor,
 }) => {
   let body = <NoData />;
 
@@ -80,7 +77,12 @@ const SingleBarChart: FunctionComponent<SingleBarChartProps> = ({
           />
           <Tooltip content={tooltipComponent} />
           <Bar dataKey={dataKey} opacity={0.9} fill={color} name={name} />
-          <Line dataKey="movingAverage" dot={<></>} activeDot={<></>} stroke={movingAverageColor} />
+          <Line
+            dataKey="movingAverage"
+            dot={<></>}
+            activeDot={<></>}
+            stroke={COLORS.movingAverage}
+          />
         </ComposedChart>
       </ResponsiveContainer>
     );

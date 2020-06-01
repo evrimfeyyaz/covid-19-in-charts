@@ -20,7 +20,7 @@ interface SingleLineChartProps {
   /**
    * The key in the `data` object to use for charting.
    */
-  dataKey: string;
+  dataKey: keyof ValuesOnDate;
   /**
    * The color of the line.
    */

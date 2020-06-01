@@ -12,7 +12,10 @@ import { useCanonicalURL } from "../../../hooks/useCanonicalURL";
 import useLocationSelection from "../../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../../hooks/useNumberSelection";
 import { usePropertySelection } from "../../../hooks/usePropertySelection";
-import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
+import {
+  humanizePropertyName,
+  stripDataBeforePropertyExceedsN,
+} from "../../../utilities/covid19APIUtilities";
 import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
@@ -21,7 +24,11 @@ import Loading from "../../common/Loading";
 import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./SingleLocationConfirmedCases";
+import SingleLocationDeaths from "./SingleLocationDeaths";
 import SingleLocationNewCases from "./SingleLocationNewCases";
+import SingleLocationNewDeaths from "./SingleLocationNewDeaths";
+import SingleLocationNewRecoveries from "./SingleLocationNewRecoveries";
+import SingleLocationRecoveries from "./SingleLocationRecoveries";
 
 interface SingleLocationProps {
   store: COVID19API;
@@ -114,6 +121,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
     body = <NoData />;
 
     if (lastUpdated != null && latestValues != null && firstDate != null && lastDate != null) {
+      const humanizedExceedingProperty = humanizePropertyName(exceedingProperty);
+      const prettyFirstDate = prettifyDate(firstDate);
+      const startingFrom = `the day ${humanizedExceedingProperty} exceeded ${exceedingValue} (${prettyFirstDate})`;
+      const xAxisTitle = `Days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`;
+
       body = (
         <Row>
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
@@ -149,57 +161,43 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             </section>
 
             <SingleLocationConfirmedCases
-              exceedingProperty={exceedingProperty}
-              exceedingValue={exceedingValue}
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
               values={data.values}
             />
 
             <SingleLocationNewCases
-              exceedingProperty={exceedingProperty}
-              exceedingValue={exceedingValue}
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
               values={data.values}
               emaRange={12}
             />
 
-            {/*<h2 className="mb-3">Deaths</h2>*/}
-            {/*<SingleLineChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="deaths"*/}
-            {/*  name="Deaths"*/}
-            {/*  color={COLORS.deaths}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
+            <SingleLocationDeaths
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
 
-            {/*<h2 className="mb-3">New Deaths</h2>*/}
-            {/*<SingleBarChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="newDeaths"*/}
-            {/*  name="New Deaths"*/}
-            {/*  color={COLORS.deaths}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
+            <SingleLocationNewDeaths
+              emaRange={12}
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
 
-            {/*<h2 className="mb-3">Recoveries</h2>*/}
-            {/*<SingleLineChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="recovered"*/}
-            {/*  name="Recoveries"*/}
-            {/*  color={COLORS.recovered}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
+            <SingleLocationRecoveries
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
 
-            {/*<h2 className="mb-3">New Recoveries</h2>*/}
-            {/*<SingleBarChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="newRecovered"*/}
-            {/*  name="New Recoveries"*/}
-            {/*  color={COLORS.recovered}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
+            <SingleLocationNewRecoveries
+              emaRange={12}
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
 
             {/*<h2 className="mb-3">Mortality Rate</h2>*/}
             {/*<SingleLineChart*/}

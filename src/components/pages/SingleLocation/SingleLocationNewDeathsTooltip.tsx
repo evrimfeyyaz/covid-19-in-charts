@@ -6,21 +6,25 @@ import SingleLocationTooltipBase from "./SingleLocationTooltipBase";
 import { getEMADiffMessage } from "./utils";
 
 /**
- * A Recharts tooltip component to show the details of a data point on the new cases chart.
+ * A Recharts tooltip component to show the details of a data point on the new deaths chart.
  */
-const SingleLocationNewCasesTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
+const SingleLocationNewDeathsTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
   if (!active || payload == null) {
     return null;
   }
 
-  const { date, newConfirmed, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
-  const chartUnit = "cases";
+  const { date, newDeaths, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
+  const chartUnit = "deaths";
+
+  if (newDeaths == null) {
+    return null;
+  }
 
   let movingAverageDiffMessage: string | undefined = undefined;
   let movingAverageDiffClass = "";
   if (movingAverage != null) {
     [movingAverageDiffMessage, movingAverageDiffClass] = getEMADiffMessage(
-      newConfirmed,
+      newDeaths,
       movingAverage,
       chartUnit
     );
@@ -28,7 +32,7 @@ const SingleLocationNewCasesTooltip: FunctionComponent<TooltipProps> = ({ active
 
   return (
     <SingleLocationTooltipBase
-      value={numToGroupedString(newConfirmed)}
+      value={numToGroupedString(newDeaths)}
       chartUnit={chartUnit}
       secondaryInfo={movingAverageDiffMessage}
       secondaryInfoClassName={movingAverageDiffClass}
@@ -37,4 +41,4 @@ const SingleLocationNewCasesTooltip: FunctionComponent<TooltipProps> = ({ active
   );
 };
 
-export default SingleLocationNewCasesTooltip;
+export default SingleLocationNewDeathsTooltip;

@@ -1,34 +1,34 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../constants";
 import SingleLineChart from "../../charts/SingleLineChart";
-import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
+import SingleLocationDeathsTooltip from "./SingleLocationDeathsTooltip";
 import SingleLocationSection from "./SingleLocationSection";
 import { SingleLocationSectionProps } from "./SingleLocationSectionProps";
 
 /**
- * Renders a page section that shows the confirmed cases chart for a single location.
+ * Renders a page section that shows the deaths chart for a single location.
  */
-const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps> = ({
+const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
   startingFrom,
   xAxisTitle,
   values,
 }) => {
-  const title = "Confirmed Cases";
-  const description = `The number of confirmed cases on each day, starting from the day ${startingFrom}.`;
+  const title = "Deaths";
+  const description = `The number of deaths on each day, starting from ${startingFrom}.`;
 
   const chart = (
     <SingleLineChart
       data={values}
-      dataKey="confirmed"
+      dataKey="deaths"
       name={title}
-      color={COLORS.confirmed}
+      color={COLORS.deaths}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationConfirmedCasesTooltip}
+      tooltipComponent={SingleLocationDeathsTooltip}
     />
   );
 
   return <SingleLocationSection title={title} description={description} chart={chart} />;
 };
 
-export default SingleLocationConfirmedCases;
+export default SingleLocationDeaths;

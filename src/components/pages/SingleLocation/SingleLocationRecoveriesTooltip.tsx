@@ -5,25 +5,26 @@ import { numToGroupedString } from "../../../utilities/numUtilities";
 import SingleLocationTooltipBase from "./SingleLocationTooltipBase";
 
 /**
- * A Recharts tooltip component to show the details of a data point on the confirmed cases chart.
+ * A Recharts tooltip component to show the details of a data point on the recoveries chart.
  */
-const SingleLocationConfirmedCasesTooltip: FunctionComponent<TooltipProps> = ({
-  active,
-  payload,
-}) => {
+const SingleLocationRecoveriesTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
   if (!active || payload == null) {
     return null;
   }
 
-  const { date, confirmed } = payload[0].payload as ValuesOnDate;
+  const { date, recovered } = payload[0].payload as ValuesOnDate;
+
+  if (recovered == null) {
+    return null;
+  }
 
   return (
     <SingleLocationTooltipBase
-      value={numToGroupedString(confirmed)}
-      chartUnit="cases"
+      value={numToGroupedString(recovered)}
+      chartUnit="recoveries"
       date={date}
     />
   );
 };
 
-export default SingleLocationConfirmedCasesTooltip;
+export default SingleLocationRecoveriesTooltip;

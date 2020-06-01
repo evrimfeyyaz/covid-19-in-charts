@@ -1,43 +1,42 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../constants";
 import SingleBarChart from "../../charts/SingleBarChart";
-import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
+import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
 import SingleLocationSection from "./SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "./SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "./useEMAInSection";
 
 /**
- * Renders a page section that shows the new cases chart for a single location.
+ * Renders a page section that shows the new recoveries chart for a single location.
  */
-const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
   startingFrom,
   xAxisTitle,
   values,
   emaRange,
 }) => {
-  const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newConfirmed", "cases", emaRange);
+  const [valuesWithEMA] = useEMAInSection(values, "newRecovered", "recoveries", emaRange);
 
-  const title = "New Cases";
+  const title = "New Recoveries";
   const description = (
     <>
-      <p>The number of new confirmed cases on each day, starting from {startingFrom}.</p>
-      {emaMessage}
+      <p>The number of new recoveries on each day, starting from {startingFrom}.</p>
     </>
   );
 
   const chart = (
     <SingleBarChart
       data={valuesWithEMA}
-      dataKey="newConfirmed"
+      dataKey="newRecovered"
       name={title}
-      color={COLORS.newConfirmed}
+      color={COLORS.recovered}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationNewCasesTooltip}
+      tooltipComponent={SingleLocationNewRecoveriesTooltip}
     />
   );
 
   return <SingleLocationSection title={title} description={description} chart={chart} />;
 };
 
-export default SingleLocationNewCases;
+export default SingleLocationNewRecoveries;
