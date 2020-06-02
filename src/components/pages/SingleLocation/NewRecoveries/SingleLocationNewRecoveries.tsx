@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
-import { COLORS } from "../../../constants";
-import SingleBarChart from "../../charts/SingleBarChart";
+import { COLORS } from "../../../../constants";
+import SingleBarChart from "../../../charts/SingleBarChart";
 import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
-import SingleLocationSection from "./SingleLocationSection";
-import { SingleLocationSectionWithEMAProps } from "./SingleLocationSectionWithEMAProps";
-import { useEMAInSection } from "./useEMAInSection";
+import SingleLocationSection from "../SingleLocationSection";
+import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
+import { useEMAInSection } from "../useEMAInSection";
 
 /**
  * Renders a page section that shows the new recoveries chart for a single location.

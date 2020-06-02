@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
-import { COLORS } from "../../../constants";
-import SingleLineChart from "../../charts/SingleLineChart";
+import { COLORS } from "../../../../constants";
+import SingleLineChart from "../../../charts/SingleLineChart";
 import SingleLocationRecoveriesTooltip from "./SingleLocationRecoveriesTooltip";
-import SingleLocationSection from "./SingleLocationSection";
-import { SingleLocationSectionProps } from "./SingleLocationSectionProps";
+import SingleLocationSection from "../SingleLocationSection";
+import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
 
 /**
  * Renders a page section that shows the recoveries chart for a single location.

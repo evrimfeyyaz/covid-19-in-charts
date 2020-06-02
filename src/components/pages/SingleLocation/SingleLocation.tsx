@@ -23,12 +23,12 @@ import LatestNumbers from "../../charts/LatestNumbers/LatestNumbers";
 import Loading from "../../common/Loading";
 import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
-import SingleLocationConfirmedCases from "./SingleLocationConfirmedCases";
-import SingleLocationDeaths from "./SingleLocationDeaths";
-import SingleLocationNewCases from "./SingleLocationNewCases";
-import SingleLocationNewDeaths from "./SingleLocationNewDeaths";
-import SingleLocationNewRecoveries from "./SingleLocationNewRecoveries";
-import SingleLocationRecoveries from "./SingleLocationRecoveries";
+import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
+import SingleLocationDeaths from "./Deaths/SingleLocationDeaths";
+import SingleLocationNewCases from "./NewCases/SingleLocationNewCases";
+import SingleLocationNewDeaths from "./NewDeaths/SingleLocationNewDeaths";
+import SingleLocationNewRecoveries from "./NewRecoveries/SingleLocationNewRecoveries";
+import SingleLocationRecoveries from "./Recoveries/SingleLocationRecoveries";
 
 interface SingleLocationProps {
   store: COVID19API;

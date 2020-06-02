@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
-import { ValuesOnDateWithMovingAverage } from "../../../utilities/covid19APIUtilities";
-import { numToGroupedString } from "../../../utilities/numUtilities";
-import SingleLocationTooltipBase from "./SingleLocationTooltipBase";
-import { getEMADiffMessage } from "./utils";
+import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19APIUtilities";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
+import SingleLocationTooltipBase from "../SingleLocationTooltipBase";
+import { getEMADiffMessage } from "../utils";
 
 /**
  * A Recharts tooltip component to show the details of a data point on the new recoveries chart.
