@@ -71,7 +71,7 @@ export function getReadableValuesOnDate(values: ValuesOnDate): ReadableValuesOnD
   }
 
   if (values.mortalityRate != null) {
-    readableValues.mortalityRate = numToPercentageFactory(4)(values.mortalityRate);
+    readableValues.mortalityRate = numToPercentageFactory(2)(values.mortalityRate);
   }
 
   if (values.recoveryRate != null) {
