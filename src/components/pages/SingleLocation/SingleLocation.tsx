@@ -25,6 +25,7 @@ import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
 import SingleLocationDeaths from "./Deaths/SingleLocationDeaths";
+import SingleLocationMortalityRate from "./MortalityRate/SingleLocationMortalityRate";
 import SingleLocationNewCases from "./NewCases/SingleLocationNewCases";
 import SingleLocationNewDeaths from "./NewDeaths/SingleLocationNewDeaths";
 import SingleLocationNewRecoveries from "./NewRecoveries/SingleLocationNewRecoveries";
@@ -199,15 +200,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               values={data.values}
             />
 
-            {/*<h2 className="mb-3">Mortality Rate</h2>*/}
-            {/*<SingleLineChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="mortalityRate"*/}
-            {/*  name="Mortality Rate"*/}
-            {/*  color={COLORS.deaths}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
+            <SingleLocationMortalityRate
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
 
             {/*<h2 className="mb-3">Recovery Rate</h2>*/}
             {/*<SingleLineChart*/}

@@ -19,7 +19,6 @@ const SingleLineChart: FunctionComponent<ChartProps<ValuesOnDate[], keyof Values
     body = (
       <ChartContainer ChartComponent={LineChart} {...props}>
         <Line
-          type="monotone"
           dataKey={dataKey}
           opacity={0.9}
           stroke={color}
