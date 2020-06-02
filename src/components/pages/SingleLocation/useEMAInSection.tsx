@@ -5,7 +5,7 @@ import {
   getValuesWithEMA,
   ValuesOnDateWithMovingAverage,
 } from "../../../utilities/covid19APIUtilities";
-import { prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { getReadableValuesOnDate } from "./utils";
 
 type UseEMAInSectionReturnValue = [ValuesOnDateWithMovingAverage[], JSX.Element | null];
 
@@ -34,7 +34,8 @@ export function useEMAInSection(
   const lastValues = valuesWithEMA[valuesWithEMA.length - 1];
   const lastValueOfEMA = lastValues.movingAverage;
   const lastValueOfProperty = lastValues[property] ?? 0;
-  const lastDate = lastValues.date;
+
+  const prettyLastValues = getReadableValuesOnDate(lastValues);
 
   let lastEMAState: JSX.Element | null = null;
   if (lastValueOfEMA != null) {
@@ -45,7 +46,7 @@ export function useEMAInSection(
 
     lastEMAState = (
       <span>
-        {prettifyMDYDate(lastDate)} was{" "}
+        {prettyLastValues.date} was{" "}
         <span className={messageStyle}>
           {Math.abs(emaDiff).toFixed(2)} {chartUnit} {aboveOrBelow}
         </span>{" "}

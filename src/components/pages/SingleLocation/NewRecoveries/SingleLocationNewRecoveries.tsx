@@ -2,10 +2,11 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleBarChart from "../../../charts/SingleBarChart";
-import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "../useEMAInSection";
+import { getReadableValuesOnDate } from "../utils";
+import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
 
 /**
  * Renders a page section that shows the new recoveries chart for a single location.
@@ -17,11 +18,19 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
   emaRange,
 }) => {
   const [valuesWithEMA] = useEMAInSection(values, "newRecovered", "recoveries", emaRange);
+  const readableValuesOnDate = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Recoveries";
   const description = (
     <>
-      <p>The number of new recoveries on each day, starting from {startingFrom}.</p>
+      <p>
+        The number of <span style={{ color: COLORS.recovered }}>new recoveries</span> on each day,
+        starting from {startingFrom}.
+      </p>
+      <p>
+        There were {readableValuesOnDate.newRecovered} new recoveries on {readableValuesOnDate.date}
+        .
+      </p>
     </>
   );
 

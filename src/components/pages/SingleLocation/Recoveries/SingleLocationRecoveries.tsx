@@ -2,9 +2,10 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLineChart from "../../../charts/SingleLineChart";
-import SingleLocationRecoveriesTooltip from "./SingleLocationRecoveriesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import { getReadableValuesOnDate } from "../utils";
+import SingleLocationRecoveriesTooltip from "./SingleLocationRecoveriesTooltip";
 
 /**
  * Renders a page section that shows the recoveries chart for a single location.
@@ -14,8 +15,20 @@ const SingleLocationRecoveries: FunctionComponent<SingleLocationSectionProps> = 
   xAxisTitle,
   values,
 }) => {
+  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
+
   const title = "Recoveries";
-  const description = `The number of recoveries on each day, starting from ${startingFrom}.`;
+  const description = (
+    <>
+      <p>
+        The number of <span style={{ color: COLORS.recovered }}>cumulative recoveries</span> on each
+        day, starting from {startingFrom}.
+      </p>
+      <p>
+        There were {readableLastValues.recovered} recoveries to date on {readableLastValues.date}.
+      </p>
+    </>
+  );
 
   const chart = (
     <SingleLineChart

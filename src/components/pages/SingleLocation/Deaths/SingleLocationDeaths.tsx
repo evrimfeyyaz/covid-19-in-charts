@@ -4,6 +4,7 @@ import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLineChart from "../../../charts/SingleLineChart";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import { getReadableValuesOnDate } from "../utils";
 import SingleLocationDeathsTooltip from "./SingleLocationDeathsTooltip";
 
 /**
@@ -14,8 +15,20 @@ const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
   xAxisTitle,
   values,
 }) => {
+  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
+
   const title = "Deaths";
-  const description = `The number of deaths on each day, starting from ${startingFrom}.`;
+  const description = (
+    <>
+      <p>
+        The <span style={{ color: COLORS.deaths }}>cumulative number of deaths</span> on each day,
+        starting from {startingFrom}.
+      </p>
+      <p>
+        There were {readableLastValues.deaths} deaths to date on {readableLastValues.date}.
+      </p>
+    </>
+  );
 
   const chart = (
     <SingleLineChart

@@ -14,10 +14,10 @@ export const ROUTE_TITLES = {
 };
 
 export const COLORS = {
-  confirmed: "#f6da63",
-  newConfirmed: "#eb8242",
+  confirmed: "#7d6c00",
+  newConfirmed: "#ce5c13",
   deaths: "#da2d2d",
-  recovered: "#18a70a",
+  recovered: "#0e8203",
   bgColor: "#e1e6ed",
   movingAverage: "#2d2dda",
   // From http://there4.io/2012/05/02/google-chart-color-list/

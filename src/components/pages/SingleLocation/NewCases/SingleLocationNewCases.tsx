@@ -5,6 +5,7 @@ import SingleBarChart from "../../../charts/SingleBarChart";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "../useEMAInSection";
+import { getReadableValuesOnDate } from "../utils";
 import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
 
 /**
@@ -17,11 +18,18 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
   emaRange,
 }) => {
   const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newConfirmed", "cases", emaRange);
+  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Cases";
   const description = (
     <>
-      <p>The number of new confirmed cases on each day, starting from {startingFrom}.</p>
+      <p>
+        The number of <span style={{ color: COLORS.newConfirmed }}>new confirmed cases</span> on
+        each day, starting from {startingFrom}.
+      </p>
+      <p>
+        There were {readableLastValues.newConfirmed} new cases on {readableLastValues.date}.
+      </p>
       {emaMessage}
     </>
   );

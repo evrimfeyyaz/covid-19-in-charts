@@ -4,6 +4,7 @@ import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLineChart from "../../../charts/SingleLineChart";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import { getReadableValuesOnDate } from "../utils";
 import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
 
 /**
@@ -14,8 +15,21 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
   xAxisTitle,
   values,
 }) => {
+  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
+
   const title = "Confirmed Cases";
-  const description = `The number of confirmed cases on each day, starting from ${startingFrom}.`;
+  const description = (
+    <>
+      <p>
+        The <span style={{ color: COLORS.confirmed }}>cumulative number of confirmed cases</span> on
+        each day, starting from {startingFrom}.
+      </p>
+      <p>
+        There were {readableLastValues.confirmed} confirmed cases to date on{" "}
+        {readableLastValues.date}.
+      </p>
+    </>
+  );
 
   const chart = (
     <SingleLineChart

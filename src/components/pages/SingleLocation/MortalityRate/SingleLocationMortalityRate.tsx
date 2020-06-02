@@ -1,10 +1,10 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
 import { numToPercentageFactory } from "../../../../utilities/numUtilities";
 import SingleScatterChart from "../../../charts/SingleScatterChart";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import { getReadableValuesOnDate } from "../utils";
 import SingleLocationMortalityRateTooltip from "./SingleLocationMortalityRateTooltip";
 
 /**
@@ -15,13 +15,7 @@ const SingleLocationMortalityRate: FunctionComponent<SingleLocationSectionProps>
   xAxisTitle,
   values,
 }) => {
-  const lastValues = values[values.length - 1];
-  const lastDate = prettifyMDYDate(lastValues.date);
-
-  let lastMortalityRate: string | undefined = undefined;
-  if (lastValues.mortalityRate != null) {
-    lastMortalityRate = numToPercentageFactory(4)(lastValues.mortalityRate);
-  }
+  const readableValuesOnDate = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "Mortality Rate";
   const description = (
@@ -40,7 +34,7 @@ const SingleLocationMortalityRate: FunctionComponent<SingleLocationSectionProps>
         on each day, starting from {startingFrom}.
       </p>
       <p>
-        The mortality rate on {lastDate} was {lastMortalityRate}.
+        The mortality rate on {readableValuesOnDate.date} was {readableValuesOnDate.mortalityRate}.
       </p>
     </>
   );

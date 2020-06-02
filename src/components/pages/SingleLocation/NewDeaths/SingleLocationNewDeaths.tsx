@@ -2,10 +2,11 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleBarChart from "../../../charts/SingleBarChart";
-import SingleLocationNewDeathsTooltip from "./SingleLocationNewDeathsTooltip";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "../useEMAInSection";
+import { getReadableValuesOnDate } from "../utils";
+import SingleLocationNewDeathsTooltip from "./SingleLocationNewDeathsTooltip";
 
 /**
  * Renders a page section that shows the new deaths chart for a single location.
@@ -17,11 +18,18 @@ const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAPro
   emaRange,
 }) => {
   const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newDeaths", "deaths", emaRange);
+  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Deaths";
   const description = (
     <>
-      <p>The number of new deaths on each day, starting from {startingFrom}.</p>
+      <p>
+        The number of <span style={{ color: COLORS.deaths }}>new deaths</span> on each day, starting
+        from {startingFrom}.
+      </p>
+      <p>
+        There were {readableLastValues.newDeaths} new deaths on {readableLastValues.date}.
+      </p>
       {emaMessage}
     </>
   );
