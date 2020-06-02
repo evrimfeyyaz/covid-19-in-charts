@@ -2,7 +2,7 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationTooltipBase from "../SingleLocationTooltipBase";
+import SingleLocationTooltipBase from "../common/charts/SingleLocationTooltipBase";
 
 /**
  * A Recharts tooltip component to show the details of a data point on the deaths chart.

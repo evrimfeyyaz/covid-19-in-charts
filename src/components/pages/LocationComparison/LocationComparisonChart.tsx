@@ -14,7 +14,7 @@ import {
   YAxis,
 } from "recharts";
 import { COLORS } from "../../../constants";
-import { numToGroupedString, numToPercentageFactory } from "../../../utilities/numUtilities";
+import { numToGroupedString, numToPercentFactory } from "../../../utilities/numUtilities";
 import NoData from "../../common/NoData";
 
 interface LocationComparisonChartProps {
@@ -50,7 +50,7 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
     }));
 
     const yAxisTickFormatter = ["mortalityRate", "recoveryRate"].includes(property)
-      ? numToPercentageFactory(2)
+      ? numToPercentFactory(2)
       : numToGroupedString;
     const tooltipFormatter: TooltipFormatter = (value, _name, { dataKey }) => {
       if (dataKey == null || typeof dataKey !== "string" || typeof value !== "number") {
@@ -58,7 +58,7 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
       }
 
       const formatter = ["mortalityRate", "recoveryRate"].includes(dataKey)
-        ? numToPercentageFactory(3)
+        ? numToPercentFactory(3)
         : numToGroupedString;
       const formattedValue = formatter(value);
 

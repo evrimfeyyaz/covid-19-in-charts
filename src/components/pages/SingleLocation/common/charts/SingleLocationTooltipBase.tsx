@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { prettifyMDYDate } from "../../../../../utilities/dateUtilities";
 
 interface SingleLocationTooltipProps {
   /**

@@ -12,7 +12,7 @@
  */
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import { prettifyMDYDate } from "../../../utilities/dateUtilities";
-import { numToGroupedString, numToPercentageFactory } from "../../../utilities/numUtilities";
+import { numToGroupedString, numToPercentFactory } from "../../../utilities/numUtilities";
 
 export function getEMADiffMessage(
   value: number,
@@ -71,11 +71,11 @@ export function getReadableValuesOnDate(values: ValuesOnDate): ReadableValuesOnD
   }
 
   if (values.mortalityRate != null) {
-    readableValues.mortalityRate = numToPercentageFactory(2)(values.mortalityRate);
+    readableValues.mortalityRate = numToPercentFactory(2)(values.mortalityRate);
   }
 
   if (values.recoveryRate != null) {
-    readableValues.recoveryRate = numToPercentageFactory(2)(values.recoveryRate);
+    readableValues.recoveryRate = numToPercentFactory(2)(values.recoveryRate);
   }
 
   return readableValues;

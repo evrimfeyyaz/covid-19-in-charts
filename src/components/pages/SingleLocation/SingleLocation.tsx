@@ -25,10 +25,10 @@ import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
 import SingleLocationDeaths from "./Deaths/SingleLocationDeaths";
-import SingleLocationMortalityRate from "./MortalityRate/SingleLocationMortalityRate";
 import SingleLocationNewCases from "./NewCases/SingleLocationNewCases";
 import SingleLocationNewDeaths from "./NewDeaths/SingleLocationNewDeaths";
 import SingleLocationNewRecoveries from "./NewRecoveries/SingleLocationNewRecoveries";
+import SingleLocationOverall from "./Overall/SingleLocationOverall";
 import SingleLocationRecoveries from "./Recoveries/SingleLocationRecoveries";
 
 interface SingleLocationProps {
@@ -200,21 +200,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               values={data.values}
             />
 
-            <SingleLocationMortalityRate
+            <SingleLocationOverall
               startingFrom={startingFrom}
               xAxisTitle={xAxisTitle}
               values={data.values}
             />
-
-            {/*<h2 className="mb-3">Recovery Rate</h2>*/}
-            {/*<SingleLineChart*/}
-            {/*  data={data.values}*/}
-            {/*  dataKey="recoveryRate"*/}
-            {/*  name="Recovery Rate"*/}
-            {/*  color={COLORS.recovered}*/}
-            {/*  xAxisTitle="Test"*/}
-            {/*  yAxisTitle="Test"*/}
-            {/*/>*/}
 
             <p className="my-0 font-weight-light font-italic text-muted">
               <small>

@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleBarChart from "../../../charts/SingleBarChart";
-import SingleLocationSection from "../SingleLocationSection";
-import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
+import SingleLocationBarChartWithEMA from "../common/charts/SingleLocationBarChartWithEMA";
+import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "../useEMAInSection";
 import { getReadableValuesOnDate } from "../utils";
 import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
@@ -35,7 +35,7 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
   );
 
   const chart = (
-    <SingleBarChart
+    <SingleLocationBarChartWithEMA
       data={valuesWithEMA}
       dataKey="newRecovered"
       name={title}

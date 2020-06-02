@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLineChart from "../../../charts/SingleLineChart";
-import SingleLocationSection from "../SingleLocationSection";
-import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import SingleLocationLineChart from "../common/charts/SingleLocationLineChart";
+import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
 import { getReadableValuesOnDate } from "../utils";
 import SingleLocationRecoveriesTooltip from "./SingleLocationRecoveriesTooltip";
 
@@ -31,7 +31,7 @@ const SingleLocationRecoveries: FunctionComponent<SingleLocationSectionProps> = 
   );
 
   const chart = (
-    <SingleLineChart
+    <SingleLocationLineChart
       data={values}
       dataKey="recovered"
       name={title}

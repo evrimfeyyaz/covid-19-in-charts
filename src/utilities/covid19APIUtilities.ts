@@ -77,3 +77,19 @@ export function getValuesWithEMA(
 export interface ValuesOnDateWithMovingAverage extends ValuesOnDate {
   movingAverage: number | null;
 }
+
+export function getValuesWithActiveCasesRate(
+  values: ValuesOnDate[]
+): ValuesOnDateWithActiveCasesRate[] {
+  return values.map((valuesOnDate) => ({
+    ...valuesOnDate,
+    activeCasesRate:
+      valuesOnDate.mortalityRate != null && valuesOnDate.recoveryRate != null
+        ? 1 - (valuesOnDate.mortalityRate + valuesOnDate.recoveryRate)
+        : null,
+  }));
+}
+
+export interface ValuesOnDateWithActiveCasesRate extends ValuesOnDate {
+  activeCasesRate: number | null;
+}
