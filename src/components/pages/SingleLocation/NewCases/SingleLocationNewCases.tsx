@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleBarChart from "../../../charts/SingleBarChart";
-import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../SingleLocationSectionWithEMAProps";
 import { useEMAInSection } from "../useEMAInSection";
+import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
 
 /**
  * Renders a page section that shows the new cases chart for a single location.
@@ -33,7 +34,8 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
       color={COLORS.newConfirmed}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationNewCasesTooltip}
+      yAxisTickFormatter={numToGroupedString}
+      TooltipComponent={SingleLocationNewCasesTooltip}
     />
   );
 

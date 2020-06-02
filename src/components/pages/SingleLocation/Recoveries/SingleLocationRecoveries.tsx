@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLineChart from "../../../charts/SingleLineChart";
 import SingleLocationRecoveriesTooltip from "./SingleLocationRecoveriesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
@@ -24,7 +25,8 @@ const SingleLocationRecoveries: FunctionComponent<SingleLocationSectionProps> = 
       color={COLORS.recovered}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationRecoveriesTooltip}
+      yAxisTickFormatter={numToGroupedString}
+      TooltipComponent={SingleLocationRecoveriesTooltip}
     />
   );
 

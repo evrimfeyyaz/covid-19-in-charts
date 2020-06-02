@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleBarChart from "../../../charts/SingleBarChart";
 import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
@@ -32,7 +33,8 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
       color={COLORS.recovered}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationNewRecoveriesTooltip}
+      yAxisTickFormatter={numToGroupedString}
+      TooltipComponent={SingleLocationNewRecoveriesTooltip}
     />
   );
 

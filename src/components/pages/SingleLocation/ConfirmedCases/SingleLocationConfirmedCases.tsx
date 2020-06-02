@@ -1,9 +1,10 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLineChart from "../../../charts/SingleLineChart";
-import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
 import SingleLocationSection from "../SingleLocationSection";
 import { SingleLocationSectionProps } from "../SingleLocationSectionProps";
+import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
 
 /**
  * Renders a page section that shows the confirmed cases chart for a single location.
@@ -24,7 +25,8 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
       color={COLORS.confirmed}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationConfirmedCasesTooltip}
+      yAxisTickFormatter={numToGroupedString}
+      TooltipComponent={SingleLocationConfirmedCasesTooltip}
     />
   );
 

@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleBarChart from "../../../charts/SingleBarChart";
 import SingleLocationNewDeathsTooltip from "./SingleLocationNewDeathsTooltip";
 import SingleLocationSection from "../SingleLocationSection";
@@ -33,7 +34,8 @@ const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAPro
       color={COLORS.deaths}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
-      tooltipComponent={SingleLocationNewDeathsTooltip}
+      yAxisTickFormatter={numToGroupedString}
+      TooltipComponent={SingleLocationNewDeathsTooltip}
     />
   );
 
