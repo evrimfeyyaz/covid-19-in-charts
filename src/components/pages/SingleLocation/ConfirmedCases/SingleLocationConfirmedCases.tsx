@@ -15,7 +15,7 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
   values,
 }) => {
   const title = "Confirmed Cases";
-  const description = `The number of confirmed cases on each day, starting from the day ${startingFrom}.`;
+  const description = `The number of confirmed cases on each day, starting from ${startingFrom}.`;
 
   const chart = (
     <SingleLineChart
