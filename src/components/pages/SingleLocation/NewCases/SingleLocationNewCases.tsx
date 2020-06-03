@@ -24,8 +24,8 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
   const description = (
     <>
       <p>
-        The number of <span style={{ color: COLORS.newConfirmed }}>new confirmed cases</span> on
-        each day, starting from {startingFrom}.
+        The number of <span style={{ color: COLORS.confirmed }}>new confirmed cases</span> on each
+        day, starting from {startingFrom}.
       </p>
       <p>
         There were {readableLastValues.newConfirmed} new cases on {readableLastValues.date}.
@@ -39,7 +39,7 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
       data={valuesWithEMA}
       dataKey="newConfirmed"
       name={title}
-      color={COLORS.newConfirmed}
+      color={COLORS.confirmed}
       xAxisTitle={xAxisTitle}
       yAxisTitle={title}
       yAxisTickFormatter={numToGroupedString}

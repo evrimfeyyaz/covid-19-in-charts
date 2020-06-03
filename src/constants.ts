@@ -14,8 +14,7 @@ export const ROUTE_TITLES = {
 };
 
 export const COLORS = {
-  confirmed: "#7d6c00",
-  newConfirmed: "#ce5c13",
+  confirmed: "#e07804",
   deaths: "#da2d2d",
   recovered: "#0e8203",
   bgColor: "#e1e6ed",
