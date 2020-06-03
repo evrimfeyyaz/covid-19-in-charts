@@ -10,7 +10,7 @@ import { useCanonicalURL } from "../../hooks/useCanonicalURL";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
 import Loading from "./Loading";
-import ShareAndDownload from "./ShareAndDownload";
+import ShareButtons from "./ShareButtons";
 
 interface DataPageProps {
   title: string;
@@ -24,7 +24,6 @@ interface DataPageProps {
   advancedOptionsComponents?: JSX.Element[];
   dataContainerId: string;
   canonicalQueryParams?: string[];
-  onDownloadClick: () => void;
 }
 
 const DataPage: FunctionComponent<DataPageProps> = ({
@@ -39,7 +38,6 @@ const DataPage: FunctionComponent<DataPageProps> = ({
   lastUpdated,
   ogImage,
   dataContainerId,
-  onDownloadClick,
 }) => {
   const canonicalUrl = useCanonicalURL(canonicalQueryParams);
 
@@ -70,7 +68,7 @@ const DataPage: FunctionComponent<DataPageProps> = ({
             </Accordion>
           )}
           <div className="mt-auto d-none d-lg-block">
-            <ShareAndDownload title={title} onDownloadClick={onDownloadClick} smallButtons />
+            <ShareButtons title={title} url={window.location.href} small />
           </div>
         </Col>
         <Col>
@@ -98,7 +96,7 @@ const DataPage: FunctionComponent<DataPageProps> = ({
         </Col>
         <Row className="d-lg-none mt-3">
           <Col className="px-5">
-            <ShareAndDownload title={title} onDownloadClick={onDownloadClick} />
+            <ShareButtons title={title} url={window.location.href} />
           </Col>
         </Row>
       </Row>

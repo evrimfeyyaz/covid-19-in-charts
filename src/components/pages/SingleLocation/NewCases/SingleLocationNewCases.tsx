@@ -55,7 +55,9 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
     />
   );
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection title={title} id="new-cases" description={description} chart={chart} />
+  );
 };
 
 export default SingleLocationNewCases;

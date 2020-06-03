@@ -44,7 +44,9 @@ const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
     />
   );
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection title={title} id="deaths" description={description} chart={chart} />
+  );
 };
 
 export default SingleLocationDeaths;

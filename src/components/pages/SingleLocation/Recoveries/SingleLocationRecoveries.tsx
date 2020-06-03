@@ -45,7 +45,9 @@ const SingleLocationRecoveries: FunctionComponent<SingleLocationSectionProps> = 
     />
   );
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection title={title} id="recoveries" description={description} chart={chart} />
+  );
 };
 
 export default SingleLocationRecoveries;

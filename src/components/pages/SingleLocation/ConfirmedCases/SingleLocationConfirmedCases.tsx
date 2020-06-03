@@ -47,7 +47,14 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
     />
   );
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection
+      title={title}
+      id="confirmed-cases"
+      description={description}
+      chart={chart}
+    />
+  );
 };
 
 export default SingleLocationConfirmedCases;

@@ -50,7 +50,9 @@ const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
 
   const chart = <SingleLocationOverallChart data={values} xAxisTitle={xAxisTitle} />;
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection title={title} id="new-deaths" description={description} chart={chart} />
+  );
 };
 
 export default SingleLocationOverall;

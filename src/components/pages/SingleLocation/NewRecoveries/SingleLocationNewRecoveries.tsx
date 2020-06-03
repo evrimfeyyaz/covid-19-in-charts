@@ -47,7 +47,14 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
     />
   );
 
-  return <SingleLocationSection title={title} description={description} chart={chart} />;
+  return (
+    <SingleLocationSection
+      title={title}
+      id="new-recoveries"
+      description={description}
+      chart={chart}
+    />
+  );
 };
 
 export default SingleLocationNewRecoveries;

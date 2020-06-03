@@ -23,7 +23,6 @@ interface LocationComparisonChartProps {
   humanizedProperty: string;
   humanizedExceedingProperty: string;
   exceedingValue: number;
-  isAnimationActive: boolean;
 }
 
 const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> = ({
@@ -32,7 +31,6 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
   humanizedProperty,
   property,
   exceedingValue,
-  isAnimationActive,
 }) => {
   let body = <NoData />;
 
@@ -101,7 +99,6 @@ const LocationComparisonChart: FunctionComponent<LocationComparisonChartProps> =
               key={`${property}-${index}`}
               name={locationData.location}
               dot={false}
-              isAnimationActive={isAnimationActive}
             />
           ))}
         </LineChart>

@@ -6,7 +6,6 @@ import useLocationSelection from "../../../hooks/useLocationSelection";
 import { useNumberSelection } from "../../../hooks/useNumberSelection";
 import { usePropertySelection } from "../../../hooks/usePropertySelection";
 import { stripDataBeforePropertyExceedsN } from "../../../utilities/covid19APIUtilities";
-import { downloadNode } from "../../../utilities/nodeToImageUtilities";
 import DataPage from "../../common/DataPage";
 import LocationComparisonChart from "./LocationComparisonChart";
 
@@ -23,7 +22,6 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
   const [locationsList] = useState(store.locations);
   const [data, setData] = useState<LocationData[]>();
   const [lastUpdated, setLastUpdated] = useState<Date>();
-  const [areChartAnimationsActive, setAreChartAnimationsActive] = useState(true);
 
   const [locations, locationInputComponent] = useLocationSelection(
     locationsList,
@@ -66,7 +64,8 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
 
   const chartId = "location-comparison-chart";
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
-  const pageDescription = "Comparison of various COVID-19 values points between multiple locations.";
+  const pageDescription =
+    "Comparison of various COVID-19 values points between multiple locations.";
 
   function clearData(): void {
     setData(undefined);
@@ -75,14 +74,6 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
 
   function hasLoaded(): boolean {
     return data != null && lastUpdated != null;
-  }
-
-  function handleDownloadClick(): void {
-    setAreChartAnimationsActive(false);
-    const node = document.getElementById(chartId) as HTMLElement;
-    downloadNode(node)
-      .catch(console.error)
-      .finally(() => setAreChartAnimationsActive(true));
   }
 
   useEffect(() => {
@@ -105,7 +96,6 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
       humanizedProperty={humanizedProperty}
       humanizedExceedingProperty={humanizedExceedingProperty}
       exceedingValue={exceedingValue}
-      isAnimationActive={areChartAnimationsActive}
     />
   );
 
@@ -121,7 +111,6 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
       advancedOptionsComponents={[exceedingPropertyInputComponent, exceedingValueInputComponent]}
       dataContainerId={chartId}
       canonicalQueryParams={canonicalQueryParams}
-      onDownloadClick={handleDownloadClick}
     />
   );
 };
