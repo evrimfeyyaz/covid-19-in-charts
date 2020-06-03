@@ -19,12 +19,12 @@ import {
 import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
-import LatestNumbers from "../../charts/LatestNumbers/LatestNumbers";
 import Loading from "../../common/Loading";
 import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
 import SingleLocationDeaths from "./Deaths/SingleLocationDeaths";
+import SingleLocationLatestNumbers from "./LatestNumbers/SingleLocationLatestNumbers";
 import SingleLocationNewCases from "./NewCases/SingleLocationNewCases";
 import SingleLocationNewDeaths from "./NewDeaths/SingleLocationNewDeaths";
 import SingleLocationNewRecoveries from "./NewRecoveries/SingleLocationNewRecoveries";
@@ -158,7 +158,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
                 Latest Numbers{" "}
                 <small className="text-muted">{prettifyMDYDate(latestValues.date)}</small>
               </h2>
-              <LatestNumbers data={latestValues} />
+              <SingleLocationLatestNumbers data={latestValues} />
             </section>
 
             <SingleLocationConfirmedCases

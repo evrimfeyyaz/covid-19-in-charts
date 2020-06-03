@@ -2,15 +2,15 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import { COLORS } from "../../../constants";
-import NoData from "../../common/NoData";
-import LatestNumbersItem from "./LatestNumbersItem";
+import { COLORS } from "../../../../constants";
+import NoData from "../../../common/NoData";
+import SingleLocationLatestNumbersItem from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
   data?: ValuesOnDate;
 }
 
-const LatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
+const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
   let body = <NoData />;
 
   if (data != null) {
@@ -28,31 +28,29 @@ const LatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
     body = (
       <Row>
         <Col xs={4}>
-          <LatestNumbersItem
-            headerBgColor={COLORS.confirmed}
+          <SingleLocationLatestNumbersItem
+            color={COLORS.confirmed}
             title="Confirmed Cases"
             value={confirmed}
             newValue={newConfirmed}
           />
         </Col>
         <Col xs={4}>
-          <LatestNumbersItem
-            headerBgColor={COLORS.deaths}
+          <SingleLocationLatestNumbersItem
+            color={COLORS.deaths}
             title="Deaths"
             value={deaths}
             newValue={newDeaths}
             rateValue={mortalityRate}
-            headerLight
           />
         </Col>
         <Col xs={4}>
-          <LatestNumbersItem
-            headerBgColor={COLORS.recovered}
+          <SingleLocationLatestNumbersItem
+            color={COLORS.recovered}
             title="Recoveries"
             value={recovered}
             newValue={newRecovered}
             rateValue={recoveryRate}
-            headerLight
           />
         </Col>
       </Row>
@@ -62,4 +60,4 @@ const LatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
   return body;
 };
 
-export default LatestNumbers;
+export default SingleLocationLatestNumbers;
