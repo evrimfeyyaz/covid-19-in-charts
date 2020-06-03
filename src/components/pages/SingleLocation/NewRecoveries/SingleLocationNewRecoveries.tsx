@@ -1,10 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationBarChartWithEMA from "../common/charts/SingleLocationBarChartWithEMA";
+import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
 import SingleLocationSection from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
-import { useEMAInSection } from "../useEMAInSection";
 import { getReadableValuesOnDate } from "../utils";
 import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
 
@@ -15,9 +14,7 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
   startingFrom,
   xAxisTitle,
   values,
-  emaRange,
 }) => {
-  const [valuesWithEMA] = useEMAInSection(values, "newRecovered", "recoveries", emaRange);
   const readableValuesOnDate = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Recoveries";
@@ -38,8 +35,8 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
   );
 
   const chart = (
-    <SingleLocationBarChartWithEMA
-      data={valuesWithEMA}
+    <SingleLocationBarChart
+      data={values}
       dataKey="newRecovered"
       name={title}
       color={COLORS.recovered}

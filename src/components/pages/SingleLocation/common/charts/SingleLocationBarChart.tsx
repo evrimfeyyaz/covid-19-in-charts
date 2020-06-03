@@ -7,27 +7,32 @@ import SingleLocationChartContainer from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 /**
- * A bar chart that charts one values point and the exponential moving average of that values point of
- * a single location.
+ * A bar chart that charts a single data point, and optionally its exponential moving average, of a
+ * single location.
  */
-const SingleLocationBarChartWithEMA: FunctionComponent<SingleLocationChartProps<
-  ValuesOnDateWithMovingAverage,
+const SingleLocationBarChart: FunctionComponent<SingleLocationChartProps<
+  ValuesOnDateWithMovingAverage | ValuesOnDate,
   keyof ValuesOnDate
 >> = (props) => {
-  const { dataKey, name, color } = props;
+  const { dataKey, name, color, data } = props;
+
+  const hasMovingAverage =
+    (data as ValuesOnDateWithMovingAverage[])[data.length - 1]["movingAverage"] != null;
 
   return (
     <SingleLocationChartContainer ChartComponent={ComposedChart} {...props}>
       <Bar dataKey={dataKey} opacity={0.9} fill={color} name={name} />
-      <Line
-        dataKey="movingAverage"
-        dot={false}
-        opacity={0.9}
-        strokeWidth={2}
-        stroke={COLORS.movingAverage}
-      />
+      {hasMovingAverage && (
+        <Line
+          dataKey="movingAverage"
+          dot={false}
+          opacity={0.9}
+          strokeWidth={2}
+          stroke={COLORS.movingAverage}
+        />
+      )}
     </SingleLocationChartContainer>
   );
 };
 
-export default SingleLocationBarChartWithEMA;
+export default SingleLocationBarChart;

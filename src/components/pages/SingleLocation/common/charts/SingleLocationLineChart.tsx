@@ -5,7 +5,7 @@ import SingleLocationChartContainer from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 /**
- * A line chart that charts one values point for a single location.
+ * A line chart that charts a single data point of a single location.
  */
 const SingleLocationLineChart: FunctionComponent<SingleLocationChartProps<
   ValuesOnDate,

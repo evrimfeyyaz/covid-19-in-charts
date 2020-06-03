@@ -1,10 +1,11 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { getValuesWithEMA } from "../../../../utilities/covid19APIUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationBarChartWithEMA from "../common/charts/SingleLocationBarChartWithEMA";
+import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
+import EMAMessage from "../common/EMAMessage";
 import SingleLocationSection from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
-import { useEMAInSection } from "../useEMAInSection";
 import { getReadableValuesOnDate } from "../utils";
 import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
 
@@ -17,7 +18,7 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
   values,
   emaRange,
 }) => {
-  const [valuesWithEMA, emaMessage] = useEMAInSection(values, "newConfirmed", "cases", emaRange);
+  const valuesWithEMA = getValuesWithEMA(values, "newConfirmed", emaRange);
   const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Cases";
@@ -32,12 +33,17 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
         <span style={{ color: COLORS.confirmed }}>{readableLastValues.newConfirmed} new cases</span>{" "}
         on {readableLastValues.date}.
       </p>
-      {emaMessage}
+      <EMAMessage
+        values={valuesWithEMA}
+        property={"newConfirmed"}
+        chartUnit={"cases"}
+        range={emaRange}
+      />
     </>
   );
 
   const chart = (
-    <SingleLocationBarChartWithEMA
+    <SingleLocationBarChart
       data={valuesWithEMA}
       dataKey="newConfirmed"
       name={title}
