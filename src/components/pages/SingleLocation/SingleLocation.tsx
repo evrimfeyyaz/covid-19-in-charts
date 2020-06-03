@@ -32,9 +32,15 @@ import SingleLocationOverall from "./Overall/SingleLocationOverall";
 import SingleLocationRecoveries from "./Recoveries/SingleLocationRecoveries";
 
 interface SingleLocationProps {
+  /**
+   * The `COVID19API` instance to query the data from.
+   */
   store: COVID19API;
 }
 
+/**
+ * A page that shows various charts and explanations for a single location.
+ */
 const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   const defaultLocation = "US";
   const defaultExceedingProperty = "confirmed";

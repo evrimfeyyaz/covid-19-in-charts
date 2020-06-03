@@ -7,9 +7,16 @@ import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
 import SingleLocationLatestNumbersItem from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
+  /**
+   * A `ValuesOnDate` object containing the values for the latest data point.
+   */
   values: ValuesOnDate;
 }
 
+/**
+ * A component that shows the latest numbers (confirmed cases, deaths and recoveries) for a single
+ * location.
+ */
 const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ values }) => {
   const {
     confirmed,

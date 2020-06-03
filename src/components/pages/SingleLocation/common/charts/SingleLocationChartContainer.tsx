@@ -11,6 +11,9 @@ interface ChartContainerProps<DataType, DataKeysType>
   ChartComponent: React.ElementType;
 }
 
+/**
+ * The container component for all the charts on the single location page.
+ */
 function SingleLocationChartContainer<DataType, DataKeysType>({
   data,
   xAxisTitle,

@@ -3,13 +3,33 @@ import Card from "react-bootstrap/Card";
 import { numToGroupedString, numToPercentFactory } from "../../../../utilities/numUtilities";
 
 interface LatestNumbersItemProps {
+  /**
+   * The name of the value, e.g. "Confirmed Cases".
+   */
   title: string;
+  /**
+   * The latest value.
+   */
   value: number | null;
+  /**
+   * The color of the header.
+   */
   color: string;
+  /**
+   * The increase of the data point compared to the last date. For example, if this item is showing
+   * "confirmed cases," this value would should be set to "new confirmed cases".
+   */
   newValue?: number | null;
+  /**
+   * The value as the percentage of confirmed cases.
+   */
   rateValue?: number | null;
 }
 
+/**
+ * A single item within the {@link SingleLocationLatestNumbers} component, showing a value such as
+ * "confirmed cases," and other information.
+ */
 const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersItemProps> = ({
   color,
   title,

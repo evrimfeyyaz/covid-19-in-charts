@@ -8,7 +8,13 @@ import SingleLocationChartContainer from "../common/charts/SingleLocationChartCo
 import SingleLocationOverallTooltip from "./SingleLocationOverallTooltip";
 
 interface SingleLocationOverallChartProps {
+  /**
+   * Data to chart.
+   */
   data: ValuesOnDate[];
+  /**
+   * The title of the x axis of the chart in this section.
+   */
   xAxisTitle: string;
 }
 

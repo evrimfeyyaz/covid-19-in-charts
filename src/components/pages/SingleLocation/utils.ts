@@ -7,7 +7,7 @@
  * @param movingAverage The moving average on a certain day.
  * @param chartUnit The unit of the chart values. For example, the unit for the new cases chart is
  *   "cases," and the unit for the new deaths chart is "deaths."
- * @returns An array with two elemens, the first element is the message, the second element is the
+ * @returns An array with two elements, the first element is the message, the second element is the
  *   CSS class to be used when showing the message.
  */
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";

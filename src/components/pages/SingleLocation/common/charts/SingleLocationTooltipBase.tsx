@@ -7,8 +7,8 @@ interface SingleLocationTooltipProps {
    */
   value: string;
   /**
-   * The unit for the chart values. For example, the unit for the new cases chart is "cases," and the
-   * unit for the new deaths chart is "deaths."
+   * The unit for the chart values. For example, the unit for the new cases chart is "cases," and
+   * the unit for the new deaths chart is "deaths."
    */
   chartUnit?: string;
   /**
@@ -29,7 +29,7 @@ interface SingleLocationTooltipProps {
  * The base component containing the way the tooltips on the single location page charts are
  * displayed.
  *
- * Not to be used on its own, but for using it in other tooltip components as a way to keep them
+ * Not to be used on its own, but for use in other tooltip components as a way to keep them
  * consistent.
  */
 const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> = ({
