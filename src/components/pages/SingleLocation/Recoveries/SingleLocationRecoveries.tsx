@@ -21,11 +21,13 @@ const SingleLocationRecoveries: FunctionComponent<SingleLocationSectionProps> = 
   const description = (
     <>
       <p>
-        The number of <span style={{ color: COLORS.recovered }}>cumulative recoveries</span> on each
+        The <span style={{ color: COLORS.recovered }}>cumulative number of recoveries</span> on each
         day, starting from {startingFrom}.
       </p>
       <p>
-        There were {readableLastValues.recovered} recoveries to date on {readableLastValues.date}.
+        There were{" "}
+        <span style={{ color: COLORS.recovered }}>{readableLastValues.recovered} recoveries</span>{" "}
+        to date on {readableLastValues.date}.
       </p>
     </>
   );

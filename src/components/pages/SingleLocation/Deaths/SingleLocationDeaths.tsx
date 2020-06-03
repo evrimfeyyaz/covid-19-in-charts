@@ -25,7 +25,8 @@ const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
         starting from {startingFrom}.
       </p>
       <p>
-        There were {readableLastValues.deaths} deaths to date on {readableLastValues.date}.
+        There were <span style={{ color: COLORS.deaths }}>{readableLastValues.deaths} deaths</span>{" "}
+        to date on {readableLastValues.date}.
       </p>
     </>
   );

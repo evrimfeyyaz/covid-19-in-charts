@@ -28,7 +28,9 @@ const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAPro
         from {startingFrom}.
       </p>
       <p>
-        There were {readableLastValues.newDeaths} new deaths on {readableLastValues.date}.
+        There were{" "}
+        <span style={{ color: COLORS.deaths }}>{readableLastValues.newDeaths} new deaths</span> on{" "}
+        {readableLastValues.date}.
       </p>
       {emaMessage}
     </>

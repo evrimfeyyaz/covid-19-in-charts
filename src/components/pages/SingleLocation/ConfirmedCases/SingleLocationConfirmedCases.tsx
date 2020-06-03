@@ -21,12 +21,15 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
   const description = (
     <>
       <p>
-        The <span style={{ color: COLORS.confirmed }}>cumulative number of confirmed cases</span> on
+        The cumulative number of <span style={{ color: COLORS.confirmed }}>confirmed cases</span> on
         each day, starting from {startingFrom}.
       </p>
       <p>
-        There were {readableLastValues.confirmed} confirmed cases to date on{" "}
-        {readableLastValues.date}.
+        There were{" "}
+        <span style={{ color: COLORS.confirmed }}>
+          {readableLastValues.confirmed} confirmed cases
+        </span>{" "}
+        to date on {readableLastValues.date}.
       </p>
     </>
   );

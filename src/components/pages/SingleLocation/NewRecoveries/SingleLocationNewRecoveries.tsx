@@ -28,8 +28,11 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
         starting from {startingFrom}.
       </p>
       <p>
-        There were {readableValuesOnDate.newRecovered} new recoveries on {readableValuesOnDate.date}
-        .
+        There were{" "}
+        <span style={{ color: COLORS.recovered }}>
+          {readableValuesOnDate.newRecovered} new recoveries
+        </span>{" "}
+        on {readableValuesOnDate.date}.
       </p>
     </>
   );

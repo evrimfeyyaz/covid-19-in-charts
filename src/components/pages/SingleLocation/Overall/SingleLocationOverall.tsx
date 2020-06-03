@@ -21,31 +21,29 @@ const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
       <p>
         The <span style={{ color: COLORS.deaths }}>deaths</span>,{" "}
         <span style={{ color: COLORS.recovered }}>recoveries</span> and{" "}
-        <span style={{ color: COLORS.confirmed }}>active cases</span> as percentages of total
-        confirmed cases on each day, starting from {startingFrom}.
+        <span style={{ color: COLORS.confirmed }}>active cases</span> as percentages of confirmed
+        cases on each day, starting from {startingFrom}.
       </p>
       <p>
         On {readableValuesOnDate.date}, the{" "}
         <span
-          className="more-info"
           style={{
             color: COLORS.deaths,
             borderColor: COLORS.deaths,
           }}
         >
-          mortality rate
+          <span className="more-info">mortality rate</span> was {readableValuesOnDate.mortalityRate}
         </span>{" "}
-        was {readableValuesOnDate.mortalityRate}, and the{" "}
+        , and the{" "}
         <span
-          className="more-info"
           style={{
             color: COLORS.recovered,
             borderColor: COLORS.recovered,
           }}
         >
-          recovery rate
+          <span className="more-info">recovery rate</span> was {readableValuesOnDate.recoveryRate}
         </span>{" "}
-        was {readableValuesOnDate.recoveryRate}.
+        .
       </p>
     </>
   );

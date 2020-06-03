@@ -28,7 +28,9 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
         day, starting from {startingFrom}.
       </p>
       <p>
-        There were {readableLastValues.newConfirmed} new cases on {readableLastValues.date}.
+        There were{" "}
+        <span style={{ color: COLORS.confirmed }}>{readableLastValues.newConfirmed} new cases</span>{" "}
+        on {readableLastValues.date}.
       </p>
       {emaMessage}
     </>
