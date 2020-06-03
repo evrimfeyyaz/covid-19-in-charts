@@ -1,3 +1,7 @@
+import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
+import { prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { numToGroupedString, numToPercentFactory } from "../../../utilities/numUtilities";
+
 /**
  * Returns a message showing the difference between the actual value and the moving average. This
  * is used in tooltips, e.g. showing the difference between the new cases value on a day and the
@@ -10,10 +14,6 @@
  * @returns An array with two elements, the first element is the message, the second element is the
  *   CSS class to be used when showing the message.
  */
-import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import { prettifyMDYDate } from "../../../utilities/dateUtilities";
-import { numToGroupedString, numToPercentFactory } from "../../../utilities/numUtilities";
-
 export function getEMADiffMessage(
   value: number,
   movingAverage: number,
