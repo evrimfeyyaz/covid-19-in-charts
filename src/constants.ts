@@ -55,7 +55,7 @@ export const SITE_INFO = {
   baseUrl:
     process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : "https://covid19incharts.com",
   baseTitle: "COVID-19 in Charts",
-  description: "Various data related to COVID-19 visualized.",
+  description: "Various values related to COVID-19 visualized.",
 };
 
 export const IMAGES = {

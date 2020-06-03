@@ -13,7 +13,7 @@ interface SingleLocationOverallChartProps {
 }
 
 /**
- * A percent area chart that charts multiple data points for a single location.
+ * A percent area chart that charts multiple values points for a single location.
  */
 const SingleLocationOverallChart: FunctionComponent<SingleLocationOverallChartProps> = ({
   data,

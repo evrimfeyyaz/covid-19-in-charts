@@ -16,7 +16,7 @@ import {
   humanizePropertyName,
   stripDataBeforePropertyExceedsN,
 } from "../../../utilities/covid19APIUtilities";
-import { MDYStringToDate, prettifyDate, prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { MDYStringToDate, prettifyDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
 import Loading from "../../common/Loading";
@@ -153,13 +153,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
             <h1>COVID-19: {location}</h1>
             {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
 
-            <section className="mb-5">
-              <h2 className="mb-4">
-                Latest Numbers{" "}
-                <small className="text-muted">{prettifyMDYDate(latestValues.date)}</small>
-              </h2>
-              <SingleLocationLatestNumbers data={latestValues} />
-            </section>
+            <SingleLocationLatestNumbers values={latestValues} />
 
             <SingleLocationConfirmedCases
               startingFrom={startingFrom}

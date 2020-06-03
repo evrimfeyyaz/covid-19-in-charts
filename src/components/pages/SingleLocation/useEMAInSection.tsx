@@ -10,16 +10,16 @@ import { getReadableValuesOnDate } from "./utils";
 type UseEMAInSectionReturnValue = [ValuesOnDateWithMovingAverage[], JSX.Element | null];
 
 /**
- * A React hook for getting a given dataset with exponential moving average data added, and getting
+ * A React hook for getting a given dataset with exponential moving average values added, and getting
  * a message related to the EMA to use within the section.
  *
- * @param values The data to add EMA to.
- * @param property The property to use within the data for the EMA calculation, e.g.
+ * @param values The values to add EMA to.
+ * @param property The property to use within the values for the EMA calculation, e.g.
  *   "newConfirmed".
- * @param chartUnit The unit for the chart data. For example, the unit for the new cases chart is
+ * @param chartUnit The unit for the chart values. For example, the unit for the new cases chart is
  *   "cases," and the unit for the new deaths chart is "deaths."
  * @param range The range for the EMA calculation. For example, if this is set to 12 then a 12-day
- *   exponential moving average is calculated for the data.
+ *   exponential moving average is calculated for the values.
  * @returns An array containing the following values: Data with EMA, the JSX element containing the
  *   EMA info message (or null if EMA couldn't be calculated).
  */

@@ -5,7 +5,7 @@ import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLocationTooltipBase from "../common/charts/SingleLocationTooltipBase";
 
 /**
- * A Recharts tooltip component to show the details of a data point on the recoveries chart.
+ * A Recharts tooltip component to show the details of a values point on the recoveries chart.
  */
 const SingleLocationRecoveriesTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
   if (!active || payload == null) {

@@ -7,7 +7,7 @@ import SingleLocationChartContainer from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 /**
- * A bar chart that charts one data point and the exponential moving average of that data point of
+ * A bar chart that charts one values point and the exponential moving average of that values point of
  * a single location.
  */
 const SingleLocationBarChartWithEMA: FunctionComponent<SingleLocationChartProps<

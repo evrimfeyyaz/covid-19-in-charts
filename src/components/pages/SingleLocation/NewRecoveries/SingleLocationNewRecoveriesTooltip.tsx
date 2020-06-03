@@ -6,7 +6,7 @@ import SingleLocationTooltipBase from "../common/charts/SingleLocationTooltipBas
 import { getEMADiffMessage } from "../utils";
 
 /**
- * A Recharts tooltip component to show the details of a data point on the new recoveries chart.
+ * A Recharts tooltip component to show the details of a values point on the new recoveries chart.
  */
 const SingleLocationNewRecoveriesTooltip: FunctionComponent<TooltipProps> = ({
   active,

@@ -7,7 +7,7 @@ interface SingleLocationTooltipProps {
    */
   value: string;
   /**
-   * The unit for the chart data. For example, the unit for the new cases chart is "cases," and the
+   * The unit for the chart values. For example, the unit for the new cases chart is "cases," and the
    * unit for the new deaths chart is "deaths."
    */
   chartUnit?: string;
@@ -20,7 +20,7 @@ interface SingleLocationTooltipProps {
    */
   secondaryInfoClassName?: string;
   /**
-   * The date of the data point, for which we are showing a tooltip.
+   * The date of the values point, for which we are showing a tooltip.
    */
   date: string;
 }

@@ -66,7 +66,7 @@ const LocationComparison: FunctionComponent<LocationComparisonProps> = ({ store 
 
   const chartId = "location-comparison-chart";
   const title = `COVID-19 ${_.startCase(humanizedProperty)} Comparison`;
-  const pageDescription = "Comparison of various COVID-19 data points between multiple locations.";
+  const pageDescription = "Comparison of various COVID-19 values points between multiple locations.";
 
   function clearData(): void {
     setData(undefined);

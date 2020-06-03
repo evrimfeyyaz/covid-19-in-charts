@@ -2,7 +2,7 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 
 export interface SingleLocationSectionProps {
   /**
-   * A `string` explaining the day that the data plotted in the chart starts. This `string`
+   * A `string` explaining the day that the values plotted in the chart starts. This `string`
    * continues the words "starting from".
    *
    * For example, "Mar 19, 2020" or "the day confirmed cases exceeded 100 (Mar 19, 2020)".
@@ -13,7 +13,7 @@ export interface SingleLocationSectionProps {
    */
   xAxisTitle: string;
   /**
-   * The data for the chart to display.
+   * The values for the chart to display.
    */
   values: ValuesOnDate[];
 }

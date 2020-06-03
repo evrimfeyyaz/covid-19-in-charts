@@ -2,11 +2,11 @@ import React from "react";
 
 export interface SingleLocationChartProps<DataType, DataKeysType> {
   /**
-   * The data to chart.
+   * The values to chart.
    */
   data: DataType[];
   /**
-   * The key of `data` to chart.
+   * The key of `values` to chart.
    */
   dataKey: DataKeysType;
   /**
@@ -14,7 +14,7 @@ export interface SingleLocationChartProps<DataType, DataKeysType> {
    */
   color: string;
   /**
-   * The human-readable name of the data that is charted.
+   * The human-readable name of the values that is charted.
    */
   name: string;
   /**

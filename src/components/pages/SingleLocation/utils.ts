@@ -5,7 +5,7 @@
  *
  * @param value The actual value, e.g. the new cases value on a certain day.
  * @param movingAverage The moving average on a certain day.
- * @param chartUnit The unit of the chart data. For example, the unit for the new cases chart is
+ * @param chartUnit The unit of the chart values. For example, the unit for the new cases chart is
  *   "cases," and the unit for the new deaths chart is "deaths."
  * @returns An array with two elemens, the first element is the message, the second element is the
  *   CSS class to be used when showing the message.

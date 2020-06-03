@@ -3,29 +3,30 @@ import React, { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { COLORS } from "../../../../constants";
-import NoData from "../../../common/NoData";
+import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
 import SingleLocationLatestNumbersItem from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
-  data?: ValuesOnDate;
+  values: ValuesOnDate;
 }
 
-const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ data }) => {
-  let body = <NoData />;
+const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ values }) => {
+  const {
+    confirmed,
+    newConfirmed,
+    recovered,
+    deaths,
+    newRecovered,
+    newDeaths,
+    mortalityRate,
+    recoveryRate,
+  } = values;
 
-  if (data != null) {
-    const {
-      confirmed,
-      newConfirmed,
-      recovered,
-      deaths,
-      newRecovered,
-      newDeaths,
-      mortalityRate,
-      recoveryRate,
-    } = data;
-
-    body = (
+  return (
+    <section className="mb-5">
+      <h2 className="mb-4">
+        Latest Numbers <small className="text-muted">{prettifyMDYDate(values.date)}</small>
+      </h2>
       <Row>
         <Col xs={4}>
           <SingleLocationLatestNumbersItem
@@ -54,10 +55,8 @@ const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ da
           />
         </Col>
       </Row>
-    );
-  }
-
-  return body;
+    </section>
+  );
 };
 
 export default SingleLocationLatestNumbers;

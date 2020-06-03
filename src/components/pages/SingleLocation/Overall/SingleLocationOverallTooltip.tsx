@@ -5,7 +5,7 @@ import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
 import { numToPercentFactory } from "../../../../utilities/numUtilities";
 
 /**
- * A Recharts tooltip component to show the details of all the data points on the overall chart.
+ * A Recharts tooltip component to show the details of all the values points on the overall chart.
  */
 const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
   if (!active || payload == null) {
