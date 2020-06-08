@@ -4,8 +4,8 @@ import { Area, AreaChart } from "recharts";
 import { COLORS } from "../../../../constants";
 import { getValuesWithActiveCasesRate } from "../../../../utilities/covid19ApiUtilities";
 import { numToPercentFactory } from "../../../../utilities/numUtilities";
-import SingleLocationChartContainer from "../common/charts/SingleLocationChartContainer";
-import SingleLocationOverallTooltip from "./SingleLocationOverallTooltip";
+import { SingleLocationChartContainer } from "../common/charts/SingleLocationChartContainer";
+import { SingleLocationOverallTooltip } from "./SingleLocationOverallTooltip";
 
 interface SingleLocationOverallChartProps {
   /**
@@ -21,7 +21,7 @@ interface SingleLocationOverallChartProps {
 /**
  * A percent area chart that charts multiple values points for a single location.
  */
-const SingleLocationOverallChart: FunctionComponent<SingleLocationOverallChartProps> = ({
+export const SingleLocationOverallChart: FunctionComponent<SingleLocationOverallChartProps> = ({
   data,
   xAxisTitle,
 }) => {
@@ -59,5 +59,3 @@ const SingleLocationOverallChart: FunctionComponent<SingleLocationOverallChartPr
     </SingleLocationChartContainer>
   );
 };
-
-export default SingleLocationOverallChart;

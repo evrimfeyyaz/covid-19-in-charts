@@ -13,7 +13,7 @@ interface LocationSelectionInputProps {
   onChange: (locations: string[]) => void;
 }
 
-const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
+export const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
   locationsList,
   defaultLocations,
   multiple,
@@ -76,5 +76,3 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
     </Form.Group>
   );
 };
-
-export default LocationSelectionInput;

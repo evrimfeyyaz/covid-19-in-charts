@@ -5,7 +5,7 @@ import Navbar from "react-bootstrap/Navbar";
 import { useLocation } from "react-router-dom";
 import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
-const NavBar: FunctionComponent = () => {
+export const NavBar: FunctionComponent = () => {
   const { pathname } = useLocation();
 
   function createNavLinkProps(href: string): { href: string; className: string } {
@@ -35,5 +35,3 @@ const NavBar: FunctionComponent = () => {
     </Navbar>
   );
 };
-
-export default NavBar;

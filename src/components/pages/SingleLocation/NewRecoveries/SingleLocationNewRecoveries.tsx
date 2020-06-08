@@ -1,16 +1,16 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationNewRecoveriesTooltip from "./SingleLocationNewRecoveriesTooltip";
+import { SingleLocationNewRecoveriesTooltip } from "./SingleLocationNewRecoveriesTooltip";
 
 /**
  * Renders a page section that shows the new recoveries chart for a single location.
  */
-const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -56,5 +56,3 @@ const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEM
     />
   );
 };
-
-export default SingleLocationNewRecoveries;

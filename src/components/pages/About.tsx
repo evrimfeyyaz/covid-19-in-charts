@@ -8,7 +8,7 @@ import { EXTERNAL_LINKS, ROUTE_PATHS, SITE_INFO } from "../../constants";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
 
-const About: FunctionComponent = () => {
+export const About: FunctionComponent = () => {
   const pageTitle = createPageTitle(SITE_INFO.baseTitle, "About");
   return (
     <>
@@ -62,5 +62,3 @@ const About: FunctionComponent = () => {
     </>
   );
 };
-
-export default About;

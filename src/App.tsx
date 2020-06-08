@@ -2,16 +2,16 @@ import { COVID19API } from "@evrimfeyyaz/covid-19-api";
 import React, { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { cleanUp } from "./cleanUp";
-import Footer from "./components/common/Footer";
-import Loading from "./components/common/Loading";
-import NavBar from "./components/common/NavBar";
-import ScreenTooSmall from "./components/common/ScreenTooSmall";
-import Router from "./components/pages/Router";
+import { Footer } from "./components/common/Footer";
+import { Loading } from "./components/common/Loading";
+import { NavBar } from "./components/common/NavBar";
+import { ScreenTooSmall } from "./components/common/ScreenTooSmall";
+import { Router } from "./components/pages/Router";
 import { IMAGES, SITE_INFO } from "./constants";
 import { createPageTitle } from "./utilities/metaUtilities";
 import { getAbsoluteUrl } from "./utilities/urlUtilities";
 
-function App(): JSX.Element {
+export function App(): JSX.Element {
   const [loaded, setLoaded] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState<string>();
 
@@ -62,5 +62,3 @@ function App(): JSX.Element {
     </>
   );
 }
-
-export default App;

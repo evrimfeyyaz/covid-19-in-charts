@@ -32,7 +32,7 @@ interface SingleLocationTooltipProps {
  * Not to be used on its own, but for use in other tooltip components as a way to keep them
  * consistent.
  */
-const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> = ({
+export const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> = ({
   value,
   chartUnit,
   secondaryInfo,
@@ -51,5 +51,3 @@ const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> =
     </div>
   );
 };
-
-export default SingleLocationTooltipBase;

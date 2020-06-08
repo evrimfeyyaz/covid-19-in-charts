@@ -2,17 +2,17 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
-import EMAMessage from "../common/EMAMessage";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
+import { EMAMessage } from "../common/EMAMessage";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationNewDeathsTooltip from "./SingleLocationNewDeathsTooltip";
+import { SingleLocationNewDeathsTooltip } from "./SingleLocationNewDeathsTooltip";
 
 /**
  * Renders a page section that shows the new deaths chart for a single location.
  */
-const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -59,5 +59,3 @@ const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAPro
     <SingleLocationSection title={title} id="new-deaths" description={description} chart={chart} />
   );
 };
-
-export default SingleLocationNewDeaths;

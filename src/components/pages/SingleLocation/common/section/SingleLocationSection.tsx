@@ -22,7 +22,7 @@ interface SingleLocationSectionProps {
 /**
  * Container for a section on the {@link SingleLocation} page.
  */
-const SingleLocationSection: FunctionComponent<SingleLocationSectionProps> = ({
+export const SingleLocationSection: FunctionComponent<SingleLocationSectionProps> = ({
   title,
   id,
   description,
@@ -38,5 +38,3 @@ const SingleLocationSection: FunctionComponent<SingleLocationSectionProps> = ({
     </section>
   );
 };
-
-export default SingleLocationSection;

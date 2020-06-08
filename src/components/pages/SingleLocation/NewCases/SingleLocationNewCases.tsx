@@ -2,17 +2,17 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
-import EMAMessage from "../common/EMAMessage";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
+import { EMAMessage } from "../common/EMAMessage";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationNewCasesTooltip from "./SingleLocationNewCasesTooltip";
+import { SingleLocationNewCasesTooltip } from "./SingleLocationNewCasesTooltip";
 
 /**
  * Renders a page section that shows the new cases chart for a single location.
  */
-const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -59,5 +59,3 @@ const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProp
     <SingleLocationSection title={title} id="new-cases" description={description} chart={chart} />
   );
 };
-
-export default SingleLocationNewCases;

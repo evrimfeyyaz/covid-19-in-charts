@@ -3,14 +3,14 @@ import React, { FunctionComponent } from "react";
 import { Bar, ComposedChart, Line } from "recharts";
 import { COLORS } from "../../../../../constants";
 import { ValuesOnDateWithMovingAverage } from "../../../../../utilities/covid19ApiUtilities";
-import SingleLocationChartContainer from "./SingleLocationChartContainer";
+import { SingleLocationChartContainer } from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 /**
  * A bar chart that charts a single data point, and optionally its exponential moving average, of a
  * single location.
  */
-const SingleLocationBarChart: FunctionComponent<SingleLocationChartProps<
+export const SingleLocationBarChart: FunctionComponent<SingleLocationChartProps<
   ValuesOnDateWithMovingAverage | ValuesOnDate,
   keyof ValuesOnDate
 >> = (props) => {
@@ -34,5 +34,3 @@ const SingleLocationBarChart: FunctionComponent<SingleLocationChartProps<
     </SingleLocationChartContainer>
   );
 };
-
-export default SingleLocationBarChart;

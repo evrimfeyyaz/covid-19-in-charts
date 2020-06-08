@@ -1,14 +1,14 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationOverallChart from "./SingleLocationOverallChart";
+import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
 
 /**
  * Renders a page section that shows the mortality rate, recovery rate and active cases on a chart.
  */
-const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
+export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -54,5 +54,3 @@ const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
     <SingleLocationSection title={title} id="new-deaths" description={description} chart={chart} />
   );
 };
-
-export default SingleLocationOverall;

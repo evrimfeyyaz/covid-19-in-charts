@@ -5,7 +5,7 @@ interface LoadingProps {
   message?: string;
 }
 
-const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
+export const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
   return (
     <div
       className="h-100 w-100 position-fixed d-flex flex-column align-items-center justify-content-center"
@@ -21,5 +21,3 @@ const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
     </div>
   );
 };
-
-export default Loading;

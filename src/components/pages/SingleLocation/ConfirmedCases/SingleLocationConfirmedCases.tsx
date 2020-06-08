@@ -1,16 +1,16 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationLineChart from "../common/charts/SingleLocationLineChart";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationLineChart } from "../common/charts/SingleLocationLineChart";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationConfirmedCasesTooltip from "./SingleLocationConfirmedCasesTooltip";
+import { SingleLocationConfirmedCasesTooltip } from "./SingleLocationConfirmedCasesTooltip";
 
 /**
  * Renders a page section that shows the confirmed cases chart for a single location.
  */
-const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps> = ({
+export const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -56,5 +56,3 @@ const SingleLocationConfirmedCases: FunctionComponent<SingleLocationSectionProps
     />
   );
 };
-
-export default SingleLocationConfirmedCases;

@@ -4,7 +4,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { COLORS } from "../../../../constants";
 import { dateKeyToDate, getReadableDate } from "../../../../utilities/dateUtilities";
-import SingleLocationLatestNumbersItem from "./SingleLocationLatestNumbersItem";
+import { SingleLocationLatestNumbersItem } from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
   /**
@@ -17,7 +17,7 @@ interface LatestNumbersProps {
  * A component that shows the latest numbers (confirmed cases, deaths and recoveries) for a single
  * location.
  */
-const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ values }) => {
+export const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ values }) => {
   const {
     date,
     confirmed,
@@ -68,5 +68,3 @@ const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ va
     </section>
   );
 };
-
-export default SingleLocationLatestNumbers;

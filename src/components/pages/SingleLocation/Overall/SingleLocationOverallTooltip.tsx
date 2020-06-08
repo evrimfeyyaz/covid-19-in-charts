@@ -7,7 +7,10 @@ import { numToPercentFactory } from "../../../../utilities/numUtilities";
 /**
  * A Recharts tooltip component to show the details of all the values points on the overall chart.
  */
-const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
+export const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({
+  active,
+  payload,
+}) => {
   if (!active || payload == null) {
     return null;
   }
@@ -37,5 +40,3 @@ const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({ active,
     </div>
   );
 };
-
-export default SingleLocationOverallTooltip;

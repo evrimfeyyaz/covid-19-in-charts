@@ -28,7 +28,12 @@ interface EMAMessageProps {
 /**
  * A component that show a simple explanation of the exponential moving average values of a dataset.
  */
-const EMAMessage: FunctionComponent<EMAMessageProps> = ({ values, property, chartUnit, range }) => {
+export const EMAMessage: FunctionComponent<EMAMessageProps> = ({
+  values,
+  property,
+  chartUnit,
+  range,
+}) => {
   if (values.length === 0) {
     return null;
   }
@@ -74,5 +79,3 @@ const EMAMessage: FunctionComponent<EMAMessageProps> = ({ values, property, char
     </p>
   );
 };
-
-export default EMAMessage;

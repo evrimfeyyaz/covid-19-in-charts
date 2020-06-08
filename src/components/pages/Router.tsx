@@ -2,14 +2,14 @@ import { COVID19API } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { Route, Switch } from "react-router-dom";
 import { ROUTE_PATHS } from "../../constants";
-import About from "./About";
-import SingleLocation from "./SingleLocation/SingleLocation";
+import { About } from "./About";
+import { SingleLocation } from "./SingleLocation/SingleLocation";
 
 interface RouterProps {
   dataStore: COVID19API;
 }
 
-const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
+export const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
   return (
     <div className="py-4 flex-grow-1 d-block-when-width-sufficient">
       <Switch>
@@ -26,5 +26,3 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
     </div>
   );
 };
-
-export default Router;

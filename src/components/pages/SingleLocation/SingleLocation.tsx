@@ -12,19 +12,19 @@ import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
 import { getAbsoluteUrl, getCanonicalUrl } from "../../../utilities/urlUtilities";
-import Loading from "../../common/Loading";
-import LocationSelectionInput from "../../common/LocationSelectionInput";
+import { Loading } from "../../common/Loading";
+import { LocationSelectionInput } from "../../common/LocationSelectionInput";
 import { MinConfirmedCasesInput } from "../../common/MinConfirmedCasesInput";
-import NoData from "../../common/NoData";
-import ShareButtons from "../../common/ShareButtons";
-import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
-import SingleLocationDeaths from "./Deaths/SingleLocationDeaths";
-import SingleLocationLatestNumbers from "./LatestNumbers/SingleLocationLatestNumbers";
-import SingleLocationNewCases from "./NewCases/SingleLocationNewCases";
-import SingleLocationNewDeaths from "./NewDeaths/SingleLocationNewDeaths";
-import SingleLocationNewRecoveries from "./NewRecoveries/SingleLocationNewRecoveries";
-import SingleLocationOverall from "./Overall/SingleLocationOverall";
-import SingleLocationRecoveries from "./Recoveries/SingleLocationRecoveries";
+import { NoData } from "../../common/NoData";
+import { ShareButtons } from "../../common/ShareButtons";
+import { SingleLocationConfirmedCases } from "./ConfirmedCases/SingleLocationConfirmedCases";
+import { SingleLocationDeaths } from "./Deaths/SingleLocationDeaths";
+import { SingleLocationLatestNumbers } from "./LatestNumbers/SingleLocationLatestNumbers";
+import { SingleLocationNewCases } from "./NewCases/SingleLocationNewCases";
+import { SingleLocationNewDeaths } from "./NewDeaths/SingleLocationNewDeaths";
+import { SingleLocationNewRecoveries } from "./NewRecoveries/SingleLocationNewRecoveries";
+import { SingleLocationOverall } from "./Overall/SingleLocationOverall";
+import { SingleLocationRecoveries } from "./Recoveries/SingleLocationRecoveries";
 
 interface SingleLocationProps {
   /**
@@ -36,7 +36,7 @@ interface SingleLocationProps {
 /**
  * A page that shows various charts and explanations for a single location.
  */
-const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
+export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
   const [locationsList] = useState(store.locations);
@@ -264,5 +264,3 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
     </Container>
   );
 };
-
-export default SingleLocation;

@@ -30,7 +30,7 @@ interface LatestNumbersItemProps {
  * A single item within the {@link SingleLocationLatestNumbers} component, showing a value such as
  * "confirmed cases," and other information.
  */
-const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersItemProps> = ({
+export const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersItemProps> = ({
   color,
   title,
   value,
@@ -62,5 +62,3 @@ const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersItemProps>
     </Card>
   );
 };
-
-export default SingleLocationLatestNumbersItem;

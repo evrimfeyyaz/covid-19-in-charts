@@ -1,16 +1,16 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationLineChart from "../common/charts/SingleLocationLineChart";
-import SingleLocationSection from "../common/section/SingleLocationSection";
+import { SingleLocationLineChart } from "../common/charts/SingleLocationLineChart";
+import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
 import { getReadableValuesOnDate } from "../utils";
-import SingleLocationDeathsTooltip from "./SingleLocationDeathsTooltip";
+import { SingleLocationDeathsTooltip } from "./SingleLocationDeathsTooltip";
 
 /**
  * Renders a page section that shows the deaths chart for a single location.
  */
-const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
+export const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
   startingFrom,
   xAxisTitle,
   values,
@@ -48,5 +48,3 @@ const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps> = ({
     <SingleLocationSection title={title} id="deaths" description={description} chart={chart} />
   );
 };
-
-export default SingleLocationDeaths;

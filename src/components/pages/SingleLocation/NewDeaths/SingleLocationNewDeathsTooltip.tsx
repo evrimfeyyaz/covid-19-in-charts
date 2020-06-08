@@ -2,13 +2,16 @@ import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
 import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
-import SingleLocationTooltipBase from "../common/charts/SingleLocationTooltipBase";
+import { SingleLocationTooltipBase } from "../common/charts/SingleLocationTooltipBase";
 import { getEMADiffMessage } from "../utils";
 
 /**
  * A Recharts tooltip component to show the details of a values point on the new deaths chart.
  */
-const SingleLocationNewDeathsTooltip: FunctionComponent<TooltipProps> = ({ active, payload }) => {
+export const SingleLocationNewDeathsTooltip: FunctionComponent<TooltipProps> = ({
+  active,
+  payload,
+}) => {
   if (!active || payload == null) {
     return null;
   }
@@ -40,5 +43,3 @@ const SingleLocationNewDeathsTooltip: FunctionComponent<TooltipProps> = ({ activ
     />
   );
 };
-
-export default SingleLocationNewDeathsTooltip;

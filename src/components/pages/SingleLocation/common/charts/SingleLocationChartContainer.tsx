@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import NoData from "../../../../common/NoData";
+import { NoData } from "../../../../common/NoData";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 interface ChartContainerProps<DataType, DataKeysType>
@@ -14,7 +14,7 @@ interface ChartContainerProps<DataType, DataKeysType>
 /**
  * The container component for all the charts on the single location page.
  */
-function SingleLocationChartContainer<DataType, DataKeysType>({
+export function SingleLocationChartContainer<DataType, DataKeysType>({
   data,
   xAxisTitle,
   yAxisTitle,
@@ -51,5 +51,3 @@ function SingleLocationChartContainer<DataType, DataKeysType>({
 
   return body;
 }
-
-export default SingleLocationChartContainer;
