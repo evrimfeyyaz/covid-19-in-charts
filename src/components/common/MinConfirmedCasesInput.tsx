@@ -2,10 +2,24 @@ import React, { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
 
 interface MinConfirmedCasesProps {
+  /**
+   * The current set minimum confirmed cases value as a number, or `null` if the minimum confirmed
+   * cases option is off.
+   */
   value: number | null;
+  /**
+   * Called when the user has requested to change the minimum confirmed cases value.
+   *
+   * @param value The new minimum confirmed cases value, or `null` if the minimum confirmed cases
+   *   option is off.
+   */
   onChange?: (value: number | null) => void;
 }
 
+/**
+ * An input that allows the user to select what the minimum number of confirmed cases should be for
+ * the data on a certain date to be charted.
+ */
 export const MinConfirmedCasesInput: FunctionComponent<MinConfirmedCasesProps> = ({
   value,
   onChange,

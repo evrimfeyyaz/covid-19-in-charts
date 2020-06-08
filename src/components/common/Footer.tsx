@@ -6,6 +6,9 @@ import { Link } from "react-router-dom";
 import packageJson from "../../../package.json";
 import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
+/**
+ * Page footer. Shown on all pages.
+ */
 export const Footer: FunctionComponent = () => {
   return (
     <footer className="bg-dark text-light pt-4 pb-2 mt-3 small text-center">

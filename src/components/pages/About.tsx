@@ -8,6 +8,9 @@ import { EXTERNAL_LINKS, ROUTE_PATHS, SITE_INFO } from "../../constants";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
 
+/**
+ * About page.
+ */
 export const About: FunctionComponent = () => {
   const pageTitle = createPageTitle(SITE_INFO.baseTitle, "About");
   return (

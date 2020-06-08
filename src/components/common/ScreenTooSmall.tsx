@@ -1,5 +1,9 @@
 import React, { FunctionComponent } from "react";
 
+/**
+ * A component that shows a message saying that the current screen size is too small for viewing
+ * charts.
+ */
 export const ScreenTooSmall: FunctionComponent = () => {
   return (
     <div className="d-flex-when-width-not-sufficient text-center px-5 py-4 flex-grow-1 flex-column justify-content-center">

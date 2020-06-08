@@ -2,9 +2,15 @@ import React, { FunctionComponent } from "react";
 import Spinner from "react-bootstrap/Spinner";
 
 interface LoadingProps {
+  /**
+   * A message that explains what is currently being loaded.
+   */
   message?: string;
 }
 
+/**
+ * A component that shows a spinner that covers the whole page.
+ */
 export const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
   return (
     <div

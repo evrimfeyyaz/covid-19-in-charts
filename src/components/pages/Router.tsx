@@ -6,9 +6,15 @@ import { About } from "./About";
 import { SingleLocation } from "./SingleLocation/SingleLocation";
 
 interface RouterProps {
+  /**
+   * A `COVID19API` instance to pass on to the page components.
+   */
   dataStore: COVID19API;
 }
 
+/**
+ * The component that uses React Router to resolve and render the current page.
+ */
 export const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
   return (
     <div className="py-4 flex-grow-1 d-block-when-width-sufficient">

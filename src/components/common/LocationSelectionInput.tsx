@@ -4,15 +4,42 @@ import Form from "react-bootstrap/Form";
 import { getAliasesForLocation } from "../../utilities/countryUtilities";
 
 interface LocationSelectionInputProps {
+  /**
+   * The list of locations to show.
+   */
   locationsList: string[];
+  /**
+   * The initial locations that are selected.
+   */
   defaultLocations: string[];
+  /**
+   * Whether or not the user is allowed to select multiple locations.
+   */
   multiple?: boolean;
+  /**
+   * The maximum number of locations that the user can select.
+   */
   maxNumOfSelections?: number;
+  /**
+   * The placeholder text to show when there are no selected locations.
+   */
   placeholder: string;
+  /**
+   * The id to assign to the input component.
+   */
   id: string;
+  /**
+   * A callback that is fired when the selected locations are changed.
+   *
+   * @param locations The new locations that are selected.
+   */
   onChange: (locations: string[]) => void;
 }
 
+/**
+ * A component that allows the user to select a single location or multiple locations with
+ * autocomplete.
+ */
 export const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
   locationsList,
   defaultLocations,
@@ -26,6 +53,16 @@ export const LocationSelectionInput: FunctionComponent<LocationSelectionInputPro
     defaultLocations.length >= maxNumOfSelections
   );
 
+  /**
+   * Determines what autocomplete options to show based on the user input.
+   *
+   * The arguments are normally provided by the `Typeahead` component, not to be used outside it.
+   *
+   * @param option The option that is being tested to see if it should be shown as an autocomplete
+   *   option.
+   * @param props The props of the `Typeahead` instance, mainly the current text and the already
+   *   selected options.
+   */
   function filterLocationsBy(option: string, props: { text: string; selected: string[] }): boolean {
     if (props.selected.includes(option)) {
       return false;
@@ -50,6 +87,10 @@ export const LocationSelectionInput: FunctionComponent<LocationSelectionInputPro
     onChange(locations);
   }
 
+  /**
+   * The menu to show the the number of maximum selections is reached (only when the `multiple`
+   * option is set to `true`).
+   */
   const maxSelectionsReachedMenu = (): JSX.Element => (
     <div className="bg-white text-danger px-3 py-2 rounded-lg small location-selection-input-max-selections-reached-menu">
       You can't select more than {maxNumOfSelections} locations.

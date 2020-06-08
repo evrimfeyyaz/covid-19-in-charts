@@ -1,11 +1,23 @@
 import React, { FunctionComponent } from "react";
 
 interface ShareButtonsProps {
+  /**
+   * The title of the page to share.
+   */
   title: string;
+  /**
+   * The URL of the page to share.
+   */
   url: string;
+  /**
+   * Default `false`. When set to `true`, smaller versions of the buttons are shown.
+   */
   small?: boolean;
 }
 
+/**
+ * A component that shows social share buttons.
+ */
 export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
   title,
   url,
