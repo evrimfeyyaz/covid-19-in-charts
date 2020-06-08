@@ -46,7 +46,6 @@ export const COLORS = {
 
 export const EXTERNAL_LINKS = {
   gitHubRepo: "https://github.com/evrimfeyyaz/covid-19-in-charts",
-  authorTwitter: "https://twitter.com/evrimfeyyaz",
   authorWebsite: "https://evrim.io",
   feedbackEmail: "feedback@covid19incharts.com",
 };
@@ -60,10 +59,4 @@ export const SITE_INFO = {
 
 export const IMAGES = {
   og: "/images/og-image.jpg?9f089226-8723-4464-a103-4b01b96355da",
-  casesRecoveriesDeathsOg: "/images/cases-recoveries-and-deaths.jpg",
-  casesRecoveriesDeathsCard: "/images/cases-recoveries-and-deaths-card.jpg",
-  dailyNumbersOg: "/images/daily-numbers.jpg",
-  dailyNumbersCard: "/images/daily-numbers-card.jpg",
-  locationComparisonOg: "/images/location-comparison.jpg",
-  locationComparisonCard: "/images/location-comparison-card.jpg",
 };

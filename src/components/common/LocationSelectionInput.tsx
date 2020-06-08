@@ -10,7 +10,7 @@ interface LocationSelectionInputProps {
   maxNumOfSelections?: number;
   placeholder: string;
   id: string;
-  onLocationChange: (locations: string[]) => void;
+  onChange: (locations: string[]) => void;
 }
 
 const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
@@ -20,7 +20,7 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
   maxNumOfSelections = Infinity,
   placeholder,
   id,
-  onLocationChange,
+  onChange,
 }) => {
   const [isMaxSelectionsReached, setIsMaxSelectionsReached] = useState(
     defaultLocations.length >= maxNumOfSelections
@@ -47,7 +47,7 @@ const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = (
       setIsMaxSelectionsReached(false);
     }
 
-    onLocationChange(locations);
+    onChange(locations);
   }
 
   const maxSelectionsReachedMenu = (): JSX.Element => (

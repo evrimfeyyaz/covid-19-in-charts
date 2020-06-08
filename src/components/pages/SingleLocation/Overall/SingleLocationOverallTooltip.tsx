@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
-import { ValuesOnDateWithActiveCasesRate } from "../../../../utilities/covid19APIUtilities";
-import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
+import { ValuesOnDateWithActiveCasesRate } from "../../../../utilities/covid19ApiUtilities";
+import { dateKeyToDate, getReadableDate } from "../../../../utilities/dateUtilities";
 import { numToPercentFactory } from "../../../../utilities/numUtilities";
 
 /**
@@ -20,6 +20,7 @@ const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({ active,
   }
 
   const getPercentValue = numToPercentFactory(4);
+  const readableDate = getReadableDate(dateKeyToDate(date));
 
   return (
     <div className="shadow rounded-lg bg-white border px-4 py-3">
@@ -32,7 +33,7 @@ const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({ active,
       <p className="h6">
         {getPercentValue(recoveryRate)} <span className="text-muted">recoveries</span>
       </p>
-      <p className="mb-0 text-muted">{prettifyMDYDate(date)}</p>
+      <p className="mb-0 text-muted">{readableDate}</p>
     </div>
   );
 };

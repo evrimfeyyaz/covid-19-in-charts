@@ -4,17 +4,18 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
-import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
+import { EXTERNAL_LINKS, ROUTE_PATHS, SITE_INFO } from "../../constants";
 import { createPageTitle } from "../../utilities/metaUtilities";
 import { getAbsoluteUrl } from "../../utilities/urlUtilities";
 
 const About: FunctionComponent = () => {
+  const pageTitle = createPageTitle(SITE_INFO.baseTitle, "About");
   return (
     <>
       <Helmet>
-        <title>{createPageTitle()}</title>
-        <meta property="og:title" content={createPageTitle("About")} />
-        <meta property="og:url" content={getAbsoluteUrl(ROUTE_PATHS.about)} />
+        <title>{pageTitle}</title>
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:url" content={getAbsoluteUrl(SITE_INFO.baseUrl, ROUTE_PATHS.about)} />
       </Helmet>
 
       <Container>

@@ -2,7 +2,7 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { Bar, ComposedChart, Line } from "recharts";
 import { COLORS } from "../../../../../constants";
-import { ValuesOnDateWithMovingAverage } from "../../../../../utilities/covid19APIUtilities";
+import { ValuesOnDateWithMovingAverage } from "../../../../../utilities/covid19ApiUtilities";
 import SingleLocationChartContainer from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 

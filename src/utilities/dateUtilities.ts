@@ -1,27 +1,26 @@
-import { format, formatISO, isSameDay, isWithinInterval, parse } from "date-fns";
+/**
+ * Converts a string containing a date key to a Date object, such as "1/2/20".
+ *
+ * @param dateKey A string containing a date in the format "month/date/year", e.g. "1/2/20".
+ */
+export function dateKeyToDate(dateKey: string): Date {
+  const dateKeyRegex = /^(\d{1,2})\/(\d{1,2})\/(\d{2})$/;
+  const dateParts = dateKey.match(dateKeyRegex);
 
-const dataStoreDateStrFormat = "M/d/yy";
+  if (dateParts == null || dateParts.length < 3) {
+    throw new Error('Date should have format "month/date/year", e.g. "1/2/20"');
+  }
 
-export function MDYStringToDate(dateStr: string): Date {
-  return parse(dateStr, dataStoreDateStrFormat, new Date());
+  const year = parseInt(`20${dateParts[3]}`);
+  const month = parseInt(dateParts[1]) - 1;
+  const day = parseInt(dateParts[2]);
+
+  return new Date(year, month, day);
 }
 
-export function prettifyDate(date: Date): string {
-  return format(date, "PP");
-}
-
-export function prettifyMDYDate(dateStr: string): string {
-  return prettifyDate(MDYStringToDate(dateStr));
-}
-
-export function dateToYMDString(date: Date): string {
-  return formatISO(date, { representation: "date" });
-}
-
-export function isDateBetween(date: Date, earlierDate: Date, laterDate: Date): boolean {
-  return (
-    isWithinInterval(date, { start: earlierDate, end: laterDate }) ||
-    isSameDay(date, earlierDate) ||
-    isSameDay(date, laterDate)
-  );
+/**
+ * Returns a string with a more readable date format, e.g. "Jan 1, 2020".
+ */
+export function getReadableDate(date: Readonly<Date>): string {
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
 }

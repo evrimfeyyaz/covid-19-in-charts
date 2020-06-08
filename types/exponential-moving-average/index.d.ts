@@ -1,15 +1,15 @@
 declare module "exponential-moving-average" {
-  interface Options {
+  interface Options<T> {
     /**
      * The number of array elements to use for the moving average. If no number is specified half
      * of the length of the array is used.
      */
-    range: number;
+    range?: number;
     /**
      * Format the numbers as they're added to the result.
      * @param num
      */
-    format: (num: number) => string;
+    format?: (num: number) => T;
   }
 
   /**
@@ -18,5 +18,8 @@ declare module "exponential-moving-average" {
    * @param options Options may be passed as an object or as a number to specify only the range to
    *   use.
    */
-  export default function ema(arr: number[], options?: Options | number): number[];
+  export default function ema<T = string>(
+    arr: (number | string)[],
+    options?: Options<T> | number
+  ): T[];
 }

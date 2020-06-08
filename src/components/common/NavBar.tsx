@@ -24,9 +24,6 @@ const NavBar: FunctionComponent = () => {
         <Navbar.Brand href={ROUTE_PATHS.home}>COVID-19 in Charts</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
-          <Nav className="mr-auto">
-            <Nav.Link href={ROUTE_PATHS.singleLocation}>Single Location</Nav.Link>
-          </Nav>
           <Nav className="ml-auto">
             <Nav.Link href={EXTERNAL_LINKS.gitHubRepo} target="_blank" rel="noopener noreferrer">
               GitHub

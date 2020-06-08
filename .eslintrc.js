@@ -7,7 +7,7 @@ module.exports = {
   env: {
     browser: true,
     node: true,
-    amd: true,
+    amd: true
   },
   extends: [
     "eslint:recommended",
@@ -16,6 +16,8 @@ module.exports = {
     "plugin:prettier/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style"
   ],
   ignorePatterns: ["public", "temp"],
   overrides: [

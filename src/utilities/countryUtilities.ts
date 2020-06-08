@@ -1,3 +1,13 @@
+/**
+ * Returns aliases for a given location name, mainly to help make locations easier to find when
+ * searching.
+ *
+ * @example
+ * // Returns ["United States of America", "USA", "United States", "America", "States"]
+ * getAliasesForLocation("US");
+ *
+ * @param location A location name from the "covid-19-api" library.
+ */
 export function getAliasesForLocation(location: string): string[] {
   if (location.includes("US")) {
     return ["United States of America", "USA", "United States", "America", "States"];

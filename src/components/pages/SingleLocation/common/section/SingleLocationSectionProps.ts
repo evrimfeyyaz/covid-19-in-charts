@@ -11,7 +11,7 @@ export interface SingleLocationSectionProps {
   /**
    * The title of the x axis of the chart in this section.
    */
-  xAxisTitle: string;
+  xAxisTitle: string | null;
   /**
    * The values for the chart to display.
    */

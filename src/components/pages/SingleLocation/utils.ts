@@ -1,5 +1,5 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import { prettifyMDYDate } from "../../../utilities/dateUtilities";
+import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
 import { numToGroupedString, numToPercentFactory } from "../../../utilities/numUtilities";
 
 /**
@@ -49,7 +49,7 @@ export interface ReadableValuesOnDate {
  */
 export function getReadableValuesOnDate(values: ValuesOnDate): ReadableValuesOnDate {
   const readableValues: ReadableValuesOnDate = {
-    date: prettifyMDYDate(values.date),
+    date: getReadableDate(dateKeyToDate(values.date)),
     confirmed: numToGroupedString(values.confirmed),
     newConfirmed: numToGroupedString(values.newConfirmed),
   };

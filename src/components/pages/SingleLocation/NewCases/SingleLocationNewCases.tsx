@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { getValuesWithEMA } from "../../../../utilities/covid19APIUtilities";
+import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLocationBarChart from "../common/charts/SingleLocationBarChart";
 import EMAMessage from "../common/EMAMessage";

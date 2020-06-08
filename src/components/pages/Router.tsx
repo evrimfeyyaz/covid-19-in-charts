@@ -3,7 +3,6 @@ import React, { FunctionComponent } from "react";
 import { Route, Switch } from "react-router-dom";
 import { ROUTE_PATHS } from "../../constants";
 import About from "./About";
-import LocationComparison from "./LocationComparison/LocationComparison";
 import SingleLocation from "./SingleLocation/SingleLocation";
 
 interface RouterProps {
@@ -14,9 +13,6 @@ const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
   return (
     <div className="py-4 flex-grow-1 d-block-when-width-sufficient">
       <Switch>
-        <Route path={ROUTE_PATHS.locationComparison}>
-          <LocationComparison store={dataStore} />
-        </Route>
         <Route path={ROUTE_PATHS.singleLocation}>
           <SingleLocation store={dataStore} />
         </Route>

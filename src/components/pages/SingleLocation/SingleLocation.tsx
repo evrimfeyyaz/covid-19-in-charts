@@ -1,25 +1,20 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api/lib/types";
 import React, { FunctionComponent, useEffect, useState } from "react";
-import Accordion from "react-bootstrap/Accordion";
-import Button from "react-bootstrap/Button";
-import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Helmet from "react-helmet";
-import { useCanonicalURL } from "../../../hooks/useCanonicalURL";
-import useLocationSelection from "../../../hooks/useLocationSelection";
-import { useNumberSelection } from "../../../hooks/useNumberSelection";
-import { usePropertySelection } from "../../../hooks/usePropertySelection";
-import {
-  humanizePropertyName,
-  stripDataBeforePropertyExceedsN,
-} from "../../../utilities/covid19APIUtilities";
-import { MDYStringToDate, prettifyDate } from "../../../utilities/dateUtilities";
+import { Helmet } from "react-helmet";
+import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
+import { SITE_INFO } from "../../../constants";
+import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
+import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
-import { getAbsoluteUrl } from "../../../utilities/urlUtilities";
+import { numToGroupedString } from "../../../utilities/numUtilities";
+import { getAbsoluteUrl, getCanonicalUrl } from "../../../utilities/urlUtilities";
 import Loading from "../../common/Loading";
+import LocationSelectionInput from "../../common/LocationSelectionInput";
+import { MinConfirmedCasesInput } from "../../common/MinConfirmedCasesInput";
 import NoData from "../../common/NoData";
 import ShareButtons from "../../common/ShareButtons";
 import SingleLocationConfirmedCases from "./ConfirmedCases/SingleLocationConfirmedCases";
@@ -42,10 +37,6 @@ interface SingleLocationProps {
  * A page that shows various charts and explanations for a single location.
  */
 const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
-  const defaultLocation = "US";
-  const defaultExceedingProperty = "confirmed";
-  const defaultExceedingValue = 100;
-
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
   const [locationsList] = useState(store.locations);
@@ -53,46 +44,19 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
 
-  const [[location], locationInputComponent] = useLocationSelection(
-    locationsList,
-    [defaultLocation],
-    {
-      lastSelectionAsDefault: true,
-      lastSelectionStorageKey: "casesRecoveriesDeathsLastLocation",
-    }
-  );
-  const [exceedingProperty, , exceedingPropertyInputComponent] = usePropertySelection(
-    "exceedingProperty",
-    defaultExceedingProperty,
-    "Start from the day",
-    {
-      onlyCumulativeValues: true,
-      lastSelectionAsDefault: true,
-      lastSelectionStorageKey: "caseRecoveriesLastExceedingProperty",
-    }
-  );
-  const [exceedingValue, exceedingValueInputComponent] = useNumberSelection(
-    "exceedingValue",
-    defaultExceedingValue,
-    "exceeded",
-    {
-      lastSelectionAsDefault: true,
-      lastSelectionStorageKey: "caseRecoveriesLastExceedingValue",
-    }
-  );
-  const canonicalQueryParams = ["location", "exceedingProperty", "exceedingValue"];
-  const ogImage = "";
+  /**
+   * The location that the user selected.
+   */
+  const [location, setLocation] = useQueryParam("location", withDefault(StringParam, "US"));
 
-  const title = `COVID-19 Cases, Recoveries & Deaths: ${location}`;
-  const pageDescription = `See the number of confirmed cases, new cases, recoveries and deaths in ${location}.`;
-
-  let subtitle = "";
-  if (firstDate != null && lastDate != null) {
-    subtitle = `${prettifyDate(firstDate)} — ${prettifyDate(lastDate)}`;
-  }
-
-  const pageTitle = createPageTitle(title);
-  const canonicalUrl = useCanonicalURL(canonicalQueryParams);
+  /**
+   * When this is set to a number, the data filtered to only include the dates that exceeded this
+   * number of confirmed cases. If this is set to `null`, then no filtering is applied.
+   */
+  const [minConfirmedCases, setMinConfirmedCases] = useQueryParam(
+    "minConfirmedCases",
+    withDefault(NumberParam, 100, false)
+  );
 
   function clearData(): void {
     setData(undefined);
@@ -101,58 +65,127 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
     setLastDate(undefined);
   }
 
+  /**
+   * Adds query parameters to the location just in case they are missing. For example, they are
+   * missing when the page is first requested without any query parameters.
+   */
+  useEffect(() => {
+    setLocation(location, "replaceIn");
+    setMinConfirmedCases(minConfirmedCases, "replaceIn");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   * Loads the data.
+   */
   useEffect(() => {
     clearData();
 
     store.getDataByLocation(location).then((data) => {
       const lastUpdated = store.sourceLastUpdatedAt;
       const latestValues = data.values[data.values.length - 1];
-      const strippedData = stripDataBeforePropertyExceedsN(data, exceedingProperty, exceedingValue);
 
-      if (strippedData.values.length > 0) {
-        const firstDate = MDYStringToDate(strippedData.values[0].date);
-        const lastDate = MDYStringToDate(strippedData.values[strippedData.values.length - 1].date);
+      let filteredData = data;
+      if (minConfirmedCases != null) {
+        filteredData = filterDatesWithMinConfirmedCases(data, minConfirmedCases);
+      }
+
+      if (filteredData.values.length > 0) {
+        const firstDate = dateKeyToDate(filteredData.values[0].date);
+        const lastDate = dateKeyToDate(filteredData.values[filteredData.values.length - 1].date);
 
         setFirstDate(firstDate);
         setLastDate(lastDate);
       }
 
       setLatestValues(latestValues);
-      setData(strippedData);
+      setData(filteredData);
       setLastUpdated(lastUpdated);
     });
-  }, [store, location, exceedingProperty, exceedingValue]);
+  }, [store, location, minConfirmedCases]);
+
+  /**
+   * Stores user settings in local storage when they change.
+   */
+  useEffect(() => {
+    localStorage.setItem("location", location);
+  }, [location]);
+
+  /**
+   * Handles the location change.
+   *
+   * @param selectedLocations The input component we are using returns an array of selections,
+   *   hence the reason why this is an array.
+   */
+  function handleLocationChange(selectedLocations: string[]): void {
+    if (selectedLocations.length > 0) {
+      setLocation(selectedLocations[0]);
+    }
+  }
+
+  /**
+   * Handles the minimum number of confirmed cases selection change.
+   *
+   * @param value A number, or `null` if minimum number of confirmed cases filtering should be off.
+   */
+  function handleMinConfirmedCasesChange(value: number | null): void {
+    setMinConfirmedCases(value);
+  }
+
+  // TODO: Add an image to this page.
+  const ogImage = "";
+
+  // TODO: Prepend the definite article before certain country names, such as the US.
+  const pageDescription = `See the progression of COVID-19 in ${location}.`;
+
+  const title = `COVID-19: ${location}`;
+  const pageTitle = createPageTitle(SITE_INFO.baseTitle, title);
+
+  let subtitle = "";
+  if (firstDate != null && lastDate != null) {
+    subtitle = `${getReadableDate(firstDate)} — ${getReadableDate(lastDate)}`;
+  }
+
+  const canonicalUrl = getCanonicalUrl(window.location.href, SITE_INFO.baseUrl, [
+    "location",
+    "minConfirmedCases",
+    "filterMinConfirmedCases",
+  ]);
 
   let body = <Loading />;
   if (data != null) {
     body = <NoData />;
 
     if (lastUpdated != null && latestValues != null && firstDate != null && lastDate != null) {
-      const humanizedExceedingProperty = humanizePropertyName(exceedingProperty);
-      const prettyFirstDate = prettifyDate(firstDate);
-      const startingFrom = `the day ${humanizedExceedingProperty} exceeded ${exceedingValue} (${prettyFirstDate})`;
-      const xAxisTitle = `Days since ${humanizedExceedingProperty} exceeded ${exceedingValue}`;
+      const readableFirstDate = getReadableDate(firstDate);
+
+      let startingFrom = readableFirstDate;
+      let xAxisTitle: string | null = null;
+      if (minConfirmedCases != null) {
+        const groupedMinConfirmedCases = numToGroupedString(minConfirmedCases);
+        startingFrom = `the day confirmed cases exceeded ${groupedMinConfirmedCases} (${readableFirstDate})`;
+        xAxisTitle = `Days since confirmed cases exceeded ${groupedMinConfirmedCases}`;
+      }
 
       body = (
         <Row>
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
-            {locationInputComponent}
-            <Accordion>
-              <Accordion.Toggle as={Button} variant="link" eventKey="0" className="w-100">
-                More Options
-              </Accordion.Toggle>
-              <Accordion.Collapse eventKey="0" className="py-2">
-                <Card className="bg-transparent border-white">
-                  <Card.Body>
-                    <Col xs={12}>{exceedingPropertyInputComponent}</Col>
-                    <Col xs={12}>{exceedingValueInputComponent}</Col>
-                  </Card.Body>
-                </Card>
-              </Accordion.Collapse>
-            </Accordion>
-            <div className="mt-auto d-none d-lg-block">
+            <LocationSelectionInput
+              locationsList={locationsList}
+              defaultLocations={[location]}
+              id="location-selection-input"
+              placeholder={"Select locations..."}
+              onChange={handleLocationChange}
+            />
+
+            <MinConfirmedCasesInput
+              value={minConfirmedCases}
+              onChange={handleMinConfirmedCasesChange}
+            />
+
+            <div className="d-none d-lg-block">
               <h2 className="h5 mt-3">Share</h2>
-              <ShareButtons title={pageTitle} url={window.location.href} small={false} />
+              <ShareButtons title={pageTitle} url={canonicalUrl} small={false} />
             </div>
           </Col>
           <Col>
@@ -205,24 +238,11 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
               xAxisTitle={xAxisTitle}
               values={data.values}
             />
-
-            <p className="my-0 font-weight-light font-italic text-muted">
-              <small>
-                covid19incharts.com | source:{" "}
-                <a
-                  className="text-decoration-none"
-                  href="https://github.com/CSSEGISandData/COVID-19"
-                >
-                  JHU CSSE
-                </a>{" "}
-                | last updated: {lastUpdated.toUTCString()}
-              </small>
-            </p>
           </Col>
           <Row className="d-lg-none mt-3">
             <Col className="px-5">
               <h2 className="h5 mt-3">Share</h2>
-              <ShareButtons title={pageTitle} url={window.location.href} small={true} />
+              <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
             </Col>
           </Row>
         </Row>
@@ -237,7 +257,7 @@ const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:image" content={getAbsoluteUrl(ogImage)} />
+        <meta property="og:image" content={getAbsoluteUrl(SITE_INFO.baseUrl, ogImage)} />
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
       {body}

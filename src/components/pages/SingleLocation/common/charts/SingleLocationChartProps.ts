@@ -20,7 +20,7 @@ export interface SingleLocationChartProps<DataType, DataKeysType> {
   /**
    * The title of the x axis.
    */
-  xAxisTitle: string;
+  xAxisTitle: string | null;
   /**
    * The title of the y axis.
    */

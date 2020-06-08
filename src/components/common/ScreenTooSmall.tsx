@@ -6,7 +6,7 @@ const ScreenTooSmall: FunctionComponent = () => {
       <h1 className="h4">Your screen is too small for viewing charts.</h1>
 
       <p>
-        If possible, try using your device in landscape mode, or use a device with larger screen.
+        If possible, try using your device in landscape mode, or use a device with a larger screen.
       </p>
     </div>
   );

@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { COLORS } from "../../../../constants";
-import { prettifyMDYDate } from "../../../../utilities/dateUtilities";
+import { dateKeyToDate, getReadableDate } from "../../../../utilities/dateUtilities";
 import SingleLocationLatestNumbersItem from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
@@ -19,6 +19,7 @@ interface LatestNumbersProps {
  */
 const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ values }) => {
   const {
+    date,
     confirmed,
     newConfirmed,
     recovered,
@@ -29,10 +30,12 @@ const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> = ({ va
     recoveryRate,
   } = values;
 
+  const readableDate = getReadableDate(dateKeyToDate(date));
+
   return (
     <section className="mb-5">
       <h2 className="mb-4">
-        Latest Numbers <small className="text-muted">{prettifyMDYDate(values.date)}</small>
+        Latest Numbers <small className="text-muted">{readableDate}</small>
       </h2>
       <Row>
         <Col xs={4}>

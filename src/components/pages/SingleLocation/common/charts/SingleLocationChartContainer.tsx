@@ -30,7 +30,9 @@ function SingleLocationChartContainer<DataType, DataKeysType>({
       <ResponsiveContainer height={400} className="mb-2">
         <ChartComponent data={data} margin={{ top: 20, right: 30, bottom: 40, left: 30 }}>
           <CartesianGrid strokeDasharray="3 3" fill="rgba(255,255,255,.9)" />
-          <XAxis label={{ value: xAxisTitle, position: "bottom", offset: 10 }} />
+          {xAxisTitle != null && (
+            <XAxis label={{ value: xAxisTitle, position: "bottom", offset: 10 }} />
+          )}
           <YAxis
             label={{
               value: yAxisTitle,

@@ -3,8 +3,8 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
-import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from "../../constants";
-import { getCurrentVersion } from "../../utilities/versionUtilities";
+import packageJson from "../../../package.json";
+import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
 const Footer: FunctionComponent = () => {
   return (
@@ -32,36 +32,14 @@ const Footer: FunctionComponent = () => {
           </Col>
         </Row>
         <Row>
-          <Col className="pt-2 pb-2 pb-lg-0">
-            <h1 className="h6">Visualizations</h1>
-            <ul className="list-unstyled">
-              <li className="list-item mb-2 m-lg-1">
-                <Link to={ROUTE_PATHS.casesRecoveriesDeaths} className="link footer-link">
-                  {ROUTE_TITLES.casesRecoveriesDeaths}
-                </Link>
-              </li>
-              <li className="list-item mb-2 m-lg-1">
-                <Link to={ROUTE_PATHS.dailyNumbers} className="link footer-link">
-                  {ROUTE_TITLES.dailyNumbers}
-                </Link>
-              </li>
-              <li className="list-item mb-2 m-lg-1">
-                <Link to={ROUTE_PATHS.locationComparison} className="link footer-link">
-                  {ROUTE_TITLES.locationComparison}
-                </Link>
-              </li>
-            </ul>
-          </Col>
-        </Row>
-        <Row>
           <Col className="pt-2">
             <p>
               Created by{" "}
-              <a className="footer-link" href={EXTERNAL_LINKS.authorTwitter}>
+              <a className="footer-link" href={EXTERNAL_LINKS.authorWebsite}>
                 Evrim Persembe
               </a>
               .
-              <br />v{getCurrentVersion()}
+              <br />v{packageJson.version}
             </p>
           </Col>
         </Row>

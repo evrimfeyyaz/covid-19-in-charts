@@ -2,7 +2,7 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { Area, AreaChart } from "recharts";
 import { COLORS } from "../../../../constants";
-import { getValuesWithActiveCasesRate } from "../../../../utilities/covid19APIUtilities";
+import { getValuesWithActiveCasesRate } from "../../../../utilities/covid19ApiUtilities";
 import { numToPercentFactory } from "../../../../utilities/numUtilities";
 import SingleLocationChartContainer from "../common/charts/SingleLocationChartContainer";
 import SingleLocationOverallTooltip from "./SingleLocationOverallTooltip";
@@ -15,7 +15,7 @@ interface SingleLocationOverallChartProps {
   /**
    * The title of the x axis of the chart in this section.
    */
-  xAxisTitle: string;
+  xAxisTitle: string | null;
 }
 
 /**

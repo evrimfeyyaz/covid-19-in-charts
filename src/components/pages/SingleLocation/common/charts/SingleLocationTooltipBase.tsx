@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { prettifyMDYDate } from "../../../../../utilities/dateUtilities";
+import { dateKeyToDate, getReadableDate } from "../../../../../utilities/dateUtilities";
 
 interface SingleLocationTooltipProps {
   /**
@@ -39,13 +39,15 @@ const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipProps> =
   secondaryInfoClassName,
   date,
 }) => {
+  const readableDate = getReadableDate(dateKeyToDate(date));
+
   return (
     <div className="shadow rounded-lg bg-white border px-4 py-3">
       <p className="h5">
         {value} {chartUnit && <span className="text-muted">{chartUnit}</span>}
       </p>
       {secondaryInfo && <p className={`mb-2 ${secondaryInfoClassName}`}>{secondaryInfo}</p>}
-      <p className="mb-0 text-muted">{prettifyMDYDate(date)}</p>
+      <p className="mb-0 text-muted">{readableDate}</p>
     </div>
   );
 };

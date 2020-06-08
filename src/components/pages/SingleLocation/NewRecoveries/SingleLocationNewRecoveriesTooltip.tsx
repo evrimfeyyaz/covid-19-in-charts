@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
-import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19APIUtilities";
+import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import SingleLocationTooltipBase from "../common/charts/SingleLocationTooltipBase";
 import { getEMADiffMessage } from "../utils";
