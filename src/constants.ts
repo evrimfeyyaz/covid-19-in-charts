@@ -1,16 +1,6 @@
 export const ROUTE_PATHS = {
   home: "/",
-  casesRecoveriesDeaths: "/cases-recoveries-deaths",
-  dailyNumbers: "/daily-numbers",
-  singleLocation: "/single-location",
-  locationComparison: "/location-comparison",
   about: "/about",
-};
-
-export const ROUTE_TITLES = {
-  casesRecoveriesDeaths: "Cases, Recoveries & Deaths",
-  dailyNumbers: "Daily Numbers",
-  locationComparison: "Compare Locations",
 };
 
 export const COLORS = {
@@ -54,7 +44,7 @@ export const SITE_INFO = {
   baseUrl:
     process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : "https://covid19incharts.com",
   baseTitle: "COVID-19 in Charts",
-  description: "Various values related to COVID-19 visualized.",
+  description: "See the latest data of the COVID-19 pandemic visualized.",
 };
 
 export const IMAGES = {

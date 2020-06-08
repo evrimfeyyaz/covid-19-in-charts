@@ -19,9 +19,6 @@ export const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
   return (
     <div className="py-4 flex-grow-1 d-block-when-width-sufficient">
       <Switch>
-        <Route path={ROUTE_PATHS.singleLocation}>
-          <SingleLocation store={dataStore} />
-        </Route>
         <Route path={ROUTE_PATHS.about}>
           <About />
         </Route>
