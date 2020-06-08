@@ -37,9 +37,9 @@ export const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersIte
   rateValue,
   newValue,
 }) => {
-  const valueStr = value ? numToGroupedString(value) : "No Data";
-  const rateValueStr = rateValue ? numToPercentFactory(2)(rateValue) : undefined;
-  const newValueStr = newValue ? `+${numToGroupedString(newValue)}` : undefined;
+  const valueStr = value != null ? numToGroupedString(value) : "No Data";
+  const rateValueStr = rateValue != null ? numToPercentFactory(2)(rateValue) : undefined;
+  const newValueStr = newValue != null ? `+${numToGroupedString(newValue)}` : undefined;
 
   return (
     <Card className="text-center">
