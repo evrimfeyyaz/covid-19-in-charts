@@ -5,7 +5,7 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "csv-parse": "^4.8.8",
-    "date-fns": "^2.12.0",
+    "date-fns": "^2.14.0",
     "dom-to-image": "^2.6.0",
     "file-saver": "^2.0.2",
     "idb": "^5.0.2",
