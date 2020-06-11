@@ -174,7 +174,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
       }
 
       body = (
-        <Col>
+        <>
           <h1>COVID-19: {location}</h1>
           {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
 
@@ -224,7 +224,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
             xAxisTitle={xAxisTitle}
             values={data.values}
           />
-        </Col>
+        </>
       );
     }
   }
@@ -239,7 +239,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <meta property="og:image" content={getAbsoluteUrl(SITE_INFO.baseUrl, ogImage)} />
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
-      <Row>
+      <Row style={{ minHeight: 500 }}>
         {/*TODO: Separate the sidebar.*/}
         <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
           <LocationSelectionInput
@@ -261,14 +261,14 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
           </div>
         </Col>
 
-        {body}
+        <Col>{body}</Col>
+      </Row>
 
-        <Row className="d-lg-none mt-3">
-          <Col className="px-5">
-            <h2 className="h5 mt-3">Share</h2>
-            <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
-          </Col>
-        </Row>
+      <Row className="d-lg-none mt-3">
+        <Col className="px-5">
+          <h2 className="h5 mt-3">Share</h2>
+          <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
+        </Col>
       </Row>
     </Container>
   );

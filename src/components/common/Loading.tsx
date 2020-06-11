@@ -14,7 +14,7 @@ interface LoadingProps {
 export const Loading: FunctionComponent<LoadingProps> = ({ message }) => {
   return (
     <div
-      className="h-100 w-100 position-fixed d-flex flex-column align-items-center justify-content-center"
+      className="h-100 w-100 position-absolute d-flex flex-column align-items-center justify-content-center"
       style={{ top: 0, left: 0, zIndex: -999 }}
     >
       <Spinner animation="border" role="status">
