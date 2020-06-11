@@ -97,3 +97,27 @@ export function getValuesWithActiveCasesRate(
         : null,
   }));
 }
+
+/**
+ * Combines the given parameters to create a location name string that can be used to query a
+ * `COVID19API` instance.
+ *
+ * @param countryOrRegion
+ * @param provinceOrState
+ * @param county
+ */
+export function getLocationName(
+  countryOrRegion: string,
+  provinceOrState?: string,
+  county?: string
+): string {
+  let location = countryOrRegion;
+
+  if (county != null && provinceOrState != null) {
+    location += ` (${county}, ${provinceOrState})`;
+  } else if (provinceOrState != null) {
+    location += ` (${provinceOrState})`;
+  }
+
+  return location;
+}

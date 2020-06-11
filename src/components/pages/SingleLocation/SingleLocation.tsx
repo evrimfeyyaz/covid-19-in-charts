@@ -5,9 +5,13 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
-import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
+import { useParams } from "react-router";
+import { NumberParam, useQueryParam, withDefault } from "use-query-params";
 import { SITE_INFO } from "../../../constants";
-import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
+import {
+  filterDatesWithMinConfirmedCases,
+  getLocationName,
+} from "../../../utilities/covid19ApiUtilities";
 import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
@@ -37,17 +41,15 @@ interface SingleLocationProps {
  * A page that shows various charts and explanations for a single location.
  */
 export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
+  const { countryOrRegion = "US", provinceOrState, county } = useParams();
+  const location = getLocationName(countryOrRegion, provinceOrState, county);
+
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
   const [locationsList] = useState(store.locations);
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
-
-  /**
-   * The location that the user selected.
-   */
-  const [location, setLocation] = useQueryParam("location", withDefault(StringParam, "US"));
 
   /**
    * When this is set to a number, the data filtered to only include the dates that exceeded this
@@ -70,7 +72,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    * missing when the page is first requested without any query parameters.
    */
   useEffect(() => {
-    setLocation(location, "replaceIn");
+    // TODO: I don't think this is necessary, remove this.
     setMinConfirmedCases(minConfirmedCases, "replaceIn");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -119,7 +121,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    */
   function handleLocationChange(selectedLocations: string[]): void {
     if (selectedLocations.length > 0) {
-      setLocation(selectedLocations[0]);
+      return;
     }
   }
 
@@ -169,6 +171,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
       body = (
         <Row>
+          {/*TODO: Separate the sidebar.*/}
           <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
             <LocationSelectionInput
               locationsList={locationsList}

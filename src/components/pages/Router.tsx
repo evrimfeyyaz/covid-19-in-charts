@@ -22,7 +22,7 @@ export const Router: FunctionComponent<RouterProps> = ({ dataStore }) => {
         <Route path={ROUTE_PATHS.about}>
           <About />
         </Route>
-        <Route path={ROUTE_PATHS.home}>
+        <Route path={`${ROUTE_PATHS.home}:countryOrRegion?/:provinceOrState?/:county?`}>
           <SingleLocation store={dataStore} />
         </Route>
       </Switch>

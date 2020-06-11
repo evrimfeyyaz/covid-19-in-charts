@@ -1,6 +1,7 @@
 import { LocationData, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import {
   filterDatesWithMinConfirmedCases,
+  getLocationName,
   getValuesWithActiveCasesRate,
   getValuesWithEMA,
 } from "../covid19ApiUtilities";
@@ -31,7 +32,7 @@ describe("COVID-19 API utilities", () => {
     newDeaths: 25,
   };
 
-  describe("stripDataBeforePropertyExceedsN", () => {
+  describe("filterDatesWithMinConfirmedCases", () => {
     it("filters out the data before the confirmed cases exceeded the given number", () => {
       const locationData: LocationData = {
         location: "",
@@ -72,6 +73,30 @@ describe("COVID-19 API utilities", () => {
       const result = getValuesWithActiveCasesRate([values]);
 
       expect(result[0].activeCasesRate).toBeNull();
+    });
+  });
+
+  describe("getLocationName", () => {
+    const country = "USA";
+    const state = "Alabama";
+    const county = "Autauga";
+
+    it("handles only a country", () => {
+      const result = getLocationName(country);
+
+      expect(result).toEqual(country);
+    });
+
+    it("handles a country and a state", () => {
+      const result = getLocationName(country, state);
+
+      expect(result).toEqual(`${country} (${state})`);
+    });
+
+    it("handles a country, a state and a county", () => {
+      const result = getLocationName(country, state, county);
+
+      expect(result).toEqual(`${country} (${county}, ${state})`);
     });
   });
 });
