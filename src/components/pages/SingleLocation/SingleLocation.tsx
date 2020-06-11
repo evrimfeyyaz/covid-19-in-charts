@@ -38,7 +38,19 @@ interface SingleLocationProps {
  * A page that shows various charts and explanations for a single location.
  */
 export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
-  const defaultLocation = "US";
+  const localStorageLastLocationKey = "location";
+  const localStorageMinConfirmedCasesKey = "minConfirmedCases";
+
+  const storedLastLocation = useMemo(() => localStorage.getItem(localStorageLastLocationKey), []);
+  const defaultLocation = storedLastLocation != null ? JSON.parse(storedLastLocation) : "US";
+
+  const storedMinConfirmedCases = useMemo(
+    () => localStorage.getItem(localStorageMinConfirmedCasesKey),
+    []
+  );
+  const defaultMinConfirmedCases: number | null = storedMinConfirmedCases
+    ? JSON.parse(storedMinConfirmedCases)
+    : 100;
 
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
@@ -61,7 +73,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    */
   const [minConfirmedCases, setMinConfirmedCases] = useQueryParam(
     "minConfirmedCases",
-    withDefault(NumberParam, 100, false)
+    withDefault(NumberParam, defaultMinConfirmedCases, false)
   );
 
   const locationHasDefiniteArticle = useMemo(() => hasDefiniteArticle(location), [location]);
@@ -117,8 +129,9 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    * Stores user settings in local storage when they change.
    */
   useEffect(() => {
-    localStorage.setItem("location", location);
-  }, [location]);
+    localStorage.setItem(localStorageLastLocationKey, JSON.stringify(location));
+    localStorage.setItem(localStorageMinConfirmedCasesKey, JSON.stringify(minConfirmedCases));
+  }, [location, minConfirmedCases]);
 
   /**
    * Handles the location change.
