@@ -240,7 +240,6 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
       <Row style={{ minHeight: 500 }}>
-        {/*TODO: Separate the sidebar.*/}
         <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
           <LocationSelectionInput
             locationsList={locationsList}
