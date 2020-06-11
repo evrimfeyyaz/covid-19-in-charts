@@ -99,30 +99,6 @@ export function getValuesWithActiveCasesRate(
 }
 
 /**
- * Combines the given parameters to create a location name string that can be used to query a
- * `COVID19API` instance.
- *
- * @param countryOrRegion
- * @param provinceOrState
- * @param county
- */
-export function getLocationName(
-  countryOrRegion: string,
-  provinceOrState?: string,
-  county?: string
-): string {
-  let location = countryOrRegion;
-
-  if (county != null && provinceOrState != null) {
-    location += ` (${county}, ${provinceOrState})`;
-  } else if (provinceOrState != null) {
-    location += ` (${provinceOrState})`;
-  }
-
-  return location;
-}
-
-/**
  * Returns the singular or plural version of a property name depending on the given amount.
  *
  * @param property The name of the property.

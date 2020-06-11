@@ -5,14 +5,9 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
-import { useParams } from "react-router";
-import { useHistory } from "react-router-dom";
-import { NumberParam, useQueryParam, withDefault } from "use-query-params";
+import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
 import { SITE_INFO } from "../../../constants";
-import {
-  filterDatesWithMinConfirmedCases,
-  getLocationName,
-} from "../../../utilities/covid19ApiUtilities";
+import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
 import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
@@ -42,17 +37,7 @@ interface SingleLocationProps {
  * A page that shows various charts and explanations for a single location.
  */
 export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
-  const defaultCountry = "US";
-
-  const history = useHistory();
-  const { countryOrRegion, provinceOrState, county } = useParams();
-
-  // If there is no location path set, then change the location path to the default location.
-  if (countryOrRegion == null) {
-    history.replace("/US");
-  }
-
-  const location = getLocationName(countryOrRegion ?? defaultCountry, provinceOrState, county);
+  const defaultLocation = "US";
 
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
@@ -60,6 +45,14 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   const [lastUpdated, setLastUpdated] = useState<Date>();
   const [firstDate, setFirstDate] = useState<Date>();
   const [lastDate, setLastDate] = useState<Date>();
+
+  /**
+   * The location that is selected by the user. This is saved in a query parameter.
+   */
+  const [location, setLocation] = useQueryParam(
+    "location",
+    withDefault(StringParam, defaultLocation)
+  );
 
   /**
    * When this is set to a number, the data filtered to only include the dates that exceeded this
@@ -107,6 +100,17 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   }, [store, location, minConfirmedCases]);
 
   /**
+   * This is a bit of a hacky solution that makes sure that the query parameters are added to the
+   * current location. They are not automatically added when the user first enters this page, and
+   * we are using their default values.
+   */
+  useEffect(() => {
+    setLocation(location);
+    setMinConfirmedCases(minConfirmedCases);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
    * Stores user settings in local storage when they change.
    */
   useEffect(() => {
@@ -121,7 +125,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    */
   function handleLocationChange(selectedLocations: string[]): void {
     if (selectedLocations.length > 0) {
-      return;
+      setLocation(selectedLocations[0]);
     }
   }
 
