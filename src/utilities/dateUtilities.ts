@@ -22,5 +22,5 @@ export function dateKeyToDate(dateKey: string): Date {
  * Returns a string with a more readable date format, e.g. "Jan 1, 2020".
  */
 export function getReadableDate(date: Readonly<Date>): string {
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return date.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }

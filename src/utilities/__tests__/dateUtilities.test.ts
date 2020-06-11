@@ -27,18 +27,18 @@ describe("Date utilities", () => {
   describe("getReadableDate", () => {
     it("returns a string with a more readable date format", () => {
       const months = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
+        "January",
+        "February",
+        "March",
+        "April",
         "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
       ];
 
       months.forEach((month, index) => {
