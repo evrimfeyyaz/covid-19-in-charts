@@ -1,4 +1,4 @@
-import { getAliasesForLocation } from "../locationUtilities";
+import { getAliasesForLocation, hasDefiniteArticle } from "../locationUtilities";
 
 describe("Location utilities", () => {
   describe("getAliasesForLocation", () => {
@@ -51,6 +51,20 @@ describe("Location utilities", () => {
       const result = getAliasesForLocation("Location with no alias");
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe("hasDefiniteArticle", () => {
+    it('returns `true` if the given location should be preceded with "the"', () => {
+      const result = hasDefiniteArticle("US (Autauga, Alabama)");
+
+      expect(result).toEqual(true);
+    });
+
+    it('returns `false` if the given location should not be preceded with "the"', () => {
+      const result = hasDefiniteArticle("Turkey");
+
+      expect(result).toEqual(false);
     });
   });
 });

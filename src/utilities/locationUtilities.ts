@@ -25,3 +25,24 @@ export function getAliasesForLocation(location: string): string[] {
     return [];
   }
 }
+
+/**
+ * Returns `true` if the given location should be preceded with the definite article.
+ */
+export function hasDefiniteArticle(location: string): boolean {
+  const countriesWithDefiniteArticle = [
+    "US",
+    "United Kingdom",
+    "United Arab Emirates",
+    "Central African Republic",
+    "Dominican Republic",
+    "Holy See",
+    "Maldives",
+    "Philippines",
+    "Netherlands",
+    "Bahamas",
+    "Gambia",
+  ];
+
+  return countriesWithDefiniteArticle.some((country) => location.includes(country));
+}

@@ -1,6 +1,6 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api/lib/types";
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -9,6 +9,7 @@ import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-
 import { SITE_INFO } from "../../../constants";
 import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
 import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
+import { hasDefiniteArticle } from "../../../utilities/locationUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
 import { getAbsoluteUrl, getCanonicalUrl } from "../../../utilities/urlUtilities";
@@ -62,6 +63,8 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
     "minConfirmedCases",
     withDefault(NumberParam, 100, false)
   );
+
+  const locationHasDefiniteArticle = useMemo(() => hasDefiniteArticle(location), [location]);
 
   function clearData(): void {
     setData(undefined);
@@ -141,10 +144,11 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   // TODO: Add an image to this page.
   const ogImage = "";
 
-  // TODO: Prepend the definite article before certain country names, such as the US.
-  const pageDescription = `See the progression of COVID-19 in ${location}.`;
+  const locationName = locationHasDefiniteArticle ? `the ${location}` : location;
+  const pageDescription = `See the progression of COVID-19 in ${locationName}.`;
 
-  const title = `COVID-19: ${location}`;
+  const locationNameCapitalized = locationHasDefiniteArticle ? `The ${location}` : location;
+  const title = `COVID-19: ${locationNameCapitalized}`;
   const pageTitle = createPageTitle(SITE_INFO.baseTitle, title);
 
   let subtitle = "";
@@ -175,7 +179,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
       body = (
         <>
-          <h1>COVID-19: {location}</h1>
+          <h1>{title}</h1>
           {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
 
           <SingleLocationLatestNumbers values={latestValues} />
