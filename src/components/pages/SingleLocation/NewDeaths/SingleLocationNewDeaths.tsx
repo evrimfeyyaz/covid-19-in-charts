@@ -4,9 +4,9 @@ import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
 import { EMAMessage } from "../common/EMAMessage";
+import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
-import { getReadableValuesOnDate } from "../utils";
 import { SingleLocationNewDeathsTooltip } from "./SingleLocationNewDeathsTooltip";
 
 /**
@@ -19,7 +19,6 @@ export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWit
   emaRange,
 }) => {
   const valuesWithEMA = getValuesWithEMA(values, "newDeaths", emaRange);
-  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
 
   const title = "New Deaths";
   const description = (
@@ -28,11 +27,7 @@ export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWit
         The number of <span style={{ color: COLORS.deaths }}>new deaths</span> on each day, starting
         from {startingFrom}.
       </p>
-      <p>
-        There were{" "}
-        <span style={{ color: COLORS.deaths }}>{readableLastValues.newDeaths} new deaths</span> on{" "}
-        {readableLastValues.date}.
-      </p>
+      <LatestValuesMessage latestValues={values[values.length - 1]} property={"newDeaths"} />
       <EMAMessage
         values={valuesWithEMA}
         property={"newDeaths"}

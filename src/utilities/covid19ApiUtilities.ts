@@ -121,3 +121,48 @@ export function getLocationName(
 
   return location;
 }
+
+/**
+ * Returns the singular or plural version of a property name depending on the given amount.
+ *
+ * @param property The name of the property.
+ * @param value The value of the property.
+ */
+export function pluralizeProperty(
+  property: keyof Omit<ValuesOnDate, "date" | "mortalityRate" | "recoveryRate">,
+  value: number
+): string {
+  const propertyNames: (keyof ValuesOnDate)[] = [
+    "confirmed",
+    "deaths",
+    "recovered",
+    "newConfirmed",
+    "newDeaths",
+    "newRecovered",
+    "activeCases",
+  ];
+
+  const pluralWords = [
+    "confirmed cases",
+    "deaths",
+    "recoveries",
+    "new cases",
+    "new deaths",
+    "new recoveries",
+    "active cases",
+  ];
+
+  const singularWords = [
+    "confirmed case",
+    "death",
+    "recovery",
+    "new case",
+    "new death",
+    "new recovery",
+    "active case",
+  ];
+
+  const wordIndex = propertyNames.indexOf(property);
+
+  return value === 1 ? singularWords[wordIndex] : pluralWords[wordIndex];
+}

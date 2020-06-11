@@ -4,6 +4,7 @@ import {
   getLocationName,
   getValuesWithActiveCasesRate,
   getValuesWithEMA,
+  pluralizeProperty,
 } from "../covid19ApiUtilities";
 
 describe("COVID-19 API utilities", () => {
@@ -97,6 +98,64 @@ describe("COVID-19 API utilities", () => {
       const result = getLocationName(country, state, county);
 
       expect(result).toEqual(`${country} (${county}, ${state})`);
+    });
+  });
+
+  describe("pluralize", () => {
+    it('handles "confirmed"', () => {
+      const singularResult = pluralizeProperty("confirmed", 1);
+      const pluralResult = pluralizeProperty("confirmed", 2);
+
+      expect(singularResult).toEqual("confirmed case");
+      expect(pluralResult).toEqual("confirmed cases");
+    });
+
+    it('handles "deaths"', () => {
+      const singularResult = pluralizeProperty("deaths", 1);
+      const pluralResult = pluralizeProperty("deaths", 2);
+
+      expect(singularResult).toEqual("death");
+      expect(pluralResult).toEqual("deaths");
+    });
+
+    it('handles "recovered"', () => {
+      const singularResult = pluralizeProperty("recovered", 1);
+      const pluralResult = pluralizeProperty("recovered", 2);
+
+      expect(singularResult).toEqual("recovery");
+      expect(pluralResult).toEqual("recoveries");
+    });
+
+    it('handles "newConfirmed"', () => {
+      const singularResult = pluralizeProperty("newConfirmed", 1);
+      const pluralResult = pluralizeProperty("newConfirmed", 2);
+
+      expect(singularResult).toEqual("new case");
+      expect(pluralResult).toEqual("new cases");
+    });
+
+    it('handles "newDeaths"', () => {
+      const singularResult = pluralizeProperty("newDeaths", 1);
+      const pluralResult = pluralizeProperty("newDeaths", 2);
+
+      expect(singularResult).toEqual("new death");
+      expect(pluralResult).toEqual("new deaths");
+    });
+
+    it('handles "newRecovered"', () => {
+      const singularResult = pluralizeProperty("newRecovered", 1);
+      const pluralResult = pluralizeProperty("newRecovered", 2);
+
+      expect(singularResult).toEqual("new recovery");
+      expect(pluralResult).toEqual("new recoveries");
+    });
+
+    it('handles "activeCases"', () => {
+      const singularResult = pluralizeProperty("activeCases", 1);
+      const pluralResult = pluralizeProperty("activeCases", 2);
+
+      expect(singularResult).toEqual("active case");
+      expect(pluralResult).toEqual("active cases");
     });
   });
 });

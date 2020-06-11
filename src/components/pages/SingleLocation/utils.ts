@@ -30,7 +30,7 @@ export function getEMADiffMessage(
   return [message, className];
 }
 
-export interface ReadableValuesOnDate {
+export interface FormattedValuesOnDate {
   date: string;
   confirmed: string;
   deaths?: string;
@@ -40,43 +40,49 @@ export interface ReadableValuesOnDate {
   mortalityRate?: string;
   newRecovered?: string;
   recoveryRate?: string;
+  activeCases?: string;
 }
 
 /**
- * Returns a more readable version of all values in a `ValuesOnDate` object.
+ * Returns a formatted version of all values in a `ValuesOnDate` object.
  *
- * For example, 1/23/20 is converted to Jan 23, 2020, and 10000 is converted to 10,000.
+ * For example, `"1/23/20"` is converted to `"Jan 23, 2020"`, and `10000` is converted to
+ * `"10,000"`.
  */
-export function getReadableValuesOnDate(values: ValuesOnDate): ReadableValuesOnDate {
-  const readableValues: ReadableValuesOnDate = {
+export function getFormattedValuesOnDate(values: ValuesOnDate): FormattedValuesOnDate {
+  const formattedValues: FormattedValuesOnDate = {
     date: getReadableDate(dateKeyToDate(values.date)),
     confirmed: numToGroupedString(values.confirmed),
     newConfirmed: numToGroupedString(values.newConfirmed),
   };
 
   if (values.deaths != null) {
-    readableValues.deaths = numToGroupedString(values.deaths);
+    formattedValues.deaths = numToGroupedString(values.deaths);
   }
 
   if (values.recovered != null) {
-    readableValues.recovered = numToGroupedString(values.recovered);
+    formattedValues.recovered = numToGroupedString(values.recovered);
   }
 
   if (values.newDeaths != null) {
-    readableValues.newDeaths = numToGroupedString(values.newDeaths);
+    formattedValues.newDeaths = numToGroupedString(values.newDeaths);
   }
 
   if (values.newRecovered != null) {
-    readableValues.newRecovered = numToGroupedString(values.newRecovered);
+    formattedValues.newRecovered = numToGroupedString(values.newRecovered);
   }
 
   if (values.mortalityRate != null) {
-    readableValues.mortalityRate = numToPercentFactory(2)(values.mortalityRate);
+    formattedValues.mortalityRate = numToPercentFactory(2)(values.mortalityRate);
   }
 
   if (values.recoveryRate != null) {
-    readableValues.recoveryRate = numToPercentFactory(2)(values.recoveryRate);
+    formattedValues.recoveryRate = numToPercentFactory(2)(values.recoveryRate);
   }
 
-  return readableValues;
+  if (values.activeCases != null) {
+    formattedValues.activeCases = numToGroupedString(values.activeCases);
+  }
+
+  return formattedValues;
 }

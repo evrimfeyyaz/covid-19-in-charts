@@ -2,9 +2,9 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
+import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
-import { getReadableValuesOnDate } from "../utils";
 import { SingleLocationNewRecoveriesTooltip } from "./SingleLocationNewRecoveriesTooltip";
 
 /**
@@ -15,8 +15,6 @@ export const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectio
   xAxisTitle,
   values,
 }) => {
-  const readableValuesOnDate = getReadableValuesOnDate(values[values.length - 1]);
-
   const title = "New Recoveries";
   const description = (
     <>
@@ -24,13 +22,7 @@ export const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectio
         The number of <span style={{ color: COLORS.recovered }}>new recoveries</span> on each day,
         starting from {startingFrom}.
       </p>
-      <p>
-        There were{" "}
-        <span style={{ color: COLORS.recovered }}>
-          {readableValuesOnDate.newRecovered} new recoveries
-        </span>{" "}
-        on {readableValuesOnDate.date}.
-      </p>
+      <LatestValuesMessage latestValues={values[values.length - 1]} property={"newRecovered"} />
     </>
   );
 

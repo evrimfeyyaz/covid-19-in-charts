@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
-import { getReadableValuesOnDate } from "../utils";
+import { getFormattedValuesOnDate } from "../utils";
 import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
 
 /**
@@ -13,7 +13,7 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
   xAxisTitle,
   values,
 }) => {
-  const readableValuesOnDate = getReadableValuesOnDate(values[values.length - 1]);
+  const readableValuesOnDate = getFormattedValuesOnDate(values[values.length - 1]);
 
   const title = "Overall";
   const description = (

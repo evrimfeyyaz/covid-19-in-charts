@@ -2,7 +2,7 @@ import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
-import { getReadableValuesOnDate } from "../utils";
+import { getFormattedValuesOnDate } from "../utils";
 
 interface EMAMessageProps {
   /**
@@ -46,7 +46,7 @@ export const EMAMessage: FunctionComponent<EMAMessageProps> = ({
     return null;
   }
 
-  const readableLastValues = getReadableValuesOnDate(lastValues);
+  const readableLastValues = getFormattedValuesOnDate(lastValues);
 
   const emaDiff = lastValueOfEMA - lastValueOfProperty;
 

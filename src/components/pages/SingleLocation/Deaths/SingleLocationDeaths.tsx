@@ -2,9 +2,9 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationLineChart } from "../common/charts/SingleLocationLineChart";
+import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
-import { getReadableValuesOnDate } from "../utils";
 import { SingleLocationDeathsTooltip } from "./SingleLocationDeathsTooltip";
 
 /**
@@ -15,8 +15,6 @@ export const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps>
   xAxisTitle,
   values,
 }) => {
-  const readableLastValues = getReadableValuesOnDate(values[values.length - 1]);
-
   const title = "Deaths";
   const description = (
     <>
@@ -24,10 +22,7 @@ export const SingleLocationDeaths: FunctionComponent<SingleLocationSectionProps>
         The <span style={{ color: COLORS.deaths }}>cumulative number of deaths</span> on each day,
         starting from {startingFrom}.
       </p>
-      <p>
-        There were <span style={{ color: COLORS.deaths }}>{readableLastValues.deaths} deaths</span>{" "}
-        to date on {readableLastValues.date}.
-      </p>
+      <LatestValuesMessage latestValues={values[values.length - 1]} property={"deaths"} />
     </>
   );
 
