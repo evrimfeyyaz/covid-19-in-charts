@@ -174,85 +174,57 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
       }
 
       body = (
-        <Row>
-          {/*TODO: Separate the sidebar.*/}
-          <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
-            <LocationSelectionInput
-              locationsList={locationsList}
-              defaultLocations={[location]}
-              id="location-selection-input"
-              placeholder={"Select locations..."}
-              onChange={handleLocationChange}
-            />
+        <Col>
+          <h1>COVID-19: {location}</h1>
+          {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
 
-            <MinConfirmedCasesInput
-              value={minConfirmedCases}
-              onChange={handleMinConfirmedCasesChange}
-            />
+          <SingleLocationLatestNumbers values={latestValues} />
 
-            <div className="d-none d-lg-block">
-              <h2 className="h5 mt-3">Share</h2>
-              <ShareButtons title={pageTitle} url={canonicalUrl} small={false} />
-            </div>
-          </Col>
-          <Col>
-            <h1>COVID-19: {location}</h1>
-            {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
+          <SingleLocationConfirmedCases
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
 
-            <SingleLocationLatestNumbers values={latestValues} />
+          <SingleLocationNewCases
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+            emaRange={12}
+          />
 
-            <SingleLocationConfirmedCases
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
+          <SingleLocationDeaths
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
 
-            <SingleLocationNewCases
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-              emaRange={12}
-            />
+          <SingleLocationNewDeaths
+            emaRange={12}
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
 
-            <SingleLocationDeaths
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
+          <SingleLocationRecoveries
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
 
-            <SingleLocationNewDeaths
-              emaRange={12}
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
+          <SingleLocationNewRecoveries
+            emaRange={12}
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
 
-            <SingleLocationRecoveries
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
-
-            <SingleLocationNewRecoveries
-              emaRange={12}
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
-
-            <SingleLocationOverall
-              startingFrom={startingFrom}
-              xAxisTitle={xAxisTitle}
-              values={data.values}
-            />
-          </Col>
-          <Row className="d-lg-none mt-3">
-            <Col className="px-5">
-              <h2 className="h5 mt-3">Share</h2>
-              <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
-            </Col>
-          </Row>
-        </Row>
+          <SingleLocationOverall
+            startingFrom={startingFrom}
+            xAxisTitle={xAxisTitle}
+            values={data.values}
+          />
+        </Col>
       );
     }
   }
@@ -267,7 +239,37 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <meta property="og:image" content={getAbsoluteUrl(SITE_INFO.baseUrl, ogImage)} />
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
-      {body}
+      <Row>
+        {/*TODO: Separate the sidebar.*/}
+        <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
+          <LocationSelectionInput
+            locationsList={locationsList}
+            defaultLocations={[location]}
+            id="location-selection-input"
+            placeholder={"Select locations..."}
+            onChange={handleLocationChange}
+          />
+
+          <MinConfirmedCasesInput
+            value={minConfirmedCases}
+            onChange={handleMinConfirmedCasesChange}
+          />
+
+          <div className="d-none d-lg-block">
+            <h2 className="h5 mt-3">Share</h2>
+            <ShareButtons title={pageTitle} url={canonicalUrl} small={false} />
+          </div>
+        </Col>
+
+        {body}
+
+        <Row className="d-lg-none mt-3">
+          <Col className="px-5">
+            <h2 className="h5 mt-3">Share</h2>
+            <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
+          </Col>
+        </Row>
+      </Row>
     </Container>
   );
 };
