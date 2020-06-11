@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import Form from "react-bootstrap/Form";
-import { getAliasesForLocation } from "../../utilities/countryUtilities";
+import { getAliasesForLocation } from "../../utilities/locationUtilities";
 
 interface LocationSelectionInputProps {
   /**

@@ -1,6 +1,6 @@
-import { getAliasesForLocation } from "../countryUtilities";
+import { getAliasesForLocation } from "../locationUtilities";
 
-describe("Country utilities", () => {
+describe("Location utilities", () => {
   describe("getAliasesForLocation", () => {
     it("it returns aliases given a string that contains the name of a location with aliases", () => {
       const location = "US (Autauga, Alabama)";
