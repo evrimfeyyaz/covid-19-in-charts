@@ -6,6 +6,7 @@ import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router";
+import { useHistory } from "react-router-dom";
 import { NumberParam, useQueryParam, withDefault } from "use-query-params";
 import { SITE_INFO } from "../../../constants";
 import {
@@ -41,8 +42,17 @@ interface SingleLocationProps {
  * A page that shows various charts and explanations for a single location.
  */
 export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }) => {
-  const { countryOrRegion = "US", provinceOrState, county } = useParams();
-  const location = getLocationName(countryOrRegion, provinceOrState, county);
+  const defaultCountry = "US";
+
+  const history = useHistory();
+  const { countryOrRegion, provinceOrState, county } = useParams();
+
+  // If there is no location path set, then change the location path to the default location.
+  if (countryOrRegion == null) {
+    history.replace("/US");
+  }
+
+  const location = getLocationName(countryOrRegion ?? defaultCountry, provinceOrState, county);
 
   const [data, setData] = useState<LocationData>();
   const [latestValues, setLatestValues] = useState<ValuesOnDate>();
@@ -66,16 +76,6 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
     setFirstDate(undefined);
     setLastDate(undefined);
   }
-
-  /**
-   * Adds query parameters to the location just in case they are missing. For example, they are
-   * missing when the page is first requested without any query parameters.
-   */
-  useEffect(() => {
-    // TODO: I don't think this is necessary, remove this.
-    setMinConfirmedCases(minConfirmedCases, "replaceIn");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   /**
    * Loads the data.
