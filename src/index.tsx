@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter, Route } from "react-router-dom";
 import { QueryParamProvider } from "use-query-params";
 import { App } from "./App";
-import "./styles.scss";
+import "./styles/styles.scss";
 
 ReactDOM.render(
   <BrowserRouter>

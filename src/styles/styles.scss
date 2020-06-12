@@ -1,0 +1,71 @@
+@import 'fonts';
+@import 'sharing-buttons';
+
+$body-bg: #e1e6ed;
+$min-screen-width: 430px;
+
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}
+
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.more-info {
+  border-bottom: 1px dotted;
+  cursor: help;
+}
+
+.d-block-when-width-sufficient {
+  display: none;
+
+  @media (min-width: $min-screen-width) {
+    display: block;
+  }
+}
+
+.d-flex-when-width-not-sufficient {
+  display: flex;
+
+  @media (min-width: $min-screen-width) {
+    display: none;
+  }
+}
+
+.text-shadow-dark {
+  text-shadow: rgba(0, 0, 0, 0.15) 0.06em 0.06em 0.06em;
+}
+
+.footer-link {
+  color: goldenrod;
+
+  &:hover {
+    color: goldenrod;
+    opacity: .8;
+  }
+}
+
+.navbar-brand {
+  font-family: $headings-font-family;
+}
+
+.navbar-nav {
+  margin-top: .5rem;
+}
+
+.location-selection-input-max-selections-reached-menu {
+  border: 1px solid #ced4da
+}
+
+@import '~react-bootstrap-typeahead/css/Typeahead';
+@import '~bootstrap/scss/bootstrap';
