@@ -172,7 +172,6 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   const canonicalUrl = getCanonicalUrl(window.location.href, SITE_INFO.baseUrl, [
     "location",
     "minConfirmedCases",
-    "filterMinConfirmedCases",
   ]);
 
   let body = <Loading />;
