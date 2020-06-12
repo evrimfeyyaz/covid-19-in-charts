@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { getFormattedValuesOnDate } from "../../../../utilities/covid19ApiUtilities";
+import { MoreInfo } from "../common/MoreInfo";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
 import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
@@ -13,7 +14,35 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
   xAxisTitle,
   values,
 }) => {
-  const readableValuesOnDate = getFormattedValuesOnDate(values[values.length - 1]);
+  const formattedValues = getFormattedValuesOnDate(values[values.length - 1]);
+
+  const mortalityRateText = (
+    <MoreInfo
+      text="mortality rate"
+      info={
+        <img
+          src={"images/mortality-rate.svg"}
+          alt="(Cumulative Deaths) / (Cumulative Confirmed Cases)"
+          style={{ width: "100%" }}
+        />
+      }
+      color={COLORS.deaths}
+    />
+  );
+
+  const recoveryRateText = (
+    <MoreInfo
+      text="recovery rate"
+      info={
+        <img
+          src={"images/recovery-rate.svg"}
+          alt="(Cumulative Recoveries) / (Cumulative Confirmed Cases)"
+          style={{ width: "100%" }}
+        />
+      }
+      color={COLORS.recovered}
+    />
+  );
 
   const title = "Overall";
   const description = (
@@ -25,23 +54,13 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
         cases on each day, starting from {startingFrom}.
       </p>
       <p>
-        On {readableValuesOnDate.date}, the{" "}
-        <span
-          style={{
-            color: COLORS.deaths,
-            borderColor: COLORS.deaths,
-          }}
-        >
-          <span className="more-info">mortality rate</span> was {readableValuesOnDate.mortalityRate}
+        On {formattedValues.date}, the{" "}
+        <span style={{ color: COLORS.deaths }}>
+          {mortalityRateText} was {formattedValues.mortalityRate}
         </span>{" "}
         , and the{" "}
-        <span
-          style={{
-            color: COLORS.recovered,
-            borderColor: COLORS.recovered,
-          }}
-        >
-          <span className="more-info">recovery rate</span> was {readableValuesOnDate.recoveryRate}
+        <span style={{ color: COLORS.recovered }}>
+          {recoveryRateText} was {formattedValues.recoveryRate}
         </span>{" "}
         .
       </p>
