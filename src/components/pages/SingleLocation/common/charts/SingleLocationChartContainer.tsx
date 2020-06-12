@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { NoData } from "../../../../common/NoData";
+import { NoData } from "../NoData";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
 
 interface ChartContainerProps<DataType, DataKeysType>
