@@ -3,11 +3,16 @@ import Overlay from "react-bootstrap/Overlay";
 import Popover from "react-bootstrap/Popover";
 import { titleCase } from "title-case";
 
-interface MoreInfoProps {
+interface MoreInfoTextProps {
   /**
    * The text that should show an overlaid information when hovered over.
    */
   text: string;
+  /**
+   * The title of the information popover. If no title is given then a title-cased version of the
+   * `text` is used.
+   */
+  title?: string;
   /**
    * The detailed information to show.
    */
@@ -16,9 +21,21 @@ interface MoreInfoProps {
    * The color of the text.
    */
   color?: string;
+  style?: React.CSSProperties;
+  className?: string;
 }
 
-export const MoreInfo: FunctionComponent<MoreInfoProps> = ({ text, info, color }) => {
+/**
+ * A component that renders a text which shows extra information on mouse over.
+ */
+export const MoreInfo: FunctionComponent<MoreInfoTextProps> = ({
+  text,
+  title,
+  info,
+  color,
+  style,
+  className,
+}) => {
   const textRef = useRef(null);
   const [showInfo, setShowInfo] = useState(false);
 
@@ -26,7 +43,8 @@ export const MoreInfo: FunctionComponent<MoreInfoProps> = ({ text, info, color }
     setShowInfo(!showInfo);
   }
 
-  const style = {
+  const containerStyle = {
+    ...style,
     color,
     borderColor: color,
   };
@@ -37,14 +55,14 @@ export const MoreInfo: FunctionComponent<MoreInfoProps> = ({ text, info, color }
         ref={textRef}
         onMouseEnter={toggleInfo}
         onMouseLeave={toggleInfo}
-        className="more-info"
-        style={style}
+        className={`${className} more-info`}
+        style={containerStyle}
       >
         {text}
       </span>
       <Overlay target={textRef.current} show={showInfo} placement="top">
         <Popover id="more-info-popover">
-          <Popover.Title as="h3">{titleCase(text)}</Popover.Title>
+          <Popover.Title as="h3">{title ?? titleCase(text)}</Popover.Title>
           <Popover.Content>{info}</Popover.Content>
         </Popover>
       </Overlay>

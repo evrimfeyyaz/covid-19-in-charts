@@ -1,5 +1,6 @@
 import React, { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
+import { MoreInfo } from "../MoreInfo";
 
 interface MinConfirmedCasesProps {
   /**
@@ -36,9 +37,19 @@ export const MinConfirmedCasesInput: FunctionComponent<MinConfirmedCasesProps> =
     }
   }
 
+  const inputExplanation =
+    "When this is set to a number, the data starts from the first day that the confirmed cases reached that number. For example, if this is set to 100, all the days before the confirmed cases were less than 100 are ignored.";
+
   return (
-    <Form.Group>
+    <Form.Group style={{ position: "relative" }}>
       <Form.Label>Minimum Confirmed Cases</Form.Label>
+      <MoreInfo
+        text="What is This?"
+        info={inputExplanation}
+        title="Minimum Confirmed Cases"
+        style={{ position: "absolute", right: 0 }}
+        className="text-secondary"
+      />
       <Form.Control as="select" value={selectedValue} onChange={handleChange} custom>
         <option value="off">Off</option>
         <option value={10}>10</option>
