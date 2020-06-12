@@ -39,6 +39,7 @@ export function SingleLocationChartContainer<DataType, DataKeysType>({
             }}
             width={70}
             tickFormatter={yAxisTickFormatter}
+            allowDataOverflow
           />
           <Tooltip content={TooltipComponent} />
           {children}
