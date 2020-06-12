@@ -192,7 +192,9 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
       body = (
         <>
           <h1>{title}</h1>
-          {subtitle && <p className="small text-muted ml-1 mb-5">{subtitle}</p>}
+          {subtitle && <p className="small text-muted ml-1 mb-3">{subtitle}</p>}
+
+          <hr />
 
           <SingleLocationLatestNumbers values={latestValues} />
 
