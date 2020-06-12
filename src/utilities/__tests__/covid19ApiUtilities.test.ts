@@ -1,6 +1,8 @@
 import { LocationData, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import {
   filterDatesWithMinConfirmedCases,
+  FormattedValuesOnDate,
+  getFormattedValuesOnDate,
   getValuesWithActiveCasesRate,
   getValuesWithEMA,
   pluralizeProperty,
@@ -131,6 +133,39 @@ describe("COVID-19 API utilities", () => {
 
       expect(singularResult).toEqual("active case");
       expect(pluralResult).toEqual("active cases");
+    });
+  });
+
+  describe("getFormattedValuesOnDate", () => {
+    it("formats all values", () => {
+      const values: ValuesOnDate = {
+        date: "1/23/20",
+        confirmed: 1000000,
+        newConfirmed: 1000000,
+        recoveryRate: 0.12345,
+        newRecovered: 1000000,
+        mortalityRate: 0.12345,
+        activeCases: 1000000,
+        deaths: 1000000,
+        recovered: 1000000,
+        newDeaths: 1000000,
+      };
+
+      const result = getFormattedValuesOnDate(values);
+      const expected: FormattedValuesOnDate = {
+        date: "January 23, 2020",
+        confirmed: "1,000,000",
+        newConfirmed: "1,000,000",
+        recoveryRate: "12.35%",
+        newRecovered: "1,000,000",
+        mortalityRate: "12.35%",
+        activeCases: "1,000,000",
+        deaths: "1,000,000",
+        recovered: "1,000,000",
+        newDeaths: "1,000,000",
+      };
+
+      expect(result).toEqual(expected);
     });
   });
 });
