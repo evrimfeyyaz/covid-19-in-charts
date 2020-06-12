@@ -38,7 +38,7 @@ export const MinConfirmedCasesInput: FunctionComponent<MinConfirmedCasesProps> =
   }
 
   const inputExplanation =
-    "When this is set to a number, the data starts from the first day that the confirmed cases reached that number. For example, if this is set to 100, all the days before the confirmed cases were less than 100 are ignored.";
+    "When this is set to a number, the data starts from the first day that the confirmed cases reached that number. For example, if this is set to 100, all the days before the confirmed cases were fewer than 100 are ignored.";
 
   return (
     <Form.Group style={{ position: "relative" }}>
