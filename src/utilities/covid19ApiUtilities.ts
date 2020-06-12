@@ -57,7 +57,7 @@ export interface ValuesOnDateWithMovingAverage extends ValuesOnDate {
  * @param range The range of the exponential moving average calculation, e.g. 12 yields a 12-day
  *   exponential moving average.
  */
-export function getValuesWithEMA(
+export function getValuesWithEma(
   values: readonly ValuesOnDate[],
   property: keyof Omit<ValuesOnDate, "date">,
   range: number

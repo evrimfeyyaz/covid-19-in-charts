@@ -4,7 +4,7 @@ import {
   FormattedValuesOnDate,
   getFormattedValuesOnDate,
   getValuesWithActiveCasesRate,
-  getValuesWithEMA,
+  getValuesWithEma,
   pluralizeProperty,
 } from "../covid19ApiUtilities";
 
@@ -52,9 +52,9 @@ describe("COVID-19 API utilities", () => {
     });
   });
 
-  describe("getValuesWithEMA", () => {
+  describe("getValuesWithEma", () => {
     it("adds exponential moving average to the data", () => {
-      const result = getValuesWithEMA([values1, values2], "confirmed", 1);
+      const result = getValuesWithEma([values1, values2], "confirmed", 1);
 
       expect(result[0].movingAverage).toBeNull();
       expect(result[1].movingAverage).toEqual(10);

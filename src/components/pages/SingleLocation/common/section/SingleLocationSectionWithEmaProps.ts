@@ -1,6 +1,6 @@
 import { SingleLocationSectionProps } from "./SingleLocationSectionProps";
 
-export interface SingleLocationSectionWithEMAProps extends SingleLocationSectionProps {
+export interface SingleLocationSectionWithEmaProps extends SingleLocationSectionProps {
   /**
    * The range of the exponential moving average calculation.
    *

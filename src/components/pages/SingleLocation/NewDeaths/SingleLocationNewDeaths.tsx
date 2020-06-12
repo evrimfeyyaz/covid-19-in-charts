@@ -1,24 +1,24 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
+import { getValuesWithEma } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
 import { EmaMessage } from "../common/EmaMessage";
 import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
-import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
+import { SingleLocationSectionWithEmaProps } from "../common/section/SingleLocationSectionWithEmaProps";
 import { SingleLocationNewDeathsTooltip } from "./SingleLocationNewDeathsTooltip";
 
 /**
  * Renders a page section that shows the new deaths chart for a single location.
  */
-export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWithEmaProps> = ({
   startingFrom,
   xAxisTitle,
   values,
   emaRange,
 }) => {
-  const valuesWithEMA = getValuesWithEMA(values, "newDeaths", emaRange);
+  const valuesWithEma = getValuesWithEma(values, "newDeaths", emaRange);
 
   const title = "New Deaths";
   const description = (
@@ -29,7 +29,7 @@ export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWit
       </p>
       <LatestValuesMessage latestValues={values[values.length - 1]} property={"newDeaths"} />
       <EmaMessage
-        values={valuesWithEMA}
+        values={valuesWithEma}
         property={"newDeaths"}
         chartUnit={"deaths"}
         range={emaRange}
@@ -39,7 +39,7 @@ export const SingleLocationNewDeaths: FunctionComponent<SingleLocationSectionWit
 
   const chart = (
     <SingleLocationBarChart
-      data={valuesWithEMA}
+      data={valuesWithEma}
       dataKey="newDeaths"
       name={title}
       color={COLORS.deaths}

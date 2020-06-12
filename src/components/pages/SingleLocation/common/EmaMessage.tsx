@@ -6,7 +6,7 @@ import {
   ValuesOnDateWithMovingAverage,
 } from "../../../../utilities/covid19ApiUtilities";
 
-interface EMAMessageProps {
+interface EmaMessageProps {
   /**
    * Values with exponential moving average data added.
    */
@@ -30,7 +30,7 @@ interface EMAMessageProps {
 /**
  * A component that show a simple explanation of the exponential moving average values of a dataset.
  */
-export const EmaMessage: FunctionComponent<EMAMessageProps> = ({
+export const EmaMessage: FunctionComponent<EmaMessageProps> = ({
   values,
   property,
   chartUnit,
@@ -41,21 +41,21 @@ export const EmaMessage: FunctionComponent<EMAMessageProps> = ({
   }
 
   const lastValues = values[values.length - 1];
-  const lastValueOfEMA = lastValues.movingAverage;
+  const lastValueOfEma = lastValues.movingAverage;
   const lastValueOfProperty = lastValues[property] ?? 0;
 
-  if (lastValueOfEMA == null) {
+  if (lastValueOfEma == null) {
     return null;
   }
 
   const readableLastValues = getFormattedValuesOnDate(lastValues);
 
-  const emaDiff = lastValueOfEMA - lastValueOfProperty;
+  const emaDiff = lastValueOfEma - lastValueOfProperty;
 
   const messageStyle = emaDiff > 0 ? "text-success" : "text-danger";
   const aboveOrBelow = emaDiff > 0 ? "below" : "above";
 
-  const lastEMAState = (
+  const lastEmaState = (
     <span>
       {readableLastValues.date} was{" "}
       <span className={messageStyle}>
@@ -77,7 +77,7 @@ export const EmaMessage: FunctionComponent<EMAMessageProps> = ({
       >
         {range}-day exponential moving average
       </span>{" "}
-      line below. {lastEMAState}
+      line below. {lastEmaState}
     </p>
   );
 };

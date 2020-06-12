@@ -4,13 +4,13 @@ import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
 import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
-import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
+import { SingleLocationSectionWithEmaProps } from "../common/section/SingleLocationSectionWithEmaProps";
 import { SingleLocationNewRecoveriesTooltip } from "./SingleLocationNewRecoveriesTooltip";
 
 /**
  * Renders a page section that shows the new recoveries chart for a single location.
  */
-export const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewRecoveries: FunctionComponent<SingleLocationSectionWithEmaProps> = ({
   startingFrom,
   xAxisTitle,
   values,

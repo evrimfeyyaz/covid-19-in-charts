@@ -1,24 +1,24 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
+import { getValuesWithEma } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
 import { EmaMessage } from "../common/EmaMessage";
 import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
-import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
+import { SingleLocationSectionWithEmaProps } from "../common/section/SingleLocationSectionWithEmaProps";
 import { SingleLocationNewCasesTooltip } from "./SingleLocationNewCasesTooltip";
 
 /**
  * Renders a page section that shows the new cases chart for a single location.
  */
-export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEMAProps> = ({
+export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWithEmaProps> = ({
   startingFrom,
   xAxisTitle,
   values,
   emaRange,
 }) => {
-  const valuesWithEMA = getValuesWithEMA(values, "newConfirmed", emaRange);
+  const valuesWithEma = getValuesWithEma(values, "newConfirmed", emaRange);
 
   const title = "New Cases";
   const description = (
@@ -29,7 +29,7 @@ export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWith
       </p>
       <LatestValuesMessage latestValues={values[values.length - 1]} property={"newConfirmed"} />
       <EmaMessage
-        values={valuesWithEMA}
+        values={valuesWithEma}
         property={"newConfirmed"}
         chartUnit={"cases"}
         range={emaRange}
@@ -39,7 +39,7 @@ export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWith
 
   const chart = (
     <SingleLocationBarChart
-      data={valuesWithEMA}
+      data={valuesWithEma}
       dataKey="newConfirmed"
       name={title}
       color={COLORS.confirmed}
