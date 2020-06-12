@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
+import { getFormattedValuesOnDate } from "../../../../utilities/covid19ApiUtilities";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
-import { getFormattedValuesOnDate } from "../utils";
 import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
 
 /**

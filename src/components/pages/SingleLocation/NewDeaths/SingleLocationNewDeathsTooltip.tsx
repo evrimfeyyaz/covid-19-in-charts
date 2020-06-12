@@ -3,7 +3,7 @@ import { TooltipProps } from "recharts";
 import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationTooltipBase } from "../common/charts/SingleLocationTooltipBase";
-import { getEMADiffMessage } from "../utils";
+import { SingleLocationTooltipEmaInfo } from "../common/charts/SingleLocationTooltipEmaInfo";
 
 /**
  * A Recharts tooltip component to show the details of a values point on the new deaths chart.
@@ -23,22 +23,20 @@ export const SingleLocationNewDeathsTooltip: FunctionComponent<TooltipProps> = (
     return null;
   }
 
-  let movingAverageDiffMessage: string | undefined = undefined;
-  let movingAverageDiffClass = "";
-  if (movingAverage != null) {
-    [movingAverageDiffMessage, movingAverageDiffClass] = getEMADiffMessage(
-      newDeaths,
-      movingAverage,
-      chartUnit
-    );
-  }
+  const emaDiffInfo =
+    movingAverage != null ? (
+      <SingleLocationTooltipEmaInfo
+        value={newDeaths}
+        chartUnit={chartUnit}
+        movingAverage={movingAverage}
+      />
+    ) : undefined;
 
   return (
     <SingleLocationTooltipBase
       value={numToGroupedString(newDeaths)}
       chartUnit={chartUnit}
-      secondaryInfo={movingAverageDiffMessage}
-      secondaryInfoClassName={movingAverageDiffClass}
+      secondaryInfo={emaDiffInfo}
       date={date}
     />
   );

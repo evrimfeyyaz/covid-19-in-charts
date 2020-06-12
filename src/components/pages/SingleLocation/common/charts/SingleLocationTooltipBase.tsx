@@ -12,13 +12,9 @@ interface SingleLocationTooltipProps {
    */
   chartUnit?: string;
   /**
-   * Secondary info to show, e.g. "100 cases below EMA".
+   * A node with extra information, e.g. "100 cases below EMA".
    */
-  secondaryInfo?: string;
-  /**
-   * The CSS class to apply to the secondary info container.
-   */
-  secondaryInfoClassName?: string;
+  secondaryInfo?: JSX.Element;
   /**
    * The date of the values point, for which we are showing a tooltip.
    */
@@ -36,7 +32,6 @@ export const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipP
   value,
   chartUnit,
   secondaryInfo,
-  secondaryInfoClassName,
   date,
 }) => {
   const readableDate = getReadableDate(dateKeyToDate(date));
@@ -46,7 +41,7 @@ export const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipP
       <p className="h5">
         {value} {chartUnit && <span className="text-muted">{chartUnit}</span>}
       </p>
-      {secondaryInfo && <p className={`mb-2 ${secondaryInfoClassName}`}>{secondaryInfo}</p>}
+      {secondaryInfo}
       <p className="mb-0 text-muted">{readableDate}</p>
     </div>
   );

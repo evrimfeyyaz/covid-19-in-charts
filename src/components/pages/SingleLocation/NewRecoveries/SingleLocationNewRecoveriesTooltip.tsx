@@ -3,7 +3,6 @@ import { TooltipProps } from "recharts";
 import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationTooltipBase } from "../common/charts/SingleLocationTooltipBase";
-import { getEMADiffMessage } from "../utils";
 
 /**
  * A Recharts tooltip component to show the details of a values point on the new recoveries chart.
@@ -16,23 +15,17 @@ export const SingleLocationNewRecoveriesTooltip: FunctionComponent<TooltipProps>
     return null;
   }
 
-  const { date, newRecovered, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
+  const { date, newRecovered } = payload[0].payload as ValuesOnDateWithMovingAverage;
   const chartUnit = "recoveries";
 
   if (newRecovered == null) {
     return null;
   }
 
-  let movingAverageDiffMessage: string | undefined = undefined;
-  if (movingAverage != null) {
-    [movingAverageDiffMessage] = getEMADiffMessage(newRecovered, movingAverage, chartUnit);
-  }
-
   return (
     <SingleLocationTooltipBase
       value={numToGroupedString(newRecovered)}
       chartUnit={chartUnit}
-      secondaryInfo={movingAverageDiffMessage}
       date={date}
     />
   );

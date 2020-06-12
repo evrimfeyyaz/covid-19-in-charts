@@ -1,5 +1,7 @@
 import { LocationData, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import ema from "exponential-moving-average";
+import { dateKeyToDate, getReadableDate } from "./dateUtilities";
+import { numToGroupedString, numToPercentFactory } from "./numUtilities";
 
 /**
  * An object that maps the properties of the `ValuesOnDate` interface to a `string` version that
@@ -141,4 +143,61 @@ export function pluralizeProperty(
   const wordIndex = propertyNames.indexOf(property);
 
   return value === 1 ? singularWords[wordIndex] : pluralWords[wordIndex];
+}
+
+export interface FormattedValuesOnDate {
+  date: string;
+  confirmed: string;
+  deaths?: string;
+  recovered?: string;
+  newConfirmed: string;
+  newDeaths?: string;
+  mortalityRate?: string;
+  newRecovered?: string;
+  recoveryRate?: string;
+  activeCases?: string;
+}
+
+/**
+ * Returns a formatted version of all values in a `ValuesOnDate` object.
+ *
+ * For example, `"1/23/20"` is converted to `"Jan 23, 2020"`, and `10000` is converted to
+ * `"10,000"`.
+ */
+export function getFormattedValuesOnDate(values: ValuesOnDate): FormattedValuesOnDate {
+  const formattedValues: FormattedValuesOnDate = {
+    date: getReadableDate(dateKeyToDate(values.date)),
+    confirmed: numToGroupedString(values.confirmed),
+    newConfirmed: numToGroupedString(values.newConfirmed),
+  };
+
+  if (values.deaths != null) {
+    formattedValues.deaths = numToGroupedString(values.deaths);
+  }
+
+  if (values.recovered != null) {
+    formattedValues.recovered = numToGroupedString(values.recovered);
+  }
+
+  if (values.newDeaths != null) {
+    formattedValues.newDeaths = numToGroupedString(values.newDeaths);
+  }
+
+  if (values.newRecovered != null) {
+    formattedValues.newRecovered = numToGroupedString(values.newRecovered);
+  }
+
+  if (values.mortalityRate != null) {
+    formattedValues.mortalityRate = numToPercentFactory(2)(values.mortalityRate);
+  }
+
+  if (values.recoveryRate != null) {
+    formattedValues.recoveryRate = numToPercentFactory(2)(values.recoveryRate);
+  }
+
+  if (values.activeCases != null) {
+    formattedValues.activeCases = numToGroupedString(values.activeCases);
+  }
+
+  return formattedValues;
 }

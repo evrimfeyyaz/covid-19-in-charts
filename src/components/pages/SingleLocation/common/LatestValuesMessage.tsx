@@ -1,8 +1,10 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { pluralizeProperty } from "../../../../utilities/covid19ApiUtilities";
-import { getFormattedValuesOnDate } from "../utils";
+import {
+  getFormattedValuesOnDate,
+  pluralizeProperty,
+} from "../../../../utilities/covid19ApiUtilities";
 
 interface LatestValuesMessageProps {
   /**

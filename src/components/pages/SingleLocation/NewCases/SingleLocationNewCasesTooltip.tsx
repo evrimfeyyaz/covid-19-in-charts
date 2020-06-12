@@ -3,7 +3,7 @@ import { TooltipProps } from "recharts";
 import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationTooltipBase } from "../common/charts/SingleLocationTooltipBase";
-import { getEMADiffMessage } from "../utils";
+import { SingleLocationTooltipEmaInfo } from "../common/charts/SingleLocationTooltipEmaInfo";
 
 /**
  * A Recharts tooltip component to show the details of a values point on the new cases chart.
@@ -19,22 +19,20 @@ export const SingleLocationNewCasesTooltip: FunctionComponent<TooltipProps> = ({
   const { date, newConfirmed, movingAverage } = payload[0].payload as ValuesOnDateWithMovingAverage;
   const chartUnit = "cases";
 
-  let movingAverageDiffMessage: string | undefined = undefined;
-  let movingAverageDiffClass = "";
-  if (movingAverage != null) {
-    [movingAverageDiffMessage, movingAverageDiffClass] = getEMADiffMessage(
-      newConfirmed,
-      movingAverage,
-      chartUnit
-    );
-  }
+  const emaDiffInfo =
+    movingAverage != null ? (
+      <SingleLocationTooltipEmaInfo
+        value={newConfirmed}
+        chartUnit={chartUnit}
+        movingAverage={movingAverage}
+      />
+    ) : undefined;
 
   return (
     <SingleLocationTooltipBase
       value={numToGroupedString(newConfirmed)}
       chartUnit={chartUnit}
-      secondaryInfo={movingAverageDiffMessage}
-      secondaryInfoClassName={movingAverageDiffClass}
+      secondaryInfo={emaDiffInfo}
       date={date}
     />
   );

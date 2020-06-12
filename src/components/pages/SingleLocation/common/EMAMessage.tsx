@@ -1,8 +1,10 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
-import { ValuesOnDateWithMovingAverage } from "../../../../utilities/covid19ApiUtilities";
-import { getFormattedValuesOnDate } from "../utils";
+import {
+  getFormattedValuesOnDate,
+  ValuesOnDateWithMovingAverage,
+} from "../../../../utilities/covid19ApiUtilities";
 
 interface EMAMessageProps {
   /**
