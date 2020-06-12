@@ -3,7 +3,7 @@ import { COLORS } from "../../../../constants";
 import { getValuesWithEMA } from "../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../utilities/numUtilities";
 import { SingleLocationBarChart } from "../common/charts/SingleLocationBarChart";
-import { EMAMessage } from "../common/EMAMessage";
+import { EmaMessage } from "../common/EmaMessage";
 import { LatestValuesMessage } from "../common/LatestValuesMessage";
 import { SingleLocationSection } from "../common/section/SingleLocationSection";
 import { SingleLocationSectionWithEMAProps } from "../common/section/SingleLocationSectionWithEMAProps";
@@ -28,7 +28,7 @@ export const SingleLocationNewCases: FunctionComponent<SingleLocationSectionWith
         day, starting from {startingFrom}.
       </p>
       <LatestValuesMessage latestValues={values[values.length - 1]} property={"newConfirmed"} />
-      <EMAMessage
+      <EmaMessage
         values={valuesWithEMA}
         property={"newConfirmed"}
         chartUnit={"cases"}
