@@ -3,7 +3,7 @@ import Overlay from "react-bootstrap/Overlay";
 import Popover from "react-bootstrap/Popover";
 import { titleCase } from "title-case";
 
-interface Props {
+interface MoreInfoProps {
   /**
    * The text that should show an overlaid information when hovered over.
    */
@@ -18,7 +18,7 @@ interface Props {
   color?: string;
 }
 
-export const MoreInfo: FunctionComponent<Props> = ({ text, info, color }) => {
+export const MoreInfo: FunctionComponent<MoreInfoProps> = ({ text, info, color }) => {
   const textRef = useRef(null);
   const [showInfo, setShowInfo] = useState(false);
 

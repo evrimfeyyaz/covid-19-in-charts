@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 
-interface Props {
+interface SingleLocationTooltipEmaInfoProps {
   /**
    * The actual value, e.g. the new cases value on a certain day.
    */
@@ -21,7 +21,7 @@ interface Props {
  * is used in tooltips, e.g. showing the difference between the new cases value on a day and the
  * moving average on that day.
  */
-export const SingleLocationTooltipEmaInfo: FunctionComponent<Props> = ({
+export const SingleLocationTooltipEmaInfo: FunctionComponent<SingleLocationTooltipEmaInfoProps> = ({
   value,
   movingAverage,
   chartUnit,
