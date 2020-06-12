@@ -28,11 +28,13 @@ export const SingleLocationSection: FunctionComponent<SingleLocationSectionProps
   description,
   chart,
 }) => {
+  const descriptionComponent = typeof description === "string" ? <p>{description}</p> : description;
+
   return (
     <section className="mb-5" id={id}>
       <header className="mb-4">
         <h2>{title}</h2>
-        <p>{description}</p>
+        {descriptionComponent}
       </header>
       {chart}
     </section>
