@@ -206,7 +206,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
-            emaRange={12}
+            emaRange={15}
           />
 
           <SingleLocationDeaths
@@ -216,7 +216,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
           />
 
           <SingleLocationNewDeaths
-            emaRange={12}
+            emaRange={15}
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}

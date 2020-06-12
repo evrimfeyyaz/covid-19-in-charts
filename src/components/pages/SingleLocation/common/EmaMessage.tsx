@@ -5,6 +5,7 @@ import {
   getFormattedValuesOnDate,
   ValuesOnDateWithMovingAverage,
 } from "../../../../utilities/covid19ApiUtilities";
+import { MoreInfo } from "./MoreInfo";
 
 interface EmaMessageProps {
   /**
@@ -65,19 +66,20 @@ export const EmaMessage: FunctionComponent<EmaMessageProps> = ({
     </span>
   );
 
+  const emaExplanation =
+    "This is a method that smooths out the day-to-day fluctuations, and shows the longer-term trend. Any point above this line pulls the trend upwards (i.e. relatively bad), and any point below pulls the trend downwards (i.e. relatively good).";
+  const emaText = (
+    <MoreInfo
+      text={`${range}-day exponential moving average`}
+      info={emaExplanation}
+      color={COLORS.movingAverage}
+      title="Exponential Moving Average"
+    />
+  );
+
   return (
     <p>
-      You can also see the{" "}
-      <span
-        className="more-info"
-        style={{
-          borderColor: COLORS.movingAverage,
-          color: COLORS.movingAverage,
-        }}
-      >
-        {range}-day exponential moving average
-      </span>{" "}
-      line below. {lastEmaState}
+      You can also see the {emaText} line below. {lastEmaState}
     </p>
   );
 };
