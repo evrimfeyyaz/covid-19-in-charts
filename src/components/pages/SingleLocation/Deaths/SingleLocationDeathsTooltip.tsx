@@ -11,7 +11,7 @@ export const SingleLocationDeathsTooltip: FunctionComponent<TooltipProps> = ({
   active,
   payload,
 }) => {
-  if (!active || payload == null) {
+  if (!active || payload == null || payload.length === 0) {
     return null;
   }
 
