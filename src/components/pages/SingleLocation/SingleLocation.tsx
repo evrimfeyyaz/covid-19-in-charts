@@ -273,9 +273,9 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <Col>{body}</Col>
       </Row>
 
-      <Row className="d-lg-none mt-3">
+      <Row className="d-lg-none mt-2 mb-3">
         <Col className="px-5">
-          <h2 className="h4 mt-3 mb-3">Share</h2>
+          <h2 className="h4 mt-2 mb-3">Share</h2>
           <ShareButtons title={pageTitle} url={canonicalUrl} />
         </Col>
       </Row>
