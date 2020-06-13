@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { dateKeyToDate, getReadableDate } from "../../../../../utilities/dateUtilities";
+import { dateKeyToDate, getFormattedDate } from "../../../../../utilities/dateUtilities";
 
 interface SingleLocationTooltipProps {
   /**
@@ -34,7 +34,7 @@ export const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipP
   secondaryInfo,
   date,
 }) => {
-  const readableDate = getReadableDate(dateKeyToDate(date));
+  const formattedDate = getFormattedDate(dateKeyToDate(date));
 
   return (
     <div className="shadow rounded-lg bg-white border px-4 py-3">
@@ -42,7 +42,7 @@ export const SingleLocationTooltipBase: FunctionComponent<SingleLocationTooltipP
         {value} {chartUnit && <span className="text-muted">{chartUnit}</span>}
       </p>
       {secondaryInfo}
-      <p className="mb-0 text-muted">{readableDate}</p>
+      <p className="mb-0 text-muted">{formattedDate}</p>
     </div>
   );
 };

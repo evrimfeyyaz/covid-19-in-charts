@@ -49,7 +49,7 @@ export const EmaMessage: FunctionComponent<EmaMessageProps> = ({
     return null;
   }
 
-  const readableLastValues = getFormattedValuesOnDate(lastValues);
+  const formattedLastValues = getFormattedValuesOnDate(lastValues);
 
   const emaDiff = lastValueOfEma - lastValueOfProperty;
 
@@ -58,7 +58,7 @@ export const EmaMessage: FunctionComponent<EmaMessageProps> = ({
 
   const lastEmaState = (
     <span>
-      {readableLastValues.date} was{" "}
+      {formattedLastValues.date} was{" "}
       <span className={messageStyle}>
         {Math.abs(emaDiff).toFixed(2)} {chartUnit} {aboveOrBelow}
       </span>{" "}

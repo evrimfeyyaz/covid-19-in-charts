@@ -1,4 +1,4 @@
-import { dateKeyToDate, getReadableDate } from "../dateUtilities";
+import { dateKeyToDate, getFormattedDate } from "../dateUtilities";
 
 describe("Date utilities", () => {
   describe("dateKeyToDate", () => {
@@ -24,7 +24,7 @@ describe("Date utilities", () => {
     });
   });
 
-  describe("getReadableDate", () => {
+  describe("getFormattedDate", () => {
     it("returns a string with a more readable date format", () => {
       const months = [
         "January",
@@ -43,7 +43,7 @@ describe("Date utilities", () => {
 
       months.forEach((month, index) => {
         const date = new Date(2020, index, 1);
-        const result = getReadableDate(date);
+        const result = getFormattedDate(date);
 
         expect(result).toEqual(`${month} 1, 2020`);
       });

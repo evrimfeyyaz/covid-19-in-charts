@@ -1,6 +1,6 @@
 import { LocationData, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
 import ema from "exponential-moving-average";
-import { dateKeyToDate, getReadableDate } from "./dateUtilities";
+import { dateKeyToDate, getFormattedDate } from "./dateUtilities";
 import { numToGroupedString, numToPercentFactory } from "./numUtilities";
 
 /**
@@ -145,7 +145,7 @@ export interface FormattedValuesOnDate {
  */
 export function getFormattedValuesOnDate(values: ValuesOnDate): FormattedValuesOnDate {
   const formattedValues: FormattedValuesOnDate = {
-    date: getReadableDate(dateKeyToDate(values.date)),
+    date: getFormattedDate(dateKeyToDate(values.date)),
     confirmed: numToGroupedString(values.confirmed),
     newConfirmed: numToGroupedString(values.newConfirmed),
   };

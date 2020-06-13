@@ -3,7 +3,7 @@ import React, { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import { COLORS } from "../../../../constants";
-import { dateKeyToDate, getReadableDate } from "../../../../utilities/dateUtilities";
+import { dateKeyToDate, getFormattedDate } from "../../../../utilities/dateUtilities";
 import { SingleLocationLatestNumbersItem } from "./SingleLocationLatestNumbersItem";
 
 interface LatestNumbersProps {
@@ -30,12 +30,12 @@ export const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> 
     recoveryRate,
   } = values;
 
-  const readableDate = getReadableDate(dateKeyToDate(date));
+  const formattedDate = getFormattedDate(dateKeyToDate(date));
 
   return (
     <section className="mb-5">
       <h2 className="mb-4">
-        Latest Numbers <small className="text-muted">{readableDate}</small>
+        Latest Numbers <small className="text-muted">{formattedDate}</small>
       </h2>
       <Row>
         <Col xs={4}>

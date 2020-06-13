@@ -9,7 +9,7 @@ import { titleCase } from "title-case";
 import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
 import { SITE_INFO } from "../../../constants";
 import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
-import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities";
+import { dateKeyToDate, getFormattedDate } from "../../../utilities/dateUtilities";
 import { hasDefiniteArticle } from "../../../utilities/locationUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
@@ -160,7 +160,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
   let subtitle = "";
   if (firstDate != null && lastDate != null) {
-    subtitle = `${getReadableDate(firstDate)} — ${getReadableDate(lastDate)}`;
+    subtitle = `${getFormattedDate(firstDate)} — ${getFormattedDate(lastDate)}`;
   }
 
   const canonicalUrl = getCanonicalUrl(window.location.href, SITE_INFO.baseUrl, [
@@ -173,13 +173,13 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
     body = <NoData />;
 
     if (lastUpdated != null && latestValues != null && firstDate != null && lastDate != null) {
-      const readableFirstDate = getReadableDate(firstDate);
+      const formattedFirstDate = getFormattedDate(firstDate);
 
-      let startingFrom = readableFirstDate;
+      let startingFrom = formattedFirstDate;
       let xAxisTitle: string | null = null;
       if (minConfirmedCases != null) {
         const groupedMinConfirmedCases = numToGroupedString(minConfirmedCases);
-        startingFrom = `the day confirmed cases exceeded ${groupedMinConfirmedCases} (${readableFirstDate})`;
+        startingFrom = `the day confirmed cases exceeded ${groupedMinConfirmedCases} (${formattedFirstDate})`;
         xAxisTitle = `Days since confirmed cases exceeded ${groupedMinConfirmedCases}`;
       }
 
