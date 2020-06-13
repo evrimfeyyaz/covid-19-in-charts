@@ -4,27 +4,6 @@ import { dateKeyToDate, getReadableDate } from "./dateUtilities";
 import { numToGroupedString, numToPercentFactory } from "./numUtilities";
 
 /**
- * An object that maps the properties of the `ValuesOnDate` interface to a `string` version that
- * can be used in user-facing cases.
- *
- * @example
- * // Returns "new recoveries".
- * readableValuesOnDatePropNames.newRecovered;
- */
-export const readableValuesOnDatePropNames: { [key in keyof ValuesOnDate]: string } = {
-  confirmed: "confirmed cases",
-  date: "date",
-  deaths: "deaths",
-  mortalityRate: "mortality rate",
-  newConfirmed: "new cases",
-  newDeaths: "new deaths",
-  newRecovered: "new recoveries",
-  recovered: "recoveries",
-  recoveryRate: "recovery rate",
-  activeCases: "active cases",
-};
-
-/**
  * Given an object implementing the `LocationData` interface (which is the data returned by the
  * "covid-19-api" library), filters out all the data before the confirmed cases exceeded a certain
  * number.
