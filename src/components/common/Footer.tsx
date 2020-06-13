@@ -1,8 +1,7 @@
 import React, { FunctionComponent } from "react";
-import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import { Link } from "react-router-dom";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
 import packageJson from "../../../package.json";
 import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
@@ -11,42 +10,28 @@ import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
  */
 export const Footer: FunctionComponent = () => {
   return (
-    <footer className="bg-dark text-light pt-4 pb-2 mt-3 small text-center">
+    <Navbar bg="dark" variant="dark" as="footer" className="pt-4 pb-5">
       <Container>
-        <Row>
-          <Col>
-            <ul className="list-inline">
-              <li className="list-inline-item mr-3">
-                <Link to={ROUTE_PATHS.home} className="link footer-link">
-                  Home
-                </Link>
-              </li>
-              <li className="list-inline-item mr-3">
-                <a href={EXTERNAL_LINKS.gitHubRepo} className="link footer-link">
-                  GitHub
-                </a>
-              </li>
-              <li className="list-inline-item">
-                <Link to={ROUTE_PATHS.about} className="link footer-link">
-                  About
-                </Link>
-              </li>
-            </ul>
-          </Col>
-        </Row>
-        <Row>
-          <Col className="pt-2">
-            <p>
-              Created by{" "}
-              <a className="footer-link" href={EXTERNAL_LINKS.authorWebsite}>
-                Evrim Persembe
-              </a>
-              .
-              <br />v{packageJson.version}
-            </p>
-          </Col>
-        </Row>
+        <Nav as="ul" bg={"dark"}>
+          <Nav.Item as="li" className="mr-4">
+            <Nav.Link href={ROUTE_PATHS.home}>Home</Nav.Link>
+          </Nav.Item>
+          <Nav.Item as="li" className="mr-4">
+            <Nav.Link href={EXTERNAL_LINKS.gitHubRepo}>GitHub</Nav.Link>
+          </Nav.Item>
+          <Nav.Item as="li">
+            <Nav.Link href={ROUTE_PATHS.about}>About</Nav.Link>
+          </Nav.Item>
+        </Nav>
+
+        <div className="text-light">
+          Created by{" "}
+          <a href={EXTERNAL_LINKS.authorWebsite} className="text-warning">
+            Evrim Persembe
+          </a>
+          <span className="text-secondary ml-4">v{packageJson.version}</span>
+        </div>
       </Container>
-    </footer>
+    </Navbar>
   );
 };

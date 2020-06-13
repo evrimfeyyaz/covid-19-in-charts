@@ -46,15 +46,6 @@ body {
   text-shadow: rgba(0, 0, 0, 0.15) 0.06em 0.06em 0.06em;
 }
 
-.footer-link {
-  color: goldenrod;
-
-  &:hover {
-    color: goldenrod;
-    opacity: .8;
-  }
-}
-
 .navbar-brand {
   font-family: $headings-font-family;
 }
