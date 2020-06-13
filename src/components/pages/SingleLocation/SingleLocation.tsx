@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
+import { titleCase } from "title-case";
 import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
 import { SITE_INFO } from "../../../constants";
 import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
@@ -154,8 +155,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   const locationName = locationHasDefiniteArticle ? `the ${location}` : location;
   const pageDescription = `See the progression of COVID-19 in ${locationName}.`;
 
-  const locationNameCapitalized = locationHasDefiniteArticle ? `The ${location}` : location;
-  const title = `COVID-19: ${locationNameCapitalized}`;
+  const title = `COVID-19: ${titleCase(locationName)}`;
   const pageTitle = createPageTitle(SITE_INFO.baseTitle, title);
 
   let subtitle = "";
