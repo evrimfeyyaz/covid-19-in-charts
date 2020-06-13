@@ -8,5 +8,5 @@ const writeStream = createWriteStream("./public/sitemap.xml");
 sitemap.pipe(writeStream);
 
 sitemap.write({ url: "/", changefreq: "daily" });
-sitemap.write({ url: "/about", changefre: "weekly" });
+sitemap.write({ url: "/about", changefreq: "weekly" });
 sitemap.end();
