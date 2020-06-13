@@ -12,7 +12,7 @@ import { dateKeyToDate, getReadableDate } from "../../../utilities/dateUtilities
 import { hasDefiniteArticle } from "../../../utilities/locationUtilities";
 import { createPageTitle } from "../../../utilities/metaUtilities";
 import { numToGroupedString } from "../../../utilities/numUtilities";
-import { getAbsoluteUrl, getCanonicalUrl } from "../../../utilities/urlUtilities";
+import { getCanonicalUrl } from "../../../utilities/urlUtilities";
 import { Loading } from "../../common/Loading";
 import { LocationSelectionInput } from "./common/inputs/LocationSelectionInput";
 import { MinConfirmedCasesInput } from "./common/inputs/MinConfirmedCasesInput";
@@ -151,9 +151,6 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
     setMinConfirmedCases(value);
   }
 
-  // TODO: Add an image to this page.
-  const ogImage = "";
-
   const locationName = locationHasDefiniteArticle ? `the ${location}` : location;
   const pageDescription = `See the progression of COVID-19 in ${locationName}.`;
 
@@ -251,7 +248,6 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:image" content={getAbsoluteUrl(SITE_INFO.baseUrl, ogImage)} />
         <meta name="twitter:image:alt" content={pageTitle} />
       </Helmet>
       <Row style={{ minHeight: 500 }}>
