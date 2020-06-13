@@ -136,13 +136,10 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
   /**
    * Handles the location change.
    *
-   * @param selectedLocations The input component we are using returns an array of selections,
-   *   hence the reason why this is an array.
+   * @param selectedLocation
    */
-  function handleLocationChange(selectedLocations: string[]): void {
-    if (selectedLocations.length > 0) {
-      setLocation(selectedLocations[0]);
-    }
+  function handleLocationChange(selectedLocation: string): void {
+    setLocation(selectedLocation);
   }
 
   /**
@@ -261,9 +258,8 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         <Col xs={12} lg={4} className="d-flex flex-column px-4 py-3">
           <LocationSelectionInput
             locationsList={locationsList}
-            defaultLocations={[location]}
+            defaultLocation={location}
             id="location-selection-input"
-            placeholder={"Select locations..."}
             onChange={handleLocationChange}
           />
 

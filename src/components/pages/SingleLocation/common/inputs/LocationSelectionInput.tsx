@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import Form from "react-bootstrap/Form";
 import { getAliasesForLocation } from "../../../../../utilities/locationUtilities";
@@ -11,48 +11,28 @@ interface LocationSelectionInputProps {
   /**
    * The initial locations that are selected.
    */
-  defaultLocations: string[];
-  /**
-   * Whether or not the user is allowed to select multiple locations.
-   */
-  multiple?: boolean;
-  /**
-   * The maximum number of locations that the user can select.
-   */
-  maxNumOfSelections?: number;
-  /**
-   * The placeholder text to show when there are no selected locations.
-   */
-  placeholder: string;
+  defaultLocation: string;
   /**
    * The id to assign to the input component.
    */
   id: string;
   /**
-   * A callback that is fired when the selected locations are changed.
+   * A callback that is fired when the selected location is changed.
    *
-   * @param locations The new locations that are selected.
+   * @param location The new location that is selected.
    */
-  onChange: (locations: string[]) => void;
+  onChange: (location: string) => void;
 }
 
 /**
- * A component that allows the user to select a single location or multiple locations with
- * autocomplete.
+ * A component that allows the user to select a single location with autocomplete.
  */
 export const LocationSelectionInput: FunctionComponent<LocationSelectionInputProps> = ({
   locationsList,
-  defaultLocations,
-  multiple,
-  maxNumOfSelections = Infinity,
-  placeholder,
+  defaultLocation,
   id,
   onChange,
 }) => {
-  const [isMaxSelectionsReached, setIsMaxSelectionsReached] = useState(
-    defaultLocations.length >= maxNumOfSelections
-  );
-
   /**
    * Determines what autocomplete options to show based on the user input.
    *
@@ -78,41 +58,25 @@ export const LocationSelectionInput: FunctionComponent<LocationSelectionInputPro
   }
 
   function handleChange(locations: string[]): void {
-    if (locations.length >= maxNumOfSelections) {
-      setIsMaxSelectionsReached(true);
-    } else {
-      setIsMaxSelectionsReached(false);
+    if (locations.length > 0) {
+      onChange(locations[0]);
     }
-
-    onChange(locations);
   }
-
-  /**
-   * The menu to show the the number of maximum selections is reached (only when the `multiple`
-   * option is set to `true`).
-   */
-  const maxSelectionsReachedMenu = (): JSX.Element => (
-    <div className="bg-white text-danger px-3 py-2 rounded-lg small location-selection-input-max-selections-reached-menu">
-      You can't select more than {maxNumOfSelections} locations.
-    </div>
-  );
 
   return (
     <Form.Group>
-      <Form.Label>{multiple ? "Locations" : "Location"}</Form.Label>
+      <Form.Label>Location</Form.Label>
       <Typeahead
         id={id}
         options={locationsList}
-        defaultSelected={defaultLocations}
+        defaultSelected={[defaultLocation]}
         filterBy={filterLocationsBy}
-        placeholder={placeholder}
+        placeholder="Select location..."
         highlightOnlyResult
         selectHintOnEnter
         clearButton
-        multiple={multiple}
         onChange={handleChange}
         paginationText="Show more locations"
-        renderMenu={isMaxSelectionsReached ? maxSelectionsReachedMenu : undefined}
       />
     </Form.Group>
   );

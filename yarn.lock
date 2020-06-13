@@ -1251,14 +1251,6 @@
     lodash "^4.17.15"
     lodash-es "^4.17.15"
 
-"@restart/hooks@^0.3.22":
-  version "0.3.25"
-  resolved "https://registry.yarnpkg.com/@restart/hooks/-/hooks-0.3.25.tgz#11004139ad1c70d2f5965a8939dcb5aeb96aa652"
-  integrity sha512-m2v3N5pxTsIiSH74/sb1yW8D9RxkJidGW+5Mfwn/lHb2QzhZNlaU1su7abSyT9EGf0xS/0waLjrf7/XxQHUk7w==
-  dependencies:
-    lodash "^4.17.15"
-    lodash-es "^4.17.15"
-
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.3"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.3.tgz#5405ee8e444ed212db44e79351f0c70a582aae25"
@@ -1551,10 +1543,10 @@
   resolved "https://registry.yarnpkg.com/@types/q/-/q-1.5.2.tgz#690a1475b84f2a884fd07cd797c00f5f31356ea8"
   integrity sha512-ce5d3q03Ex0sy4R14722Rmt6MT07Ua+k4FwDfdcToYJcMKNtRVQvJ6JCAPdAmAnbRb6CsX6aYb9m96NGod9uTw==
 
-"@types/react-bootstrap-typeahead@^3.4.5":
-  version "3.4.5"
-  resolved "https://registry.yarnpkg.com/@types/react-bootstrap-typeahead/-/react-bootstrap-typeahead-3.4.5.tgz#94ea5a90b611e238fa8c3467eb1e3172427b1053"
-  integrity sha512-waTJZ1QER+bUUmNXqLw2QwJxe/G2EfjYuSLg6BURUe2rEkBTKRTmjiCrVBfRQ2JqqoaC7ScYEasm/DPw3lkvCA==
+"@types/react-bootstrap-typeahead@^3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@types/react-bootstrap-typeahead/-/react-bootstrap-typeahead-3.4.6.tgz#b97709ad10670ad277b2c7b2f0e6368f890bf849"
+  integrity sha512-3vrWrPNb2G+ieyWB1VtEPZH6E4NBcd2cVsacb6oUhBNU/D/ZYnUqnbmeTIKzIVXqEkdPtgARG45W1x7tUV9DGA==
   dependencies:
     "@types/react" "*"
 
@@ -8512,7 +8504,7 @@ pnp-webpack-plugin@1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
-popper.js@^1.14.4, popper.js@^1.15.0:
+popper.js@^1.14.4:
   version "1.16.1"
   resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
   integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
@@ -9485,19 +9477,18 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
-react-bootstrap-typeahead@^5.0.0-rc.3:
-  version "5.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-5.0.0-rc.3.tgz#5d329d6814cbf62bca37fd80592e2cdc68e5260f"
-  integrity sha512-kS67dP90iZQuhSw2lmmNqwQppOko2zGlbIoDNMR0dE+WrxoJNsviHAJo8gT12COpOwWFsQejD0G7UovclFv1SQ==
+react-bootstrap-typeahead@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-typeahead/-/react-bootstrap-typeahead-4.2.3.tgz#d5ade1080574b4d486e9283a7b022239bb2df224"
+  integrity sha512-qDMql6I+x5oU+Ek90B90763zL9EHYv6hcShEtobuyofgHOuAiMB8HNA4Zlt4JCbL/5bbM4+bnSAc9c5a6cQ6kg==
   dependencies:
     "@babel/runtime" "^7.3.4"
-    "@restart/hooks" "^0.3.22"
     classnames "^2.2.0"
     fast-deep-equal "^3.1.1"
     invariant "^2.2.1"
     lodash.debounce "^4.0.8"
     prop-types "^15.5.8"
-    react-overlays "^2.0.0"
+    react-overlays "^1.0.0"
     react-popper "^1.0.0"
     scroll-into-view-if-needed "^2.2.20"
     warning "^4.0.1"
@@ -9520,6 +9511,11 @@ react-bootstrap@^1.0.1:
     react-transition-group "^4.0.0"
     uncontrollable "^7.0.0"
     warning "^4.0.3"
+
+react-context-toolbox@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/react-context-toolbox/-/react-context-toolbox-2.0.2.tgz#35637287cb23f801e6ed802c2bb7a97e1f04e3fb"
+  integrity sha512-tY4j0imkYC3n5ZlYSgFkaw7fmlCp3IoQQ6DxpqeNHzcD0hf+6V+/HeJxviLUZ1Rv1Yn3N3xyO2EhkkZwHn0m1A==
 
 react-dev-utils@^10.2.1:
   version "10.2.1"
@@ -9591,18 +9587,19 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-overlays@^2.0.0:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-2.1.1.tgz#ffe2090c4a10da6b8947a1c7b1a67d0457648a0d"
-  integrity sha512-gaQJwmb8Ij2IGVt4D1HmLtl4A0mDVYxlsv/8i0dHWK7Mw0kNat6ORelbbEWzaXTK1TqMeQtJw/jraL3WOADz3w==
+react-overlays@^1.0.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-1.2.0.tgz#205368eeb0a5fb0b7f9b717fa7a12d518500abdb"
+  integrity sha512-i/FCV8wR6aRaI+Kz/dpJhOdyx+ah2tN1RhT9InPrexyC4uzf3N4bNayFTGtUeQVacj57j1Mqh1CwV60/5153Iw==
   dependencies:
-    "@babel/runtime" "^7.4.5"
-    "@restart/hooks" "^0.3.12"
-    dom-helpers "^5.1.0"
-    popper.js "^1.15.0"
-    prop-types "^15.7.2"
-    uncontrollable "^7.0.0"
-    warning "^4.0.3"
+    classnames "^2.2.6"
+    dom-helpers "^3.4.0"
+    prop-types "^15.6.2"
+    prop-types-extra "^1.1.0"
+    react-context-toolbox "^2.0.2"
+    react-popper "^1.3.2"
+    uncontrollable "^6.0.0"
+    warning "^4.0.2"
 
 react-overlays@^3.1.2:
   version "3.1.3"
@@ -9618,7 +9615,7 @@ react-overlays@^3.1.2:
     uncontrollable "^7.0.0"
     warning "^4.0.3"
 
-react-popper@^1.0.0:
+react-popper@^1.0.0, react-popper@^1.3.2:
   version "1.3.7"
   resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-1.3.7.tgz#f6a3471362ef1f0d10a4963673789de1baca2324"
   integrity sha512-nmqYTx7QVjCm3WUZLeuOomna138R1luC4EqkW3hxJUrAe+3eNz3oFCLYdnPwILfn0mX1Ew2c3wctrjlUMYYUww==
@@ -11497,6 +11494,14 @@ typescript@~3.7.2:
   version "3.7.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
   integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==
+
+uncontrollable@^6.0.0:
+  version "6.2.3"
+  resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-6.2.3.tgz#e7dba0d746e075122ed178f27ad2354d343196c7"
+  integrity sha512-VgOAoBU2ptCL2bfTG2Mra0I8i1u6Aq84AFonD5tmCAYSfs3hWvr2Rlw0q2ntoxXTHjcQOmZOh3FKaN+UZVyREQ==
+  dependencies:
+    "@babel/runtime" "^7.4.5"
+    invariant "^2.2.4"
 
 uncontrollable@^7.0.0:
   version "7.1.1"
