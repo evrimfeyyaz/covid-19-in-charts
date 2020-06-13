@@ -273,8 +273,8 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
           />
 
           <div className="d-none d-lg-block">
-            <h2 className="h5 mt-3">Share</h2>
-            <ShareButtons title={pageTitle} url={canonicalUrl} small={false} />
+            <h2 className="h4 mt-5 mb-3">Share</h2>
+            <ShareButtons title={pageTitle} url={canonicalUrl} />
           </div>
         </Col>
 
@@ -283,8 +283,8 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
       <Row className="d-lg-none mt-3">
         <Col className="px-5">
-          <h2 className="h5 mt-3">Share</h2>
-          <ShareButtons title={pageTitle} url={canonicalUrl} small={true} />
+          <h2 className="h4 mt-3 mb-3">Share</h2>
+          <ShareButtons title={pageTitle} url={canonicalUrl} />
         </Col>
       </Row>
     </Container>

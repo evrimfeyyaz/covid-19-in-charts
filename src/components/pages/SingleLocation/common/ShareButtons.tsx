@@ -9,32 +9,23 @@ interface ShareButtonsProps {
    * The URL of the page to share.
    */
   url: string;
-  /**
-   * Default `false`. When set to `true`, smaller versions of the buttons are shown.
-   */
-  small?: boolean;
 }
 
 /**
  * A component that shows social share buttons.
  */
-export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
-  title,
-  url,
-  small = false,
-}) => {
+export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({ title, url }) => {
   const encodedTitle = encodeURIComponent(title);
   const encodedURL = encodeURIComponent(url);
   const twitterHashtags = "covid19incharts,covid19,coronavirus";
 
   return (
-    <div className={small ? "small" : undefined}>
+    <div className="small">
       <a
         className="resp-sharing-button__link"
         href={`https://facebook.com/sharer/sharer.php?u=${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--facebook resp-sharing-button--small">
           <div
@@ -53,7 +44,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://twitter.com/intent/tweet/?text=${encodedTitle}&url=${encodedURL}&hashtags=${twitterHashtags}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--twitter resp-sharing-button--small">
           <div
@@ -72,7 +62,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`mailto:?subject=${encodedTitle}&body=${encodedURL}`}
         target="_self"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--email resp-sharing-button--small">
           <div
@@ -91,7 +80,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodedURL}&title=${encodedTitle}&summary=${encodedTitle}&source=${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--linkedin resp-sharing-button--small">
           <div
@@ -110,7 +98,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://reddit.com/submit/?url=${encodedURL}&resubmit=true&title=${encodedTitle}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--reddit resp-sharing-button--small">
           <div
@@ -129,7 +116,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://www.xing.com/app/user?op=share;url=${encodedURL};title=${encodedTitle}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--xing resp-sharing-button--small">
           <div
@@ -148,7 +134,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`whatsapp://send?text=${encodedTitle}%20${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--whatsapp resp-sharing-button--small">
           <div
@@ -167,7 +152,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://news.ycombinator.com/submitlink?u=${encodedURL}&t=${encodedTitle}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--hackernews resp-sharing-button--small">
           <div
@@ -189,7 +173,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`http://vk.com/share.php?title=${encodedTitle}&url=${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--vk resp-sharing-button--small">
           <div
@@ -208,7 +191,6 @@ export const ShareButtons: FunctionComponent<ShareButtonsProps> = ({
         href={`https://telegram.me/share/url?text=${encodedTitle}&url=${encodedURL}`}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label=""
       >
         <div className="resp-sharing-button resp-sharing-button--telegram resp-sharing-button--small">
           <div
