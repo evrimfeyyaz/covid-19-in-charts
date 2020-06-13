@@ -26,18 +26,13 @@ export const About: FunctionComponent = () => {
           <Col xs={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }} xl={{ span: 6, offset: 3 }}>
             <h1 className="h3">About COVID-19 in Charts</h1>
             <p>
-              I created this website to help people see the COVID-19 data in a visual way, and give
-              everyone a way to easily create shareable images of these visualizations.
-            </p>
-
-            <p>
               This website uses the{" "}
               <a href="https://github.com/CSSEGISandData/COVID-19">
                 data provided by the Johns Hopkins University Center for Systems Science and
                 Engineering (JHU CSSE)
               </a>
-              . This data isn't perfect, so, I wouldn't recommend using this website in any official
-              manner.
+              . This data isn't perfect, for that reason, I wouldn't recommend using this website in
+              any official manner.
             </p>
 
             <p>
