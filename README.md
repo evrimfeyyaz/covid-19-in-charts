@@ -1,17 +1,22 @@
+<div align="center">
+  <h1>COVID-19 in Charts</h1>
+  <p>Visual representations of the progression of COVID-19.</p>
+
+  <p>
+    <img src="https://github.com/evrimfeyyaz/covid-19-in-charts/workflows/CI/badge.svg?branch=master" alt="Build Status" />
+    <a href="https://codeclimate.com/github/evrimfeyyaz/covid-19-in-charts/maintainability"><img src="https://api.codeclimate.com/v1/badges/c24a3e0970a5b3197dc9/maintainability" alt="Maintainability" /></a>
+    <a href="https://codeclimate.com/github/evrimfeyyaz/covid-19-in-charts/test_coverage"><img src="https://api.codeclimate.com/v1/badges/c24a3e0970a5b3197dc9/test_coverage" alt="Test Coverage" /></a>
+    <a href="https://app.netlify.com/sites/optimistic-brown-a22efa/deploys"><img src="https://api.netlify.com/api/v1/badges/a38c3bc6-b6a1-461b-a311-096b0f695bf7/deploy-status" alt="Netlify Status" /></a>
+  </p>
+</div>
+
+---
+
 ## COVID-19 in Charts
-This is the source code for the [COVID-19 in Charts](https://covid19incharts.com) website.
-
-The codebase is currently somewhat messy. If you are interested in helping, I would appreciate help with any of the following:
-
-1. Accessibility.
-2. Design.
-3. Testing.
-4. New chart ideas and implementations.
+This is the source code for the [COVID-19 in Charts](https://covid19.evrim.io) website.
 
 ## About COVID-19 in Charts
-I created this website to help people see the COVID-19 data in a visual way, and give everyone a way to easily create shareable images of these visualizations.
-
-This website uses the [data provided by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19). This data isn't perfect, so, I wouldn't recommend using this website in any official manner.
+This website uses the [data provided by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19). This data isn't perfect, for that reason, I wouldn't recommend using this website in any official manner.
 
 ## Running the app
 This application was developed in React.
@@ -26,17 +31,15 @@ OR
 npm start
 ```
 
-Afterwards, you should be able to visit the app at http://localhost:3000.
+Afterwards, you should be able to view the app at `http://localhost:3000`.
 
 ## Attributions
-- GitHub Mark SVG: https://commons.wikimedia.org/wiki/File:Octicons-mark-github.svg
 - Sharing buttons: https://sharingbuttons.io/
 
 ## Looking for a web or mobile app developer?
-
 If you are looking for a web or mobile app developer, I might be available for freelance work. You can [find out more about me on my website](https://evrim.io).
 
 ---
 
 ### Author
-[evrimfeyyaz (Evrim Persembe)](https://evrim.io)
+[Evrim Persembe](https://evrim.io): [evrimfeyyaz](https://github.com/evrimfeyyaz)
