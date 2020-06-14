@@ -37,12 +37,11 @@ export const COLORS = {
 export const EXTERNAL_LINKS = {
   gitHubRepo: "https://github.com/evrimfeyyaz/covid-19-in-charts",
   authorWebsite: "https://evrim.io",
-  feedbackEmail: "feedback@covid19incharts.com",
+  feedbackEmail: "hi@evrim.io",
 };
 
 export const SITE_INFO = {
-  baseUrl:
-    process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : "https://covid19incharts.com",
+  baseUrl: process.env.PUBLIC_URL.length > 0 ? process.env.PUBLIC_URL : "https://covid19.evrim.io",
   baseTitle: "COVID-19 in Charts",
   description: "See the latest data of the COVID-19 pandemic visualized.",
 };
