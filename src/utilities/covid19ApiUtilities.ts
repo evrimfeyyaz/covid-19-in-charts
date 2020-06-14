@@ -4,6 +4,21 @@ import { dateKeyToDate, getFormattedDate } from "./dateUtilities";
 import { numToGroupedString, numToPercentFactory } from "./numUtilities";
 
 /**
+ * Contains the names of `ValuesOnDate` keys that can be used in texts.
+ */
+export const readableValuesOnDateKeys: { [key in keyof Omit<ValuesOnDate, "date">]: string } = {
+  confirmed: "confirmed cases",
+  newConfirmed: "new cases",
+  mortalityRate: "mortality rate",
+  recovered: "recoveries",
+  recoveryRate: "recovery rate",
+  newRecovered: "new recoveries",
+  newDeaths: "new deaths",
+  deaths: "deaths",
+  activeCases: "active cases",
+};
+
+/**
  * Given an object implementing the `LocationData` interface (which is the data returned by the
  * "covid-19-api" library), filters out all the data before the confirmed cases exceeded a certain
  * number.
@@ -25,7 +40,7 @@ export function filterDatesWithMinConfirmedCases(
 }
 
 export interface ValuesOnDateWithMovingAverage extends ValuesOnDate {
-  movingAverage: number | null;
+  movingAverage?: number | null;
 }
 
 /**

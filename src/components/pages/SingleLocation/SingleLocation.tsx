@@ -7,7 +7,7 @@ import Row from "react-bootstrap/Row";
 import { Helmet } from "react-helmet";
 import { titleCase } from "title-case";
 import { NumberParam, StringParam, useQueryParam, withDefault } from "use-query-params";
-import { SITE_INFO } from "../../../constants";
+import { COLORS, SITE_INFO } from "../../../constants";
 import { filterDatesWithMinConfirmedCases } from "../../../utilities/covid19ApiUtilities";
 import { dateKeyToDate, getFormattedDate } from "../../../utilities/dateUtilities";
 import { hasDefiniteArticle } from "../../../utilities/locationUtilities";
@@ -18,15 +18,11 @@ import { Loading } from "../../common/Loading";
 import { LocationSelectionInput } from "./common/inputs/LocationSelectionInput";
 import { MinConfirmedCasesInput } from "./common/inputs/MinConfirmedCasesInput";
 import { NoData } from "./common/NoData";
+import { SingleLocationSectionCumulative } from "./common/sections/SingleLocationSectionCumulative";
+import { SingleLocationSectionNew } from "./common/sections/SingleLocationSectionNew";
 import { ShareButtons } from "./common/ShareButtons";
-import { SingleLocationConfirmedCases } from "./ConfirmedCases/SingleLocationConfirmedCases";
-import { SingleLocationDeaths } from "./Deaths/SingleLocationDeaths";
 import { SingleLocationLatestNumbers } from "./LatestNumbers/SingleLocationLatestNumbers";
-import { SingleLocationNewCases } from "./NewCases/SingleLocationNewCases";
-import { SingleLocationNewDeaths } from "./NewDeaths/SingleLocationNewDeaths";
-import { SingleLocationNewRecoveries } from "./NewRecoveries/SingleLocationNewRecoveries";
 import { SingleLocationOverall } from "./Overall/SingleLocationOverall";
-import { SingleLocationRecoveries } from "./Recoveries/SingleLocationRecoveries";
 
 interface SingleLocationProps {
   /**
@@ -192,43 +188,54 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
           <SingleLocationLatestNumbers values={latestValues} />
 
-          <SingleLocationConfirmedCases
+          <SingleLocationSectionCumulative
+            property={"confirmed"}
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
+            color={COLORS.confirmed}
           />
 
-          <SingleLocationNewCases
+          <SingleLocationSectionNew
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
-            emaRange={15}
+            property={"newConfirmed"}
+            color={COLORS.confirmed}
+            showEma={true}
           />
 
-          <SingleLocationDeaths
+          <SingleLocationSectionCumulative
+            property={"deaths"}
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
+            color={COLORS.deaths}
           />
 
-          <SingleLocationNewDeaths
-            emaRange={15}
+          <SingleLocationSectionNew
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
+            property={"newDeaths"}
+            color={COLORS.deaths}
+            showEma={true}
           />
 
-          <SingleLocationRecoveries
+          <SingleLocationSectionCumulative
+            property={"recovered"}
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
+            color={COLORS.recovered}
           />
 
-          <SingleLocationNewRecoveries
-            emaRange={12}
+          <SingleLocationSectionNew
             startingFrom={startingFrom}
             xAxisTitle={xAxisTitle}
             values={data.values}
+            property={"newRecovered"}
+            color={COLORS.recovered}
           />
 
           <SingleLocationOverall

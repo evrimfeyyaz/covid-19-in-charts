@@ -2,8 +2,8 @@ import React, { FunctionComponent } from "react";
 import { COLORS } from "../../../../constants";
 import { getFormattedValuesOnDate } from "../../../../utilities/covid19ApiUtilities";
 import { MoreInfo } from "../common/MoreInfo";
-import { SingleLocationSection } from "../common/section/SingleLocationSection";
-import { SingleLocationSectionProps } from "../common/section/SingleLocationSectionProps";
+import { SingleLocationSection } from "../common/sections/SingleLocationSection";
+import { SingleLocationSectionProps } from "../common/sections/SingleLocationSectionProps";
 import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
 
 /**
@@ -69,7 +69,5 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
 
   const chart = <SingleLocationOverallChart data={values} xAxisTitle={xAxisTitle} />;
 
-  return (
-    <SingleLocationSection title={title} id="new-deaths" description={description} chart={chart} />
-  );
+  return <SingleLocationSection title={title} description={description} chart={chart} />;
 };

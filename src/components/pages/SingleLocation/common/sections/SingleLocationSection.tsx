@@ -6,10 +6,6 @@ interface SingleLocationSectionProps {
    */
   title: string;
   /**
-   * ID to be assigned to the container for linking purposes, e.g. "confirmed-cases".
-   */
-  id: string;
-  /**
    * The description of the section or an element that contains the description of the section.
    */
   description: string | JSX.Element;
@@ -24,14 +20,13 @@ interface SingleLocationSectionProps {
  */
 export const SingleLocationSection: FunctionComponent<SingleLocationSectionProps> = ({
   title,
-  id,
   description,
   chart,
 }) => {
   const descriptionComponent = typeof description === "string" ? <p>{description}</p> : description;
 
   return (
-    <section className="mb-5" id={id}>
+    <section className="mb-5">
       <header className="mb-4">
         <h2>{title}</h2>
         {descriptionComponent}
