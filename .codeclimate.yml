@@ -1,0 +1,8 @@
+version: "2"
+exclude_patterns:
+  - "public/"
+  - "**/node_modules/"
+  - "coverage/"
+  - ".github/"
+  - "temp/"
+  - "**/__tests__/"

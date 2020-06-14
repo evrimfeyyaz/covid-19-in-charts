@@ -1,72 +1,45 @@
-import React, { FunctionComponent } from 'react';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import { Link } from 'react-router-dom';
-import { EXTERNAL_LINKS, ROUTE_PATHS, ROUTE_TITLES } from '../../constants';
-import { getCurrentVersion } from '../../utilities/versionUtilities';
+import React, { FunctionComponent } from "react";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
+import Row from "react-bootstrap/Row";
+import packageJson from "../../../package.json";
+import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
-const Footer: FunctionComponent = () => {
-
-
+/**
+ * Page footer. Shown on all pages.
+ */
+export const Footer: FunctionComponent = () => {
   return (
-    <footer className='bg-dark text-light pt-4 pb-2 mt-3 small text-center'>
-      <Container>
-        <Row>
-          <Col>
-            <ul className='list-inline'>
-              <li className='list-inline-item mr-3'>
-                <Link to={ROUTE_PATHS.home} className='link footer-link'>
-                  Home
-                </Link>
-              </li>
-              <li className='list-inline-item mr-3'>
-                <a href={EXTERNAL_LINKS.gitHubRepo} className='link footer-link'>
-                  GitHub
-                </a>
-              </li>
-              <li className='list-inline-item'>
-                <Link to={ROUTE_PATHS.about} className='link footer-link'>
-                  About
-                </Link>
-              </li>
-            </ul>
+    <Navbar bg="dark" as="footer" variant="dark" className="pt-4 pb-4">
+      <Container className="w-100 flex-wrap justify-content-center">
+        <Row className="w-100 align-items-baseline">
+          <Col xs={12} md={6}>
+            <Nav as="ul" bg={"dark"} className="justify-content-center justify-content-md-start">
+              <Nav.Item as="li" className="mr-4">
+                <Nav.Link href={ROUTE_PATHS.home}>Home</Nav.Link>
+              </Nav.Item>
+              <Nav.Item as="li" className="mr-4">
+                <Nav.Link href={EXTERNAL_LINKS.gitHubRepo}>GitHub</Nav.Link>
+              </Nav.Item>
+              <Nav.Item as="li">
+                <Nav.Link href={ROUTE_PATHS.about}>About</Nav.Link>
+              </Nav.Item>
+            </Nav>
           </Col>
-        </Row>
-        <Row>
-          <Col className='pt-2 pb-2 pb-lg-0'>
-            <h1 className='h6'>Visualizations</h1>
-            <ul className='list-unstyled'>
-              <li className='list-item mb-2 m-lg-1'>
-                <Link to={ROUTE_PATHS.casesRecoveriesDeaths} className='link footer-link'>
-                  {ROUTE_TITLES.casesRecoveriesDeaths}
-                </Link>
-              </li>
-              <li className='list-item mb-2 m-lg-1'>
-                <Link to={ROUTE_PATHS.dailyNumbers} className='link footer-link'>
-                  {ROUTE_TITLES.dailyNumbers}
-                </Link>
-              </li>
-              <li className='list-item mb-2 m-lg-1'>
-                <Link to={ROUTE_PATHS.locationComparison} className='link footer-link'>
-                  {ROUTE_TITLES.locationComparison}
-                </Link>
-              </li>
-            </ul>
-          </Col>
-        </Row>
-        <Row>
-          <Col className='pt-2'>
-            <p>
-              Created by <a className='footer-link' href={EXTERNAL_LINKS.authorTwitter}>Evrim Persembe</a>.
-              <br />
-              v{getCurrentVersion()}
-            </p>
+
+          <Col xs={12} md={6}>
+            <div className="text-light text-center text-md-right mt-5 mt-md-0">
+              Created by{" "}
+              <a href={EXTERNAL_LINKS.authorWebsite} className="text-warning">
+                Evrim Persembe
+              </a>
+              <span className="text-secondary ml-4">v{packageJson.version}</span>
+            </div>
           </Col>
         </Row>
       </Container>
-    </footer>
+    </Navbar>
   );
 };
-
-export default Footer;
