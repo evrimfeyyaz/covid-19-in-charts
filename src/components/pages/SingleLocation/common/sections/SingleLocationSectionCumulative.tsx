@@ -35,8 +35,8 @@ export const SingleLocationSectionCumulative: FunctionComponent<SingleLocationSe
   const description = (
     <>
       <p>
-        The cumulative number of <span style={{ color }}>cumulative {propName}</span> on each day,
-        starting from {startingFrom}.
+        The cumulative number of <span style={{ color }}>{propName}</span> on each day, starting
+        from {startingFrom}.
       </p>
       <LatestValuesMessage latestValues={values[values.length - 1]} property={property} />
     </>
