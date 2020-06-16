@@ -56,8 +56,14 @@ describe("COVID-19 API utilities", () => {
     it("adds exponential moving average to the data", () => {
       const result = getValuesWithEma([values1, values2], "confirmed", 1);
 
-      expect(result[0].movingAverage).toBeNull();
-      expect(result[1].movingAverage).toEqual(10);
+      expect(result?.[0].movingAverage).toBeNull();
+      expect(result?.[1].movingAverage).toEqual(10);
+    });
+
+    it("returns `null` when the length of `values` is smaller than `range`", () => {
+      const result = getValuesWithEma([values1, values2], "confirmed", 3);
+
+      expect(result).toBeNull();
     });
   });
 
