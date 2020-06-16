@@ -6,3 +6,4 @@ exclude_patterns:
   - ".github/"
   - "temp/"
   - "**/__tests__/"
+  - "**/__mocks__/"

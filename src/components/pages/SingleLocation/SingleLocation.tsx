@@ -222,27 +222,33 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
             showEma={true}
           />
 
-          <SingleLocationSectionCumulative
-            property={"recovered"}
-            startingFrom={startingFrom}
-            xAxisTitle={xAxisTitle}
-            values={data.values}
-            color={COLORS.recovered}
-          />
+          {latestValues.recovered != null && (
+            <SingleLocationSectionCumulative
+              property={"recovered"}
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+              color={COLORS.recovered}
+            />
+          )}
 
-          <SingleLocationSectionNew
-            startingFrom={startingFrom}
-            xAxisTitle={xAxisTitle}
-            values={data.values}
-            property={"newRecovered"}
-            color={COLORS.recovered}
-          />
+          {latestValues.recovered != null && (
+            <SingleLocationSectionNew
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+              property={"newRecovered"}
+              color={COLORS.recovered}
+            />
+          )}
 
-          <SingleLocationOverall
-            startingFrom={startingFrom}
-            xAxisTitle={xAxisTitle}
-            values={data.values}
-          />
+          {latestValues.recovered != null && latestValues.recoveryRate != null && (
+            <SingleLocationOverall
+              startingFrom={startingFrom}
+              xAxisTitle={xAxisTitle}
+              values={data.values}
+            />
+          )}
         </>
       );
     }

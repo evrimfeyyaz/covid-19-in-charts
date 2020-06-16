@@ -52,13 +52,16 @@ export const LatestValuesMessage: FunctionComponent<LatestValuesMessageProps> = 
     return null;
   }
 
+  const isCumulative =
+    property === "confirmed" || property === "deaths" || property === "recovered";
+
   return (
     <p>
       There {latestValue === 1 ? "was" : "were"}{" "}
       <span style={{ color }}>
         {formattedValues[property]} {pluralizeProperty(property, latestValue)}
       </span>{" "}
-      to date on {formattedValues.date}.
+      {isCumulative && "to date"} on {formattedValues.date}.
     </p>
   );
 };

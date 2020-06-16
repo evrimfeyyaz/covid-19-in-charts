@@ -64,7 +64,7 @@ export const LocationSelectionInput: FunctionComponent<LocationSelectionInputPro
   }
 
   return (
-    <Form.Group>
+    <Form.Group controlId="location-input">
       <Form.Label>Location</Form.Label>
       <Typeahead
         id={id}
@@ -77,6 +77,9 @@ export const LocationSelectionInput: FunctionComponent<LocationSelectionInputPro
         clearButton
         onChange={handleChange}
         paginationText="Show more locations"
+        inputProps={{
+          id: "location-input",
+        }}
       />
     </Form.Group>
   );

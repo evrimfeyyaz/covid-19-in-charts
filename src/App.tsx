@@ -1,5 +1,5 @@
 import { COVID19API } from "@evrimfeyyaz/covid-19-api";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { cleanUp } from "./cleanUp";
 import { Footer } from "./components/common/Footer";
@@ -20,11 +20,13 @@ export function App(): JSX.Element {
     setLoadingMessage(message);
   }
 
-  const dataStore = useRef<COVID19API>(
-    new COVID19API({
-      onLoadingStatusChange: handleLoadStatusChange,
-      store: "indexeddb",
-    })
+  const dataStore = useMemo(
+    () =>
+      new COVID19API({
+        onLoadingStatusChange: handleLoadStatusChange,
+        store: "indexeddb",
+      }),
+    []
   );
 
   useEffect(() => {
@@ -32,7 +34,7 @@ export function App(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    dataStore.current.init().catch(console.error);
+    dataStore.init().catch(console.error);
   }, [dataStore]);
 
   const pageTitle = createPageTitle(SITE_INFO.baseTitle);
@@ -54,7 +56,7 @@ export function App(): JSX.Element {
       {loaded && (
         <>
           <NavBar />
-          <Router dataStore={dataStore.current} />
+          <Router dataStore={dataStore} />
           <ScreenTooSmall />
           <Footer />
         </>

@@ -4,6 +4,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import Row from "react-bootstrap/Row";
+import { Link } from "react-router-dom";
 import packageJson from "../../../package.json";
 import { EXTERNAL_LINKS, ROUTE_PATHS } from "../../constants";
 
@@ -18,13 +19,23 @@ export const Footer: FunctionComponent = () => {
           <Col xs={12} md={6}>
             <Nav as="ul" bg={"dark"} className="justify-content-center justify-content-md-start">
               <Nav.Item as="li" className="mr-4">
-                <Nav.Link href={ROUTE_PATHS.home}>Home</Nav.Link>
+                <Nav.Link as={Link} to={ROUTE_PATHS.home}>
+                  Home
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li" className="mr-4">
-                <Nav.Link href={EXTERNAL_LINKS.gitHubRepo}>GitHub</Nav.Link>
+                <Nav.Link
+                  href={EXTERNAL_LINKS.gitHubRepo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  GitHub
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item as="li">
-                <Nav.Link href={ROUTE_PATHS.about}>About</Nav.Link>
+                <Nav.Link as={Link} to={ROUTE_PATHS.about}>
+                  About
+                </Nav.Link>
               </Nav.Item>
             </Nav>
           </Col>
