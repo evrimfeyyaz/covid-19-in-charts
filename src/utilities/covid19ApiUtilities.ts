@@ -50,12 +50,18 @@ export interface ValuesOnDateWithMovingAverage extends ValuesOnDate {
  * @param property The property on which the exponential moving average calculation is based.
  * @param range The range of the exponential moving average calculation, e.g. 12 yields a 12-day
  *   exponential moving average.
+ * @returns An object that implements {@link ValuesOnDateWithMovingAverage}, or `null` if the
+ *   length of `values` is smaller than `range`.
  */
 export function getValuesWithEma(
   values: readonly ValuesOnDate[],
   property: keyof Omit<ValuesOnDate, "date">,
   range: number
-): ValuesOnDateWithMovingAverage[] {
+): ValuesOnDateWithMovingAverage[] | null {
+  if (values.length < range) {
+    return null;
+  }
+
   const allValuesOfProperty = values.map((valuesOnDate) => valuesOnDate[property] as number);
 
   const movingAveragePoints = [
