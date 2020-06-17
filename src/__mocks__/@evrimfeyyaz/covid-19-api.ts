@@ -60,6 +60,9 @@ const mockLocationData: LocationData[] = [
   createTestLocationData("US"),
   createTestLocationData("NoRecoveriesistan", false),
   { ...createTestLocationData("NoData Republic"), values: [] },
+  createTestLocationData("United Kingdom"),
+  createTestLocationData("Netherlands"),
+  createTestLocationData("Sweden"),
 ];
 
 export const COVID19API = jest.fn().mockImplementation((options?: COVID19APIOptions) => {

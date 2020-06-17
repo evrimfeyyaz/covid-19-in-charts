@@ -1,10 +1,17 @@
-import { COVID19API, ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
+import { COVID19API } from "@evrimfeyyaz/covid-19-api";
 import userEvent from "@testing-library/user-event";
 import "fake-indexeddb/auto";
 import React from "react";
 import { App } from "../App";
-import { numToGroupedString, numToPercentFactory } from "../utilities/numUtilities";
-import { act, render, screen, waitForElementToBeRemoved } from "../utilities/testUtilities";
+import { FormattedValuesOnDate, getFormattedValuesOnDate } from "../utilities/covid19ApiUtilities";
+import {
+  act,
+  cleanup,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from "../utilities/testUtilities";
 
 /**
  * Imitates the user changing the location using the auto-complete input, and waits for the page to
@@ -41,12 +48,23 @@ async function changeMinConfirmedCases(
   });
 }
 
+async function renderApp(): Promise<void> {
+  render(<App />);
+
+  await waitForElementToBeRemoved(() => screen.getByRole("status"));
+}
+
+async function rerenderApp(): Promise<void> {
+  cleanup();
+  await act(async () => {
+    await renderApp();
+  });
+}
+
 describe("Viewing location data", () => {
   beforeEach(async () => {
     localStorage.clear();
-    render(<App />);
-
-    await waitForElementToBeRemoved(() => screen.getByRole("status"));
+    await renderApp();
   });
 
   test("The default location (USA) is shown at the first visit", () => {
@@ -54,29 +72,65 @@ describe("Viewing location data", () => {
   });
 
   describe("Sections", () => {
-    let latestValues: ValuesOnDate;
+    let latestNumbers: FormattedValuesOnDate;
 
     beforeAll(async () => {
       const mockStore = new COVID19API();
       const usData = await mockStore.getDataByLocation("US");
-      latestValues = usData.values[usData.values.length - 1];
+      latestNumbers = getFormattedValuesOnDate(usData.values[usData.values.length - 1]);
+    });
+
+    test("The user can see the latest values information", () => {
+      const {
+        activeCases,
+        confirmed,
+        newConfirmed,
+        recovered,
+        newRecovered,
+        deaths,
+        newDeaths,
+        recoveryRate,
+        mortalityRate,
+      } = latestNumbers;
+
+      const latestConfirmedCardContainer = screen.getByTestId("latest-confirmed-card-container");
+      const latestDeathsCardContainer = screen.getByTestId("latest-deaths-card-container");
+      const latestRecoveredCardContainer = screen.getByTestId("latest-recovered-card-container");
+
+      expect(within(latestConfirmedCardContainer).queryByText(confirmed)).toBeInTheDocument();
+      expect(
+        within(latestConfirmedCardContainer).queryByText(`+${newConfirmed}`)
+      ).toBeInTheDocument();
+      expect(within(latestDeathsCardContainer).queryByText(deaths ?? "")).toBeInTheDocument();
+      expect(within(latestDeathsCardContainer).queryByText(`+${newDeaths}`)).toBeInTheDocument();
+      expect(
+        within(latestDeathsCardContainer).queryByText(`(${mortalityRate})`)
+      ).toBeInTheDocument();
+      expect(within(latestRecoveredCardContainer).queryByText(recovered ?? "")).toBeInTheDocument();
+      expect(
+        within(latestRecoveredCardContainer).queryByText(`+${newRecovered}`)
+      ).toBeInTheDocument();
+      expect(
+        within(latestRecoveredCardContainer).queryByText(`(${recoveryRate})`)
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByTextWithMarkup(`${activeCases} active confirmed cases`)
+      ).toBeInTheDocument();
     });
 
     test("The user can see the information on confirmed cases", () => {
-      const confirmedCases = latestValues.confirmed;
+      const { confirmed } = latestNumbers;
 
       expect(
-        screen.queryByTextWithMarkup(
-          `${numToGroupedString(confirmedCases)} confirmed cases to date`
-        )
+        screen.queryByTextWithMarkup(`${confirmed} confirmed cases to date`)
       ).toBeInTheDocument();
     });
 
     test("The user can see the information on new cases", () => {
-      const newCases = latestValues.newConfirmed;
+      const { newConfirmed } = latestNumbers;
 
       const regex = new RegExp(
-        `there were[\\s\\S.]*${numToGroupedString(newCases)}[\\s\\S.]*new cases[\\s\\S.]*on`,
+        `there were[\\s\\S.]*${newConfirmed}[\\s\\S.]*new cases[\\s\\S.]*on`,
         "i"
       );
 
@@ -84,18 +138,16 @@ describe("Viewing location data", () => {
     });
 
     test("The user can see the information on deaths", () => {
-      const deaths = latestValues.deaths as number;
+      const { deaths } = latestNumbers;
 
-      expect(
-        screen.queryByTextWithMarkup(`${numToGroupedString(deaths)} deaths to date`)
-      ).toBeInTheDocument();
+      expect(screen.queryByTextWithMarkup(`${deaths} deaths to date`)).toBeInTheDocument();
     });
 
     test("The user can see the information on new deaths", () => {
-      const newDeaths = latestValues.newDeaths as number;
+      const { newDeaths } = latestNumbers;
 
       const regex = new RegExp(
-        `there were[\\s\\S.]*${numToGroupedString(newDeaths)}[\\s\\S.]*new deaths[\\s\\S.]*on`,
+        `there were[\\s\\S.]*${newDeaths}[\\s\\S.]*new deaths[\\s\\S.]*on`,
         "i"
       );
 
@@ -103,20 +155,18 @@ describe("Viewing location data", () => {
     });
 
     test("The user can see the information on recoveries", () => {
-      const recoveries = latestValues.recovered as number;
+      const { recovered } = latestNumbers;
 
       expect(
-        screen.queryByTextWithMarkup(`${numToGroupedString(recoveries)} recoveries to date on`)
+        screen.queryByTextWithMarkup(`${recovered} recoveries to date on`)
       ).toBeInTheDocument();
     });
 
     test("The user can see the information on new recoveries", () => {
-      const newRecoveries = latestValues.newRecovered as number;
+      const { newRecovered } = latestNumbers;
 
       const regex = new RegExp(
-        `there were[\\s\\S.]*${numToGroupedString(
-          newRecoveries
-        )}[\\s\\S.]*new recoveries[\\s\\S.]*on`,
+        `there were[\\s\\S.]*${newRecovered}[\\s\\S.]*new recoveries[\\s\\S.]*on`,
         "i"
       );
 
@@ -124,15 +174,12 @@ describe("Viewing location data", () => {
     });
 
     test("The user can see the overall information", () => {
-      const mortalityRate = latestValues.mortalityRate as number;
-      const recoveryRate = latestValues.recoveryRate as number;
+      const { mortalityRate, recoveryRate } = latestNumbers;
 
       expect(
-        screen.queryByTextWithMarkup(`mortality rate was ${numToPercentFactory(2)(mortalityRate)}`)
+        screen.queryByTextWithMarkup(`mortality rate was ${mortalityRate}`)
       ).toBeInTheDocument();
-      expect(
-        screen.queryByTextWithMarkup(`recovery rate was ${numToPercentFactory(2)(recoveryRate)}`)
-      ).toBeInTheDocument();
+      expect(screen.queryByTextWithMarkup(`recovery rate was ${recoveryRate}`)).toBeInTheDocument();
     });
   });
 
@@ -175,21 +222,66 @@ describe("Viewing location data", () => {
     expect(screen.queryByText(/covid-19: turkey/i)).toBeInTheDocument();
     expect(screen.queryByText(/covid-19: the us/i)).not.toBeInTheDocument();
 
-    render(<App />);
+    await rerenderApp();
 
     expect(screen.queryByText(/covid-19: turkey/i)).toBeInTheDocument();
     expect(screen.queryByText(/covid-19: the us/i)).not.toBeInTheDocument();
   });
 
-  test("The recoveries and overall sections are hidden when the selected location has no recoveries data", async () => {
-    expect(screen.queryByRole("heading", { name: "Overall" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Recoveries" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "New Recoveries" })).toBeInTheDocument();
-
+  test("The recoveries and overall information is hidden when the selected location has no recoveries data", async () => {
     await changeLocation("norecoveriesistan");
 
+    const latestRecoveriesCardContainer = screen.getByTestId("latest-recovered-card-container");
+
+    expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+    expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+    expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+  });
+
+  describe("Locations with incomplete or missing recoveries data", () => {
+    test("No recoveries and overall information is shown for the UK", async () => {
+      await changeLocation("united kingdom");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recovered-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByText("active confirmed cases")).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
+
+    test("No recoveries and overall information is shown for the Netherlands", async () => {
+      await changeLocation("netherlands");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recovered-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByText("active confirmed cases")).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
+
+    test("No recoveries and overall information is shown for Sweden", async () => {
+      await changeLocation("sweden");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recovered-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByText("active confirmed cases")).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
   });
 });

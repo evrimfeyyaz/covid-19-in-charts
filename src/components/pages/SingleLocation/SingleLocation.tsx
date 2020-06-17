@@ -92,6 +92,16 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
       const lastUpdated = store.sourceLastUpdatedAt;
       const latestValues = data.values[data.values.length - 1];
 
+      // The recoveries data for the following countries is not included in the JHU CSSE dataset,
+      // so we set them to `null` for the rest of the UI to know that this data is actually missing.
+      // In the dataset the values are either "0" or incomplete.
+      if (location === "United Kingdom" || location === "Netherlands" || location === "Sweden") {
+        latestValues.newRecovered = null;
+        latestValues.recovered = null;
+        latestValues.recoveryRate = null;
+        latestValues.activeCases = null;
+      }
+
       let filteredData = data;
       if (minConfirmedCases != null) {
         filteredData = filterDatesWithMinConfirmedCases(data, minConfirmedCases);
@@ -186,7 +196,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
           <hr />
 
-          <SingleLocationLatestNumbers values={latestValues} />
+          <SingleLocationLatestNumbers values={latestValues} locationName={locationName} />
 
           <SingleLocationSectionCumulative
             property={"confirmed"}

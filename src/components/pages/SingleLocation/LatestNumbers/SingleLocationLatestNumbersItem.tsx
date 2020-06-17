@@ -24,6 +24,10 @@ interface LatestNumbersItemProps {
    * The value as the percentage of confirmed cases.
    */
   rateValue?: number | null;
+  /**
+   * Extra information to show in the footer.
+   */
+  footerInformation?: JSX.Element;
 }
 
 /**
@@ -36,6 +40,7 @@ export const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersIte
   value,
   rateValue,
   newValue,
+  footerInformation,
 }) => {
   const valueStr = value != null ? numToGroupedString(value) : "No Data";
   const rateValueStr = rateValue != null ? numToPercentFactory(2)(rateValue) : undefined;
@@ -58,6 +63,7 @@ export const SingleLocationLatestNumbersItem: FunctionComponent<LatestNumbersIte
       </Card.Body>
       <Card.Footer className="p-1">
         <span className="h6">{newValueStr}</span>
+        {footerInformation}
       </Card.Footer>
     </Card>
   );
