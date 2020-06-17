@@ -150,7 +150,6 @@ describe("Viewing location data", () => {
 
   describe("Exponential moving average", () => {
     test("The exponential moving average information is shown", async () => {
-      console.log(screen.getAllByText(/15-day exponential moving average/i));
       expect(screen.getAllByText(/15-day exponential moving average/i)).toHaveLength(2);
     });
 
