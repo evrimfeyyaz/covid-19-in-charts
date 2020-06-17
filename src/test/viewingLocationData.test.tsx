@@ -4,7 +4,14 @@ import "fake-indexeddb/auto";
 import React from "react";
 import { App } from "../App";
 import { numToGroupedString, numToPercentFactory } from "../utilities/numUtilities";
-import { act, render, screen, waitForElementToBeRemoved } from "../utilities/testUtilities";
+import {
+  act,
+  cleanup,
+  render,
+  screen,
+  waitForElementToBeRemoved,
+  within,
+} from "../utilities/testUtilities";
 
 /**
  * Imitates the user changing the location using the auto-complete input, and waits for the page to
@@ -41,12 +48,23 @@ async function changeMinConfirmedCases(
   });
 }
 
+async function renderApp(): Promise<void> {
+  render(<App />);
+
+  await waitForElementToBeRemoved(() => screen.getByRole("status"));
+}
+
+async function rerenderApp(): Promise<void> {
+  cleanup();
+  await act(async () => {
+    await renderApp();
+  });
+}
+
 describe("Viewing location data", () => {
   beforeEach(async () => {
     localStorage.clear();
-    render(<App />);
-
-    await waitForElementToBeRemoved(() => screen.getByRole("status"));
+    await renderApp();
   });
 
   test("The default location (USA) is shown at the first visit", () => {
@@ -175,21 +193,63 @@ describe("Viewing location data", () => {
     expect(screen.queryByText(/covid-19: turkey/i)).toBeInTheDocument();
     expect(screen.queryByText(/covid-19: the us/i)).not.toBeInTheDocument();
 
-    render(<App />);
+    await rerenderApp();
 
     expect(screen.queryByText(/covid-19: turkey/i)).toBeInTheDocument();
     expect(screen.queryByText(/covid-19: the us/i)).not.toBeInTheDocument();
   });
 
-  test("The recoveries and overall sections are hidden when the selected location has no recoveries data", async () => {
-    expect(screen.queryByRole("heading", { name: "Overall" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "Recoveries" })).toBeInTheDocument();
-    expect(screen.queryByRole("heading", { name: "New Recoveries" })).toBeInTheDocument();
-
+  test("The recoveries and overall information is hidden when the selected location has no recoveries data", async () => {
     await changeLocation("norecoveriesistan");
 
+    const latestRecoveriesCardContainer = screen.getByTestId("latest-recoveries-card-container");
+
+    expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+    expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+    expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+  });
+
+  describe("Locations with incomplete or missing recoveries data", () => {
+    test("No recoveries and overall information is shown for the UK", async () => {
+      await changeLocation("united kingdom");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recoveries-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
+
+    test("No recoveries and overall information is shown for the Netherlands", async () => {
+      await changeLocation("netherlands");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recoveries-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
+
+    test("No recoveries and overall information is shown for Sweden", async () => {
+      await changeLocation("sweden");
+
+      const latestRecoveriesCardContainer = screen.getByTestId("latest-recoveries-card-container");
+
+      expect(within(latestRecoveriesCardContainer).queryByText(/no data/i)).toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/%/i)).not.toBeInTheDocument();
+      expect(within(latestRecoveriesCardContainer).queryByText(/why/i)).toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Overall" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "Recoveries" })).not.toBeInTheDocument();
+      expect(screen.queryByRole("heading", { name: "New Recoveries" })).not.toBeInTheDocument();
+    });
   });
 });
