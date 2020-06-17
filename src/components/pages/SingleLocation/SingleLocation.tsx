@@ -127,8 +127,8 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
    * we are using their default values.
    */
   useEffect(() => {
-    setLocation(location);
-    setMinConfirmedCases(minConfirmedCases);
+    setLocation(location, "replaceIn");
+    setMinConfirmedCases(minConfirmedCases, "replaceIn");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
