@@ -7,3 +7,4 @@ exclude_patterns:
   - "temp/"
   - "**/__tests__/"
   - "**/__mocks__/"
+  - "src/test/"
