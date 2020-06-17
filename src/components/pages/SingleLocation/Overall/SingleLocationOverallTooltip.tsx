@@ -15,10 +15,10 @@ export const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({
     return null;
   }
 
-  const { date, mortalityRate, recoveryRate, activeCasesRate } = payload[0]
+  const { date, caseFatalityRate, recoveryRate, activeCasesRate } = payload[0]
     .payload as ValuesOnDateWithActiveCasesRate;
 
-  if (mortalityRate == null || recoveryRate == null || activeCasesRate == null) {
+  if (caseFatalityRate == null || recoveryRate == null || activeCasesRate == null) {
     return null;
   }
 
@@ -31,7 +31,7 @@ export const SingleLocationOverallTooltip: FunctionComponent<TooltipProps> = ({
         {getPercentValue(activeCasesRate)} <span className="text-muted">active cases</span>
       </p>
       <p className="h6">
-        {getPercentValue(mortalityRate)} <span className="text-muted">deaths</span>
+        {getPercentValue(caseFatalityRate)} <span className="text-muted">deaths</span>
       </p>
       <p className="h6">
         {getPercentValue(recoveryRate)} <span className="text-muted">recoveries</span>

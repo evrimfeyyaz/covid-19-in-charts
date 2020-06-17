@@ -7,7 +7,8 @@ import { SingleLocationSectionProps } from "../common/sections/SingleLocationSec
 import { SingleLocationOverallChart } from "./SingleLocationOverallChart";
 
 /**
- * Renders a page section that shows the mortality rate, recovery rate and active cases on a chart.
+ * Renders a page section that shows the case fatality rate, recovery rate and active cases on a
+ * chart.
  */
 export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps> = ({
   startingFrom,
@@ -16,12 +17,12 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
 }) => {
   const formattedValues = getFormattedValuesOnDate(values[values.length - 1]);
 
-  const mortalityRateText = (
+  const caseFatalityRateText = (
     <MoreInfo
-      text="mortality rate"
+      text="case fatality rate"
       info={
         <img
-          src={"images/mortality-rate.svg"}
+          src={"images/case-fatality-rate.svg"}
           alt="(Cumulative Deaths) / (Cumulative Confirmed Cases)"
           className="img-fluid"
         />
@@ -56,7 +57,7 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
       <p>
         On {formattedValues.date}, the{" "}
         <span style={{ color: COLORS.deaths }}>
-          {mortalityRateText} was {formattedValues.mortalityRate}
+          {caseFatalityRateText} was {formattedValues.caseFatalityRate}
         </span>{" "}
         , and the{" "}
         <span style={{ color: COLORS.recovered }}>

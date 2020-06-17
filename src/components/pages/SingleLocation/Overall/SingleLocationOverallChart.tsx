@@ -43,7 +43,7 @@ export const SingleLocationOverallChart: FunctionComponent<SingleLocationOverall
         name={"Active Cases"}
       />
       <Area
-        dataKey="mortalityRate"
+        dataKey="caseFatalityRate"
         stackId={1}
         opacity={0.9}
         fill={COLORS.deaths}

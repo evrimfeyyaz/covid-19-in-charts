@@ -3,7 +3,7 @@
   "version": "0.19.7",
   "private": true,
   "dependencies": {
-    "@evrimfeyyaz/covid-19-api": "^1.0.0",
+    "@evrimfeyyaz/covid-19-api": "^2.0.0",
     "bootstrap": "^4.4.1",
     "exponential-moving-average": "jonschlinkert/exponential-moving-average#48cbdf1d934599011f440965867f19b6151dc4e2",
     "idb": "^5.0.3",
