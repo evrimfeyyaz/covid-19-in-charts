@@ -1168,10 +1168,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
 
-"@evrimfeyyaz/covid-19-api@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@evrimfeyyaz/covid-19-api/-/covid-19-api-1.0.0.tgz#decc6abcff7d416bd4fb2475d947607d2271803e"
-  integrity sha512-3oam6jB9ITW8UEP5atJF81qTsnLqXJi3N71ZE9fXrDz1QKMjIUdl0csoKOHLOZc8YBdyKCjEN80F48AdTG+yGg==
+"@evrimfeyyaz/covid-19-api@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@evrimfeyyaz/covid-19-api/-/covid-19-api-2.0.0.tgz#048746ab7d72164b36f7dd91cf465072ff42fd76"
+  integrity sha512-UyXhB2X8ysYstKE9HAoIBhklG02viyhcC0cMfW1o/9V9ui0nREWwRpfCpk429R+eOM5hw4YHiP0KGJ1lt78OjQ==
   dependencies:
     csv-parse "^4.9.1"
     idb "^5.0.3"

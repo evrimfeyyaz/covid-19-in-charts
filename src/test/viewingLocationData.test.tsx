@@ -90,7 +90,7 @@ describe("Viewing location data", () => {
         deaths,
         newDeaths,
         recoveryRate,
-        mortalityRate,
+        caseFatalityRate,
       } = latestNumbers;
 
       const latestConfirmedCardContainer = screen.getByTestId("latest-confirmed-card-container");
@@ -104,7 +104,7 @@ describe("Viewing location data", () => {
       expect(within(latestDeathsCardContainer).queryByText(deaths ?? "")).toBeInTheDocument();
       expect(within(latestDeathsCardContainer).queryByText(`+${newDeaths}`)).toBeInTheDocument();
       expect(
-        within(latestDeathsCardContainer).queryByText(`(${mortalityRate})`)
+        within(latestDeathsCardContainer).queryByText(`(${caseFatalityRate})`)
       ).toBeInTheDocument();
       expect(within(latestRecoveredCardContainer).queryByText(recovered ?? "")).toBeInTheDocument();
       expect(
@@ -174,10 +174,10 @@ describe("Viewing location data", () => {
     });
 
     test("The user can see the overall information", () => {
-      const { mortalityRate, recoveryRate } = latestNumbers;
+      const { caseFatalityRate, recoveryRate } = latestNumbers;
 
       expect(
-        screen.queryByTextWithMarkup(`mortality rate was ${mortalityRate}`)
+        screen.queryByTextWithMarkup(`case fatality rate was ${caseFatalityRate}`)
       ).toBeInTheDocument();
       expect(screen.queryByTextWithMarkup(`recovery rate was ${recoveryRate}`)).toBeInTheDocument();
     });

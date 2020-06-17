@@ -13,7 +13,7 @@ interface SingleLocationSectionCumulativeProps extends SingleLocationSectionProp
   /**
    * The property that is explained and charted in the section.
    */
-  property: keyof Omit<ValuesOnDate, "date" | "mortalityRate" | "recoveryRate">;
+  property: keyof Omit<ValuesOnDate, "date" | "caseFatalityRate" | "recoveryRate">;
   /**
    * The color to use for the property mentions and the plot.
    */

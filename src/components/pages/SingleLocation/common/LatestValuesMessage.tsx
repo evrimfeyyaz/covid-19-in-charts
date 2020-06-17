@@ -14,7 +14,7 @@ interface LatestValuesMessageProps {
   /**
    * The property to use in this message, e.g. `confirmedCases`.
    */
-  property: keyof Omit<ValuesOnDate, "date" | "mortalityRate" | "recoveryRate">;
+  property: keyof Omit<ValuesOnDate, "date" | "caseFatalityRate" | "recoveryRate">;
 }
 
 /**

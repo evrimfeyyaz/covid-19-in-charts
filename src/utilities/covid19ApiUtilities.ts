@@ -9,7 +9,7 @@ import { numToGroupedString, numToPercentFactory } from "./numUtilities";
 export const readableValuesOnDateKeys: { [key in keyof Omit<ValuesOnDate, "date">]: string } = {
   confirmed: "confirmed cases",
   newConfirmed: "new cases",
-  mortalityRate: "mortality rate",
+  caseFatalityRate: "case fatality rate",
   recovered: "recoveries",
   recoveryRate: "recovery rate",
   newRecovered: "new recoveries",
@@ -94,8 +94,8 @@ export function getValuesWithActiveCasesRate(
   return values.map((valuesOnDate) => ({
     ...valuesOnDate,
     activeCasesRate:
-      valuesOnDate.mortalityRate != null && valuesOnDate.recoveryRate != null
-        ? 1 - (valuesOnDate.mortalityRate + valuesOnDate.recoveryRate)
+      valuesOnDate.caseFatalityRate != null && valuesOnDate.recoveryRate != null
+        ? 1 - (valuesOnDate.caseFatalityRate + valuesOnDate.recoveryRate)
         : null,
   }));
 }
@@ -107,7 +107,7 @@ export function getValuesWithActiveCasesRate(
  * @param value The value of the property.
  */
 export function pluralizeProperty(
-  property: keyof Omit<ValuesOnDate, "date" | "mortalityRate" | "recoveryRate">,
+  property: keyof Omit<ValuesOnDate, "date" | "caseFatalityRate" | "recoveryRate">,
   value: number
 ): string {
   const propertyNames: (keyof ValuesOnDate)[] = [
@@ -152,7 +152,7 @@ export interface FormattedValuesOnDate {
   recovered?: string;
   newConfirmed: string;
   newDeaths?: string;
-  mortalityRate?: string;
+  caseFatalityRate?: string;
   newRecovered?: string;
   recoveryRate?: string;
   activeCases?: string;
@@ -187,8 +187,8 @@ export function getFormattedValuesOnDate(values: ValuesOnDate): FormattedValuesO
     formattedValues.newRecovered = numToGroupedString(values.newRecovered);
   }
 
-  if (values.mortalityRate != null) {
-    formattedValues.mortalityRate = numToPercentFactory(2)(values.mortalityRate);
+  if (values.caseFatalityRate != null) {
+    formattedValues.caseFatalityRate = numToPercentFactory(2)(values.caseFatalityRate);
   }
 
   if (values.recoveryRate != null) {

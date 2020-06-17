@@ -18,6 +18,11 @@ This is the source code for the [COVID-19 in Charts](https://covid19.evrim.io) w
 ## About COVID-19 in Charts
 This website uses the [data provided by the Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE)](https://github.com/CSSEGISandData/COVID-19). This data isn't perfect, for that reason, I wouldn't recommend using this website in any official manner.
 
+## COVID-19 API
+I extracted the code that allows fetching and querying the JHU CSSE COVID-19 data into its own library: [COVID-19 API](https://github.com/evrimfeyyaz/covid-19-api).
+
+You are free to use it in your own projects.
+
 ## Running the app
 This application was developed in React.
 

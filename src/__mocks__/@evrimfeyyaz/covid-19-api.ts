@@ -21,7 +21,7 @@ function createTestLocationData(location: string, hasRecovered = true): Location
     const newConfirmed = confirmed - previousConfirmed;
     const newDeaths = deaths - previousDeaths;
     const newRecovered = recovered - previousRecovered;
-    const mortalityRate = deaths / confirmed;
+    const caseFatalityRate = deaths / confirmed;
     const recoveryRate = recovered / confirmed;
     const activeCases = confirmed - recovered - deaths;
     const date = `1/${i}/20`;
@@ -33,7 +33,7 @@ function createTestLocationData(location: string, hasRecovered = true): Location
       newDeaths,
       recovered: hasRecovered ? recovered : null,
       newRecovered: hasRecovered ? newRecovered : null,
-      mortalityRate,
+      caseFatalityRate,
       recoveryRate: hasRecovered ? recoveryRate : null,
       activeCases: hasRecovered ? activeCases : null,
       date,

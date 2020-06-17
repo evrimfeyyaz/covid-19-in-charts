@@ -35,7 +35,7 @@ export const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> 
     deaths,
     newRecovered,
     newDeaths,
-    mortalityRate,
+    caseFatalityRate,
     recoveryRate,
   } = values;
 
@@ -93,7 +93,7 @@ export const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> 
             title="Deaths"
             value={deaths}
             newValue={newDeaths}
-            rateValue={mortalityRate}
+            rateValue={caseFatalityRate}
           />
         </Col>
         <Col xs={4} data-testid="latest-recovered-card-container">
