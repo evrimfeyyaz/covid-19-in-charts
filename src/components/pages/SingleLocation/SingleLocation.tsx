@@ -99,6 +99,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
         latestValues.newRecovered = null;
         latestValues.recovered = null;
         latestValues.recoveryRate = null;
+        latestValues.activeCases = null;
       }
 
       let filteredData = data;
@@ -195,7 +196,7 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
 
           <hr />
 
-          <SingleLocationLatestNumbers values={latestValues} />
+          <SingleLocationLatestNumbers values={latestValues} locationName={locationName} />
 
           <SingleLocationSectionCumulative
             property={"confirmed"}
