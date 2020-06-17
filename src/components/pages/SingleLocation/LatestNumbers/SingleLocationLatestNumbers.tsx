@@ -67,9 +67,9 @@ export const SingleLocationLatestNumbers: FunctionComponent<LatestNumbersProps> 
               text={`${activeCases} active confirmed cases`}
               info={
                 <img
-                  src={"images/active-cases.png"}
+                  src={"images/active-cases.svg"}
                   alt="Confirmed Cases - (Deaths + Recoveries)"
-                  style={{ width: "100%" }}
+                  className="img-fluid"
                 />
               }
               title="Active Cases"
