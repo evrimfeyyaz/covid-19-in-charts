@@ -23,7 +23,7 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
         <img
           src={"images/mortality-rate.svg"}
           alt="(Cumulative Deaths) / (Cumulative Confirmed Cases)"
-          style={{ width: "100%" }}
+          className="img-fluid"
         />
       }
       color={COLORS.deaths}
@@ -37,7 +37,7 @@ export const SingleLocationOverall: FunctionComponent<SingleLocationSectionProps
         <img
           src={"images/recovery-rate.svg"}
           alt="(Cumulative Recoveries) / (Cumulative Confirmed Cases)"
-          style={{ width: "100%" }}
+          className="img-fluid"
         />
       }
       color={COLORS.recovered}
