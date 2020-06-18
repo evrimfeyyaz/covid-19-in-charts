@@ -259,6 +259,30 @@ export const SingleLocation: FunctionComponent<SingleLocationProps> = ({ store }
               values={data.values}
             />
           )}
+
+          <h2>About the Data</h2>
+          <p>
+            The source of the data on this page is{" "}
+            <a
+              href="https://github.com/CSSEGISandData/COVID-19"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              the COVID-19 Data Repository by the Center for Systems Science and Engineering (CSSE)
+              at Johns Hopkins University
+            </a>
+            .
+          </p>
+          <p>
+            The last update was on{" "}
+            {lastUpdated.toLocaleDateString("en-US", {
+              weekday: "long",
+              month: "long",
+              year: "numeric",
+              day: "numeric",
+            })}{" "}
+            at {lastUpdated.toLocaleTimeString("en-US", { timeZoneName: "short" })}.
+          </p>
         </>
       );
     }
