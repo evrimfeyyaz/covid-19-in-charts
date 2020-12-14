@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
 import { ValuesOnDateWithActiveCasesRate } from "../../../../utilities/covid19ApiUtilities";
 import { dateKeyToDate, getFormattedDate } from "../../../../utilities/dateUtilities";

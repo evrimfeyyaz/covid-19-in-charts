@@ -65,17 +65,19 @@ const mockLocationData: LocationData[] = [
   createTestLocationData("Sweden"),
 ];
 
-export const COVID19API = jest.fn().mockImplementation((options?: COVID19APIOptions) => {
-  options?.onLoadingStatusChange?.(false);
+export class COVID19API {
+  options = {};
 
-  return {
-    init: jest.fn().mockImplementation(() => Promise.resolve()),
-    getDataByLocation: jest.fn().mockImplementation((location: string) => {
-      const locationData = mockLocationData.find((data) => data.location === location);
+  constructor(options?: COVID19APIOptions) {
+    options?.onLoadingStatusChange?.(false);
+  }
 
-      return Promise.resolve(locationData);
-    }),
-    locations: mockLocationData.map((data) => data.location),
-    sourceLastUpdatedAt: new Date(),
-  };
-});
+  init = jest.fn().mockImplementation(() => Promise.resolve());
+  getDataByLocation = jest.fn().mockImplementation((location: string) => {
+    const locationData = mockLocationData.find((data) => data.location === location);
+
+    return Promise.resolve(locationData);
+  });
+  locations = mockLocationData.map((data) => data.location);
+  sourceLastUpdatedAt = new Date();
+}

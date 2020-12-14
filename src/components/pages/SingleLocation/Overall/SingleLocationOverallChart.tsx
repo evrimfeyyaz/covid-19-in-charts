@@ -1,5 +1,5 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Area, AreaChart } from "recharts";
 import { COLORS } from "../../../../constants";
 import { getValuesWithActiveCasesRate } from "../../../../utilities/covid19ApiUtilities";

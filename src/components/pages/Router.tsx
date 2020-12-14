@@ -1,5 +1,5 @@
 import { COVID19API } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Route, Switch } from "react-router-dom";
 import { ROUTE_PATHS } from "../../constants";
 import { About } from "./About";

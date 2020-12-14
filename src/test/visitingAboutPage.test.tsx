@@ -1,6 +1,5 @@
 import userEvent from "@testing-library/user-event";
 import "fake-indexeddb/auto";
-import React from "react";
 import { App } from "../App";
 import { act, render, screen, waitForElementToBeRemoved } from "../utilities/testUtilities";
 

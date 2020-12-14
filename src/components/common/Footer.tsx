@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
@@ -17,7 +17,7 @@ export const Footer: FunctionComponent = () => {
       <Container className="w-100 flex-wrap justify-content-center">
         <Row className="w-100 align-items-baseline">
           <Col xs={12} md={6}>
-            <Nav as="ul" bg={"dark"} className="justify-content-center justify-content-md-start">
+            <Nav as="ul" className="justify-content-center justify-content-md-start">
               <Nav.Item as="li" className="mr-4">
                 <Nav.Link as={Link} to={ROUTE_PATHS.home}>
                   Home

@@ -1,4 +1,4 @@
-import React from "react";
+"react";
 
 export interface SingleLocationChartProps<DataType, DataKeysType> {
   /**

@@ -1,7 +1,6 @@
 import { COVID19API } from "@evrimfeyyaz/covid-19-api";
 import userEvent from "@testing-library/user-event";
 import "fake-indexeddb/auto";
-import React from "react";
 import { App } from "../App";
 import { FormattedValuesOnDate, getFormattedValuesOnDate } from "../utilities/covid19ApiUtilities";
 import {
@@ -22,7 +21,8 @@ import {
 async function changeLocation(location: string): Promise<void> {
   const locationInput = screen.getByLabelText(/location/i);
 
-  await userEvent.type(locationInput, location);
+  userEvent.clear(locationInput);
+  userEvent.type(locationInput, location);
   const locationName = new RegExp(location, "i");
   const countryWithNoDataOption = screen.getByRole("link", { name: locationName, exact: false });
 

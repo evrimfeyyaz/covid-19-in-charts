@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import Form from "react-bootstrap/Form";
 import { MoreInfo } from "../MoreInfo";
 

@@ -1,5 +1,5 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { TooltipProps } from "recharts";
 import { readableValuesOnDateKeys } from "../../../../../utilities/covid19ApiUtilities";
 import { numToGroupedString } from "../../../../../utilities/numUtilities";

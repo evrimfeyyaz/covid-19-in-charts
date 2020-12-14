@@ -1,5 +1,5 @@
 import { COVID19API } from "@evrimfeyyaz/covid-19-api";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { cleanUp } from "./cleanUp";
 import { Footer } from "./components/common/Footer";

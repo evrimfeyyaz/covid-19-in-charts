@@ -1,6 +1,6 @@
 import { COVID19API, LocationData } from "@evrimfeyyaz/covid-19-api";
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api/lib/types";
-import React, { FunctionComponent, useEffect, useMemo, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";

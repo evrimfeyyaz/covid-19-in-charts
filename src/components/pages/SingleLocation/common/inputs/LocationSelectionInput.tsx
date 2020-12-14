@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 import Form from "react-bootstrap/Form";
 import { getAliasesForLocation } from "../../../../../utilities/locationUtilities";

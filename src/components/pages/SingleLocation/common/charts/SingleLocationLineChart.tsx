@@ -1,5 +1,5 @@
 import { ValuesOnDate } from "@evrimfeyyaz/covid-19-api";
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import { Line, LineChart } from "recharts";
 import { SingleLocationChartContainer } from "./SingleLocationChartContainer";
 import { SingleLocationChartProps } from "./SingleLocationChartProps";
@@ -7,10 +7,9 @@ import { SingleLocationChartProps } from "./SingleLocationChartProps";
 /**
  * A line chart that charts a single data point of a single location.
  */
-export const SingleLocationLineChart: FunctionComponent<SingleLocationChartProps<
-  ValuesOnDate,
-  keyof ValuesOnDate
->> = (props) => {
+export const SingleLocationLineChart: FunctionComponent<
+  SingleLocationChartProps<ValuesOnDate, keyof ValuesOnDate>
+> = (props) => {
   const { dataKey, name, color } = props;
 
   return (

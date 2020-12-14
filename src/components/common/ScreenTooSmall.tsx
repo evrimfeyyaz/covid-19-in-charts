@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 
 /**
  * A component that shows a message saying that the current screen size is too small for viewing

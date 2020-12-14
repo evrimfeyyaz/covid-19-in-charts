@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import { FunctionComponent } from "react";
 import Card from "react-bootstrap/Card";
 import { numToGroupedString, numToPercentFactory } from "../../../../utilities/numUtilities";
 

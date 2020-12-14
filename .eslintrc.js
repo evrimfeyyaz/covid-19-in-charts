@@ -18,7 +18,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jest/recommended",
-    "plugin:jest/style"
+    "plugin:jest/style",
   ],
   ignorePatterns: ["public", "temp"],
   overrides: [
@@ -26,6 +26,8 @@ module.exports = {
       files: ["**/*.tsx"],
       rules: {
         "react/prop-types": "off",
+        "react/jsx-uses-react": "off",
+        "react/react-in-jsx-scope": "off",
       },
     },
   ],

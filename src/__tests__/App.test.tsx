@@ -1,5 +1,4 @@
 import "fake-indexeddb/auto";
-import React from "react";
 import { App } from "../App";
 import { render, screen, waitForElementToBeRemoved, within } from "../utilities/testUtilities";
 
